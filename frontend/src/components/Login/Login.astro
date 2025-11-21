@@ -1,0 +1,150 @@
+---
+import Layout from "../../layouts/Layout.astro"
+---
+
+  <main class="login-container">
+    <section>
+      <h1>Iniciar Sesión ADMIN</h1>
+      
+      <form id="login-form">
+        <label>
+          Correo electrónico:
+          <input type="email" name="email" placeholder="admin@digitalgarden.com" required>
+        </label>
+        
+        <label>
+          Contraseña:
+          <input type="password" name="password" required>
+        </label>
+        
+        <button type="submit" id="submit-btn">
+          Ingresar
+        </button>
+
+        <p id="error-message" class="hidden error-text"></p>
+      </form>
+    </section>
+  </main>
+
+
+<script>
+  // 👇 Importamos tu función helper. Astro permite importar TS dentro de <script>
+  // Ajusta la ruta según donde guardaste el archivo
+  import fetchDataPost from "../../lib/api/fetchDataPost";
+
+  // 1. Seleccionamos los elementos del DOM
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const errorMsg = document.getElementById('error-message') as HTMLParagraphElement;
+  const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+  // 2. Escuchamos el evento submit
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // UI: Limpiar errores y mostrar carga
+    errorMsg.textContent = '';
+    errorMsg.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+
+    // 3. Capturamos los datos del formulario automáticamente
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+
+    try {
+      // 4. Llamada al Backend
+      const response = await fetchDataPost('auth/login', data);
+      console.log('Respuesta:', response);
+
+      if (response.access_token) {
+        // 5. Guardar Token
+        localStorage.setItem('token', response.access_token);
+        
+        // 6. Redireccionar
+        window.location.href = '/home-admin'; // O la página que quieras
+      } else {
+        throw new Error('No se recibió el token');
+      }
+
+    } catch (error) {
+      console.error(error);
+      // UI: Mostrar error
+      errorMsg.textContent = 'Credenciales incorrectas o error de servidor.';
+      errorMsg.classList.remove('hidden');
+    } finally {
+      // UI: Restaurar botón
+      btn.disabled = false;
+      btn.textContent = 'Ingresar';
+    }
+  });
+</script>
+
+<style>
+  /* CSS Scoped: Solo aplica a este archivo */
+  .login-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 4rem;
+    font-family: system-ui, sans-serif;
+  }
+  
+  section {
+    background: #f4f4f5;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 0.25rem;
+  }
+
+  button {
+    background-color: #000;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #333;
+  }
+
+  button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+  }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>

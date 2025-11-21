@@ -1,0 +1,121 @@
+---
+
+  import fetchDataGet from "../../lib/api/fetchDataGet";
+
+  let notes = [];
+  try {
+    notes = await fetchDataGet("notes");
+} catch (error) {
+    console.error("Error cargando notas:", error);
+}
+
+  
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("es-AR", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+---
+
+<section>
+  <h1>Mis Notas</h1>
+
+  <div class="notes-container">
+    
+    {
+      notes.map((note: any) => (
+        <article class="note-card" id={note.id}>
+          <h2 class="note-title">{note.title}</h2>
+          <button class="delete-btn">Borrar</button>
+          <p class="note-content">{note.content}</p>
+
+          <div class="note-meta">
+            <p class="category">{note.category}</p>
+            
+            <p class="author">
+              👤 {note.author?.name || "Esteban Karaputny"}
+            </p>
+          </div>
+
+          <div class="note-footer">
+            <p class="status">Estado: {note.status}</p>
+            <time datetime={note.createdAt} class="date">
+              {formatDate(note.createdAt)}
+            </time>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  {notes.length === 0 && <p>No hay notas para mostrar.</p>}
+
+</section>
+
+<script>
+    import fetchDataDelete from "../../lib/api/fetchDataDelete";
+
+    const myToken = localStorage.getItem("token");
+
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("delete-btn")) {
+            const id = e.target.closest(".note-card").id;
+            console.log(id);
+            try {
+                await fetchDataDelete(`notes/${id}`, myToken);
+                window.location.href = "/home-admin";
+                } catch (error) {
+                console.error("Error al borrar la nota:", error);
+            }
+        }
+    });
+
+
+</script>
+
+<style>
+  /* 3. Un poco de CSS para que se vea ordenado */
+  .notes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .note-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .note-title {
+    margin: 0;
+    color: #2d3748;
+  }
+
+  .note-meta,
+  .note-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: auto;
+    border-top: 1px solid #f7fafc;
+    padding-top: 0.5rem;
+  }
+
+  .category {
+    font-weight: bold;
+    color: #4a5568;
+  }
+</style>
