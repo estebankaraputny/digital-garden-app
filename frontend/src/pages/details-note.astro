@@ -36,40 +36,39 @@ import Layout from "../layouts/Layout.astro";
     import fetchDataGetById from "../lib/api/fetchDataGetById";
 
     async function loadNote() {
-        // A. Leemos el ID de la URL (Ej: tudominio.com/detail-note?id=5)
+        
         const params = new URLSearchParams(window.location.search);
         const id = localStorage.getItem('noteId') || params.get('id');
 
-        // Referencias al DOM
+        
         const loadingDiv = document.getElementById('loading');
         const contentDiv = document.getElementById('content');
         const errorDiv = document.getElementById('error');
-        
-        // Elementos a rellenar
+   
         const titleEl = document.getElementById('note-title');
         const bodyEl = document.getElementById('note-body');
         const catEl = document.getElementById('note-category');
 
         if (!id) {
             console.error("No hay ID en la URL");
-            window.location.href = '/'; // Si no hay ID, lo echamos al home
+            window.location.href = '/'; 
             return;
         }
 
         try {
             console.log("Buscando nota con ID:", id);
             
-            // B. Llamada a la API desde el navegador
+
             const note = await fetchDataGetById("notes", id);
 
             if (!note) throw new Error("Nota vacía");
 
-            // C. Rellenar el HTML
+           
             if(titleEl) titleEl.textContent = note.title;
             if(bodyEl) bodyEl.textContent = note.content;
             if(catEl) catEl.textContent = note.category || 'Sin categoría';
 
-            // D. Mostrar el contenido
+            
             loadingDiv?.classList.add('hidden');
             contentDiv?.classList.remove('hidden');
 
@@ -80,7 +79,6 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
-    // Ejecutar la función
     loadNote();
 </script>
 

@@ -3,6 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import fetchDataGet from "../lib/api/fetchDataGet";
 
 let notes = [];
+let categories: any = [];
+
 try {
   notes = await fetchDataGet("notes");
 
@@ -11,6 +13,16 @@ try {
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
+
+  if (notes && notes.length > 0) {
+        const categorySet = new Set();
+        notes.forEach((note: any) => {
+            if (note.category) {
+                categorySet.add(note.category);
+            }
+        });
+        categories = Array.from(categorySet);
+    }
 
 } catch (error) {
   console.error("Error cargando notas:", error);
@@ -24,7 +36,7 @@ const formatDate = (dateString: string) => {
 };
 
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 6;
 
 ---
 
@@ -35,16 +47,26 @@ const ITEMS_PER_PAGE = 3;
       <p>Encuentra notas de los temas que te interesan.</p>
       <p>Algunas notas estan creadas con IA. Realizamos busquedas para realizar notas lo más correctas posibles.</p>
     </section>
-
     <section class="content-asides">
       <aside class="aside-category">
         <h2>Categorías</h2>
-        <div class="list-category">
-            <ul>
-                <li>
-                    <a href="">Front</a>
-                </li>
-            </ul>
+        <div class="content-list-category">
+          <ul class="list-category">
+            <li>
+              <button class="filter-btn active" id="all">
+                Todas
+              </button>
+            </li>
+            {
+              categories.map((category: string) => {
+                  return (
+                      <li class="content-link-category">
+                          <button class="filter-btn" id={category.toLocaleLowerCase()}>{category}</a>
+                      </li>
+                  )
+              })
+            }
+          </ul>
         </div>
       </aside>
       <aside class="aside-notes">
@@ -57,10 +79,10 @@ const ITEMS_PER_PAGE = 3;
         <div id="notes-container" class="container-notes">
           {
             notes.map((note: any, index: number) => (
-              /* 2. LOGICA VISUAL: Si el índice es mayor a 9, agregamos la clase 'hidden' */
               <article 
                 class={`note-card ${index >= ITEMS_PER_PAGE ? 'hidden' : ''}`} 
                 id={note.id}
+                data-category={note.category}
               >
                 <div>
                   <p class="note-category">{note.category}</p>
@@ -82,15 +104,13 @@ const ITEMS_PER_PAGE = 3;
             ))
           }
         </div>
+          {notes.length === 0 && <p>No hay notas para mostrar.</p>}
+          {notes.length > ITEMS_PER_PAGE && (
+            <div class="pagination-container">
+              <button id="load-more-btn">Cargar más notas</button>
+            </div>
+          )}
 
-        {notes.length === 0 && <p>No hay notas para mostrar.</p>}
-
-        {/* 3. BOTÓN CARGAR MÁS: Solo se muestra si hay más de 10 notas */}
-        {notes.length > ITEMS_PER_PAGE && (
-          <div class="pagination-container">
-            <button id="load-more-btn">Cargar más notas</button>
-          </div>
-        )}
 
       </aside>
     </section>
@@ -110,38 +130,15 @@ const ITEMS_PER_PAGE = 3;
         <button onclick="window.location.href='/create-note'">Crear nota</button>
     </section>
   </main>
-  
 </Layout>
 
 <script>
 
   const loadMoreBtn = document.getElementById('load-more-btn');
   const buttons = document.querySelectorAll('.btn-view-note');
-
-  const itemsPerPage = 10;
-
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', () => {
-     
-      const hiddenNotes = document.querySelectorAll('.note-card.hidden');
-
-      if (hiddenNotes.length === 0) {
-        loadMoreBtn.style.display = 'none';
-        return;
-      }
-
-      for (let i = 0; i < itemsPerPage; i++) {
-        if (hiddenNotes[i]) {
-          hiddenNotes[i].classList.remove('hidden');
-        }
-      }
-
-      const remainingHidden = document.querySelectorAll('.note-card.hidden');
-      if (remainingHidden.length === 0) {
-        loadMoreBtn.style.display = 'none';
-      }
-    });
-  }
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const allCards = document.querySelectorAll('.note-card');
+  const ITEMS_PER_PAGE = 6;
 
   
 buttons.forEach((button) => {
@@ -164,6 +161,47 @@ buttons.forEach((button) => {
             }
     });
 });
+
+
+/**FILTROS DE CATEGORIAS */    
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        filterButtons.forEach(b => b.classList.remove('active'));
+        (e.target as HTMLElement).classList.add('active');
+
+        const selectedCat = (e.target as HTMLElement).id;
+        console.log("Filtrando por:", selectedCat);
+
+        if (loadMoreBtn) {
+            if (selectedCat === 'all') {
+                loadMoreBtn.style.display = 'block'; 
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+
+        allCards.forEach(card => {
+          const cardElement = card as HTMLElement;
+          const cardCat = cardElement.dataset.category?.toLowerCase();
+
+          if (selectedCat === 'all') {
+            cardElement.classList.remove('hidden');
+          } else {
+            if (cardCat === selectedCat) {
+              cardElement.classList.remove('hidden');
+            } else {
+              cardElement.classList.add('hidden');
+            }
+          }
+        });
+      });
+    });
+
+    
+
 </script>
 
 <style>
@@ -209,18 +247,18 @@ buttons.forEach((button) => {
   }
   .section-one h1{
     font-weight: 600;
-    font-size: 2.3rem;
+    font-size: 3rem;
   }
   .section-one h1 span{
-    color: var(--secondary-color);
+
+    background-color: var(--secondary-color);
+    padding: .5rem 1rem;
+    border-radius: 10px;
+    color: var(--white-color);
   }
   .section-one p{
     font-size: 1.2rem;
     color: var(--color-text-primary);
-  }
-  /* Clase para ocultar elementos */
-  .hidden {
-    display: none;
   }
   .pagination-container {
     display: flex;
@@ -250,11 +288,43 @@ buttons.forEach((button) => {
     width: 95%;
   }
 
-  .aside-category{
+  .aside-category {
     width: 20%;
-    padding: 1rem;
     border-radius: 8px;
     height: fit-content;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .list-category{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    list-style: none;
+    margin-top: 1rem;
+  }
+  .filter-btn {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    transition: all 0.2s ease;
+  }
+
+  .filter-btn:hover {
+    color: var(--secondary-color); 
+  }
+
+  .filter-btn.active {
+    color: var(--secondary-color);
+    font-weight: bold;
+    text-decoration: underline;
   }
   .aside-notes{
     width: 75%;
@@ -262,14 +332,6 @@ buttons.forEach((button) => {
     flex-direction: column;
     gap: 1.5rem;
   }
-  /* <h2>Últimas notas</h2>
-        <div class="content-search">
-            <label for="">
-                O
-            </label>
-            <input type="search" name="" id="" placeholder="Hooks de React">
-        </div> */
-
 
     .content-search{
         display: flex;
@@ -310,6 +372,11 @@ buttons.forEach((button) => {
     /* Animación suave al aparecer */
     animation: fadeIn 0.5s ease-in-out;
     gap: .5rem;
+  }
+
+   /* Clase para ocultar elementos */
+  .hidden {
+    display: none !important;
   }
 
   .note-category{
