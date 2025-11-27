@@ -1,0 +1,119 @@
+---
+import Layout from "../layouts/Layout.astro";
+// No importamos fetchDataGetById aquí arriba porque no tenemos el ID todavía
+---
+
+<Layout title="Detalle de Nota">
+    <main class="detail-container">
+        
+        <div id="loading">
+            <h2>Cargando nota...</h2>
+        </div>
+
+        <section id="content" class="hidden">
+            <h1 id="note-title" class="title"></h1>
+            
+            <div class="meta">
+                <span id="note-category" class="badge"></span>
+                <span id="note-date" class="date"></span>
+            </div>
+
+            <hr />
+
+            <p id="note-body" class="body-text"></p>
+        </section>
+
+        <div id="error" class="hidden">
+            <h2>⚠️ Nota no encontrada</h2>
+            <a href="/">Volver al inicio</a>
+        </div>
+
+    </main>
+</Layout>
+
+<script>
+    // Importamos la función aquí para usarla en el navegador
+    import fetchDataGetById from "../lib/api/fetchDataGetById";
+
+    async function loadNote() {
+        // A. Leemos el ID de la URL (Ej: tudominio.com/detail-note?id=5)
+        const params = new URLSearchParams(window.location.search);
+        const id = localStorage.getItem('noteId') || params.get('id');
+
+        // Referencias al DOM
+        const loadingDiv = document.getElementById('loading');
+        const contentDiv = document.getElementById('content');
+        const errorDiv = document.getElementById('error');
+        
+        // Elementos a rellenar
+        const titleEl = document.getElementById('note-title');
+        const bodyEl = document.getElementById('note-body');
+        const catEl = document.getElementById('note-category');
+
+        if (!id) {
+            console.error("No hay ID en la URL");
+            window.location.href = '/'; // Si no hay ID, lo echamos al home
+            return;
+        }
+
+        try {
+            console.log("Buscando nota con ID:", id);
+            
+            // B. Llamada a la API desde el navegador
+            const note = await fetchDataGetById("notes", id);
+
+            if (!note) throw new Error("Nota vacía");
+
+            // C. Rellenar el HTML
+            if(titleEl) titleEl.textContent = note.title;
+            if(bodyEl) bodyEl.textContent = note.content;
+            if(catEl) catEl.textContent = note.category || 'Sin categoría';
+
+            // D. Mostrar el contenido
+            loadingDiv?.classList.add('hidden');
+            contentDiv?.classList.remove('hidden');
+
+        } catch (error) {
+            console.error(error);
+            loadingDiv?.classList.add('hidden');
+            errorDiv?.classList.remove('hidden');
+        }
+    }
+
+    // Ejecutar la función
+    loadNote();
+</script>
+
+<style>
+    .detail-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .hidden {
+        display: none;
+    }
+
+    .title {
+        font-size: 2.5rem;
+        color: #111;
+        margin-bottom: 1rem;
+    }
+
+    .badge {
+        background: #e0f2fe;
+        color: #0369a1;
+        padding: 0.25rem 0.75rem;
+        border-radius: 99px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .body-text {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #374151;
+        white-space: pre-line; /* Respeta los saltos de línea de la nota */
+    }
+</style>
