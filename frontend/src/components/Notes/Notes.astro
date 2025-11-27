@@ -31,7 +31,13 @@
       notes.map((note: any) => (
         <article class="note-card" id={note.id}>
           <h2 class="note-title">{note.title}</h2>
-          <button class="delete-btn">Borrar</button>
+          <button 
+            class="delete-btn" 
+            data-id={note.id} 
+            type="button"
+          >
+            Eliminar
+          </button>
           <p class="note-content">{note.content}</p>
 
           <div class="note-meta">
@@ -58,25 +64,49 @@
 </section>
 
 <script>
-    import fetchDataDelete from "../../lib/api/fetchDataDelete";
+  import fetchDataDelete from "../../lib/api/fetchDataDelete";
 
-    const myToken = localStorage.getItem("token");
+  // 1. Obtenemos el token
+  const myToken = localStorage.getItem("token");
 
-    document.addEventListener("click", async (e) => {
-        if (e.target.classList.contains("delete-btn")) {
-            const id = e.target.closest(".note-card").id;
-            console.log(id);
-            try {
-                await fetchDataDelete(`notes/${id}`, myToken);
-                window.location.href = "/home-admin";
-                } catch (error) {
-                console.error("Error al borrar la nota:", error);
-            }
+  // 2. Seleccionamos los botones
+  const buttonsDelete = document.querySelectorAll(".delete-btn");
+
+  buttonsDelete.forEach((button) => {
+    button.addEventListener("click", async (e) => {
+      // Usamos currentTarget para obtener siempre el botón, no el icono de adentro
+      const btnElement = e.currentTarget as HTMLButtonElement;
+      
+      // Leemos el ID desde el atributo data-id (más seguro)
+      const id = btnElement.dataset.id;
+
+      if (!id) {
+        // console.error("No se encontró ID en el botón");
+        return;
+      }
+
+      // 3. Confirmación y borrado
+      const confirmDelete = confirm("¿Estás seguro de que deseas borrar esta nota?");
+
+      if (confirmDelete) {
+        if (!myToken) {
+            alert("No tienes permiso o tu sesión expiró.");
+            return;
         }
+
+        try {
+          await fetchDataDelete(`notes/${id}`, myToken);
+          // Recargamos para ver los cambios
+          window.location.reload(); 
+        } catch (error) {
+          // console.error("Error al borrar la nota:", error);
+          // alert("Error al borrar la nota. Revisa la consola.");
+        }
+      }
     });
-
-
+  });
 </script>
+
 
 <style>
   /* 3. Un poco de CSS para que se vea ordenado */

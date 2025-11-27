@@ -1,11 +1,11 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import FormNote from "../components/FormNote/FormNote.astro";
-import Notes from "../components/Notes/Notes.astro";
+import Layout from "../../layouts/Layout.astro";
+import FormNote from "../../components/FormNote/FormNote.astro";
+import Notes from "../../components/Notes/Notes.astro";
 
 ---
 
-<Layout title="home-admin">
+<Layout title="Panel de Admin">
   <main class="home-container">
     <button id="singOut">Cerrar Sesion</button>
     <FormNote />
@@ -14,7 +14,12 @@ import Notes from "../components/Notes/Notes.astro";
 </Layout>
 
 <script>
-  import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken";
+  const isAdmin = localStorage.getItem('isAdmin');
+    if (isAdmin !== 'true') {
+        window.location.href = '/'; // O a /login
+    }
+
+  import fetchDataPostWithToken from "../../lib/api/fetchDataPostWithToken";
 
   const form = document.getElementById("note-form") as HTMLFormElement;
   const errorMsg = document.getElementById(
@@ -41,8 +46,8 @@ import Notes from "../components/Notes/Notes.astro";
       const response = await fetchDataPostWithToken("notes", data, myToken);
       console.log("Respuesta:", response);
 
-      if (response && response.id) { // Verifica si la respuesta es válida y tiene un ID
-        window.location.href = "/home-admin"; // Redirige si la nota se creó con éxito
+      if (response && response.id) {
+        window.location.href = "/admin/dashboard"; // Redirige si la nota se creó con éxito
       } else {
         throw new Error("Error al crear la nota");
       }
@@ -60,6 +65,7 @@ import Notes from "../components/Notes/Notes.astro";
 
   singOut.addEventListener("click", () => {
     localStorage.removeItem("token");
+    localStorage.removeItem('isAdmin');
     window.location.href = "/";
   });
 

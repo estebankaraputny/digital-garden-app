@@ -87,7 +87,7 @@
       console.log("Respuesta:", response);
 
       if (response && response.id) { // Verifica si la respuesta es válida y tiene un ID
-        window.location.href = ""; // Redirige si la nota se creó con éxito
+        window.location.href = "dashboard"; // Redirige si la nota se creó con éxito
       } else {
         throw new Error("Error al crear la nota");
       }

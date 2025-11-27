@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro"
 ---
 
+<Layout title="login">
   <main class="login-container">
     <section>
       <h1>Iniciar Sesión ADMIN</h1>
@@ -25,43 +26,40 @@ import Layout from "../../layouts/Layout.astro"
       </form>
     </section>
   </main>
-
+</Layout>
 
 <script>
-  // 👇 Importamos tu función helper. Astro permite importar TS dentro de <script>
-  // Ajusta la ruta según donde guardaste el archivo
   import fetchDataPost from "../../lib/api/fetchDataPost";
 
-  // 1. Seleccionamos los elementos del DOM
+  //DOM
   const form = document.getElementById('login-form') as HTMLFormElement;
   const errorMsg = document.getElementById('error-message') as HTMLParagraphElement;
   const btn = document.getElementById('submit-btn') as HTMLButtonElement;
 
-  // 2. Escuchamos el evento submit
+  //submit
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // UI: Limpiar errores y mostrar carga
     errorMsg.textContent = '';
     errorMsg.classList.add('hidden');
     btn.disabled = true;
     btn.textContent = 'Cargando...';
 
-    // 3. Capturamos los datos del formulario automáticamente
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
 
     try {
-      // 4. Llamada al Backend
+      //Llamada al Backend
       const response = await fetchDataPost('auth/login', data);
       console.log('Respuesta:', response);
 
       if (response.access_token) {
-        // 5. Guardar Token
+        // Guardar Token y si es admin
         localStorage.setItem('token', response.access_token);
+        localStorage.setItem('isAdmin', 'true');
         
-        // 6. Redireccionar
-        window.location.href = '/home-admin'; // O la página que quieras
+        // Redireccionar
+        window.location.href = '/admin/dashboard'; // O la página que quieras
       } else {
         throw new Error('No se recibió el token');
       }

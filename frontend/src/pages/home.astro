@@ -1,0 +1,365 @@
+---
+import Layout from "../layouts/Layout.astro";
+import fetchDataGet from "../lib/api/fetchDataGet";
+
+let notes = [];
+try {
+  notes = await fetchDataGet("notes");
+
+  if (notes && notes.length > 0) {
+    notes.sort((a: any, b: any) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+} catch (error) {
+  console.error("Error cargando notas:", error);
+}
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("es-AR", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+};
+
+
+const ITEMS_PER_PAGE = 3;
+
+---
+
+<Layout title="Digital Garden - Home">
+  <main class="container-home">
+    <section class="section-one">
+      <h1>Digital <span>Garden</span></h1>
+      <p>Encuentra notas de los temas que te interesan.</p>
+      <p>Algunas notas estan creadas con IA. Realizamos busquedas para realizar notas lo más correctas posibles.</p>
+    </section>
+
+    <section class="content-asides">
+      <aside class="aside-category">
+        <h2>Categorías</h2>
+        <div class="list-category">
+            <ul>
+                <li>
+                    <a href="">Front</a>
+                </li>
+            </ul>
+        </div>
+      </aside>
+      <aside class="aside-notes">
+          <h2>Últimas notas</h2>
+        <div class="content-search">
+            <label for="">
+                <i class="fa-light fa-magnifying-glass"></i>
+            <input type="search" name="" id="" placeholder="Hooks de React">
+        </div>
+        <div id="notes-container" class="container-notes">
+          {
+            notes.map((note: any, index: number) => (
+              /* 2. LOGICA VISUAL: Si el índice es mayor a 9, agregamos la clase 'hidden' */
+              <article 
+                class={`note-card ${index >= ITEMS_PER_PAGE ? 'hidden' : ''}`} 
+                id={note.id}
+              >
+                <div>
+                  <p class="note-category">{note.category}</p>
+                </div>
+                <h2 class="note-title">{note.title}</h2>
+
+                <div class="note-content">
+                  <p>{note.content.slice(0, 50)}...</p>         
+                </div>
+                <div class="note-footer">
+                    <div>
+                        <button class="btn-view-note" id={note.id}>Leer nota completa</button>
+                    </div>
+                    <time class="note-date" datetime={note.createdAt} class="date">
+                    {formatDate(note.createdAt)}
+                    </time>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+
+        {notes.length === 0 && <p>No hay notas para mostrar.</p>}
+
+        {/* 3. BOTÓN CARGAR MÁS: Solo se muestra si hay más de 10 notas */}
+        {notes.length > ITEMS_PER_PAGE && (
+          <div class="pagination-container">
+            <button id="load-more-btn">Cargar más notas</button>
+          </div>
+        )}
+
+      </aside>
+    </section>
+    <section>
+        <h2>¿Queres crear notas?</h2>
+        <p>Envia tu postulación en el siguiente formulario.</p>
+        <button onclick="window.location.href='/apply-author'">Postularme</button>
+    </section>
+    <section>
+        <h2>¿No encontraste lo que buscabas?</h2>
+        <p>Envianos tus sugerencias o temas de interés y los agregaremos a nuestro jardín digital.</p>
+        <button onclick="window.location.href='/suggest-topic'">Sugerir tema</button>
+    </section>
+    <section>
+        <h2>Tus pensamientos y saberes son valiosos para otros.</h2>
+        <p>Comparte tus conocimientos creando y publicando tus propias notas en nuestro jardín digital.</p>
+        <button onclick="window.location.href='/create-note'">Crear nota</button>
+    </section>
+  </main>
+  
+</Layout>
+
+<script>
+
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  const buttons = document.querySelectorAll('.btn-view-note');
+
+  const itemsPerPage = 10;
+
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+     
+      const hiddenNotes = document.querySelectorAll('.note-card.hidden');
+
+      if (hiddenNotes.length === 0) {
+        loadMoreBtn.style.display = 'none';
+        return;
+      }
+
+      for (let i = 0; i < itemsPerPage; i++) {
+        if (hiddenNotes[i]) {
+          hiddenNotes[i].classList.remove('hidden');
+        }
+      }
+
+      const remainingHidden = document.querySelectorAll('.note-card.hidden');
+      if (remainingHidden.length === 0) {
+        loadMoreBtn.style.display = 'none';
+      }
+    });
+  }
+
+  
+buttons.forEach((button) => {
+        
+    button.addEventListener('click', (event) => {
+        const currentBtn = event.currentTarget as HTMLButtonElement;
+        const idNote = currentBtn.id;
+
+        if (idNote) {
+                console.log('ID de la nota:', idNote);
+                
+                // B. Guardamos en LocalStorage
+                localStorage.setItem('noteId', idNote);
+                
+                // C. Redirigimos
+                window.location.href = '/details-note';
+            }
+            else {
+                console.error('No se encontró el ID de la nota.');
+            }
+    });
+});
+</script>
+
+<style>
+  /* 5. ESTILOS NECESARIOS */
+  :root{
+		--primary-color: #fdfcfa;
+		--secondary-color: #447d4b;
+		--tertidary-color:#08453c;
+		--quaternary-color:#65e9f6;
+        --background-color: #F4EEE5;
+        --color-text-primary: #262626;
+        --color-text-secondary: #141414;
+        --color-text-light: #8a8989;
+		--black-color: #000000;
+		--white-color: #ffffff;
+	}
+	* {
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+	}
+
+    .container-home{
+        display: flex;
+        flex-direction: column;
+        gap: 4rem;
+        margin-top: 5rem;
+        align-items: center;
+    }
+  .section-one{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 95%;
+      background-color: var(--background-color);
+      border-radius: 1rem;
+      border: 1px solid #e6e6e6;
+      height: 40svh;
+      gap: 1.3rem;
+      padding: 2rem;
+  }
+  .section-one h1{
+    font-weight: 600;
+    font-size: 2.3rem;
+  }
+  .section-one h1 span{
+    color: var(--secondary-color);
+  }
+  .section-one p{
+    font-size: 1.2rem;
+    color: var(--color-text-primary);
+  }
+  /* Clase para ocultar elementos */
+  .hidden {
+    display: none;
+  }
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  #load-more-btn {
+    padding: 0.8rem 1.5rem;
+    background-color: var(--tertidary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  #load-more-btn:hover {
+    background-color: var(--secondary-color);
+  }
+
+  /* Info */
+
+  .content-asides{
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    width: 95%;
+  }
+
+  .aside-category{
+    width: 20%;
+    padding: 1rem;
+    border-radius: 8px;
+    height: fit-content;
+  }
+  .aside-notes{
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  /* <h2>Últimas notas</h2>
+        <div class="content-search">
+            <label for="">
+                O
+            </label>
+            <input type="search" name="" id="" placeholder="Hooks de React">
+        </div> */
+
+
+    .content-search{
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        width: 100%;
+    }
+
+    .content-search label{
+        font-size: .8rem;
+        color: var(--color-text-light);
+        width: 90%;
+    }
+
+
+    .content-search input{
+        width: 70%;
+        padding: .5rem;
+        border-radius: 1rem;
+        border: 1px solid #ccc;
+    }
+
+
+  .container-notes{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .note-card {
+    flex-basis: calc(50% - 1rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--white-color);
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 8px;
+    /* Animación suave al aparecer */
+    animation: fadeIn 0.5s ease-in-out;
+    gap: .5rem;
+  }
+
+  .note-category{
+    font-size: .8rem;
+    color: var(--color-text-light);
+    font-weight: 600;
+    /* text-align: end; */
+  }
+
+  .note-title{
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+
+  }
+    .note-content{
+        flex-grow: 1;
+        margin: .5rem 0;
+        color: var(--color-text-primary);
+    }
+
+    .note-footer{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .note-date{
+        font-size: .8rem;
+        color: var(--color-text-light);
+    }
+
+    .btn-view-note {
+        padding: .5rem;
+        background-color: var(--secondary-color); /* Ajusta a tu paleta */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+
+    .btn-view-note:hover {
+        background-color: var(--tertidary-color);
+    }
+
+    
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

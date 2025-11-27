@@ -1,21 +1,203 @@
+---
+import { Image } from 'astro:assets';
+import logoImageColor from '../assets/image/logo-color.png';
+import logoNameColor from '../assets/image/logo-name-color.png';
+import logoImageByN from '../assets/image/logo-full-byn.png';
+---
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
+		<!-- <meta name="generator" content={Astro.generator} /> -->
 		<title>Digital Garden</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 	</head>
 	<body>
+		<header class="container-navbar">
+			<div class="container-logo">
+				<Image 
+				src={logoImageColor}
+				alt="Logo Digital Garden"
+				class="logo-navbar"
+				/>
+				<Image 
+					src={logoNameColor}
+					alt="Logo Digital Garden"
+					class="logo-name"
+				/>
+			</div>
+			<div class="content-nav">
+				<ul>
+					<li>
+						<a href="/">Home</a>
+
+					</li>
+					<li>
+						<a href="/about">About</a>
+					</li>
+					<li>
+						<a href="/contact">Quiero publicar</a>
+					</li>
+					<li>
+						<a href="">Planes y precios</a>
+					</li>
+				</ul>
+			</div>
+		</header>
 		<slot />
+		<footer class="container-footer">
+			<div class="content-logo-footer">
+				<Image 
+				src={logoImageByN}
+				alt="Logo Digital Garden"
+				class="logo-footer"
+				/>
+			</div>
+			<div class="content-link-footer">
+				<ul>
+					<h2>Explorar</h2>
+					<li>
+						<a href="/">Home</a>
+
+					</li>
+					<li>
+						<a href="/about">About</a>
+					</li>
+					<li>
+						Planes y precios
+					</li>
+				</ul>
+				<ul>
+					<h2>Quiero comenzar</h2>
+					<li>
+						<a href="/contact">Quiero publicar</a>
+					</li>
+				</ul>
+			</div>
+			<div class="content-legal-footer">
+				<p>© 2025 Copy.</p>
+				<p>Seguridad</p>
+				<p>Privacidad</p>
+			</div>
+		</footer>
 	</body>
 </html>
 
 <style>
-	html,
-	body {
+	:root{
+		--primary-color: #fdfcfa;
+		--secondary-color: #447d4b;
+		--tertidary-color:#08453c;
+		--quaternary-color:#65e9f6;
+		--black-color: #000000;
+		--white-color: #ffffff;
+	}
+	* {
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+	}
+	html, body {
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		font-family: "Roboto", sans-serif;
+		background-color: var(--primary-color);
 	}
+
+	.container-navbar{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		background-color: var(--primary-color);
+		position: fixed;
+		width: 100%;
+		z-index: 10;
+		top: 0;
+	}
+
+	.container-logo{
+		display: flex;
+		align-items: center;
+		gap: .5rem;;
+	}
+	.logo-navbar{
+		width: 3rem;
+		height: auto;
+	}
+
+	.logo-name{
+		width: 10rem;
+		height: auto;
+	}
+
+	.content-nav ul{
+		display: flex;
+		list-style: none;
+		gap: .5rem;
+		align-items: center;
+	}
+
+	.content-nav ul li a{
+		text-decoration: none;
+		color: var(--black-color);
+		padding: 1rem;
+		transition: all .5s ease-in-out;
+		border-radius: 0;
+	}
+	
+	.content-nav ul li a:hover{
+		border-bottom: 1px solid var(--secondary-color);
+		color: var(--black-color);
+		border-radius: 1rem;
+	}
+
+	/**Footer */
+
+	.container-footer{
+		background-color: var(--primary-color);
+		color: var(--black-color);
+		display: flex;
+		justify-content: space-around;
+		align-items: flex-start;
+		padding: 2rem;
+		flex-wrap: wrap;
+		gap: 1rem;
+		flex-direction: column;
+	}
+
+	.logo-footer{
+		width: 6rem;
+		height: auto;
+	}
+
+	.content-link-footer ul{
+		list-style: none;
+		padding: 0;
+	}
+
+	.content-link-footer ul li{
+		margin-bottom: .5rem;
+	}
+
+	.content-link-footer ul li a{
+		text-decoration: none;
+		color: var(--black-color);
+		transition: all .3s ease-in-out;
+	}
+
+
+	.content-link-footer ul li a:hover{
+		color: var(--secondary-color);
+	}
+
+	.content-legal-footer p{
+		margin: .3rem 0;
+	}
+
+
 </style>
