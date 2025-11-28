@@ -114,20 +114,26 @@ const ITEMS_PER_PAGE = 6;
 
       </aside>
     </section>
-    <section>
+    <section class="section-add">
+      <div>
         <h2>¿Queres crear notas?</h2>
         <p>Envia tu postulación en el siguiente formulario.</p>
         <button onclick="window.location.href='/apply-author'">Postularme</button>
+      </div>
     </section>
-    <section>
+    <section class="section-theme">
+      <div>
         <h2>¿No encontraste lo que buscabas?</h2>
         <p>Envianos tus sugerencias o temas de interés y los agregaremos a nuestro jardín digital.</p>
         <button onclick="window.location.href='/suggest-topic'">Sugerir tema</button>
+      </div>
     </section>
-    <section>
+    <section class="section-aboutme">
+      <div>
         <h2>Tus pensamientos y saberes son valiosos para otros.</h2>
         <p>Comparte tus conocimientos creando y publicando tus propias notas en nuestro jardín digital.</p>
         <button onclick="window.location.href='/create-note'">Crear nota</button>
+      </div>
     </section>
   </main>
 </Layout>
@@ -206,7 +212,7 @@ buttons.forEach((button) => {
 
 <style>
   /* 5. ESTILOS NECESARIOS */
-  :root{
+  /* :root{
 		--primary-color: #fdfcfa;
 		--secondary-color: #447d4b;
 		--tertidary-color:#08453c;
@@ -217,7 +223,8 @@ buttons.forEach((button) => {
         --color-text-light: #8a8989;
 		--black-color: #000000;
 		--white-color: #ffffff;
-	}
+    --border-color: #E7E7E7;
+	} */
 	* {
 		box-sizing: border-box;
 		padding: 0;
@@ -280,24 +287,20 @@ buttons.forEach((button) => {
   }
 
   /* Info */
-
   .content-asides{
     display: flex;
     gap: 2rem;
     justify-content: center;
     width: 95%;
   }
-
   .aside-category {
     width: 20%;
     border-radius: 8px;
     height: fit-content;
   }
-
   h2 {
     font-size: 1.5rem;
   }
-
   .list-category{
     display: flex;
     flex-direction: column;
@@ -316,11 +319,9 @@ buttons.forEach((button) => {
     text-align: left;
     transition: all 0.2s ease;
   }
-
   .filter-btn:hover {
     color: var(--secondary-color); 
   }
-
   .filter-btn.active {
     color: var(--secondary-color);
     font-weight: bold;
@@ -332,29 +333,23 @@ buttons.forEach((button) => {
     flex-direction: column;
     gap: 1.5rem;
   }
-
-    .content-search{
+  .content-search{
         display: flex;
         align-items: center;
         gap: .5rem;
         width: 100%;
-    }
-
-    .content-search label{
+  }
+  .content-search label{
         font-size: .8rem;
         color: var(--color-text-light);
         width: 90%;
-    }
-
-
-    .content-search input{
+  }
+  .content-search input{
         width: 70%;
         padding: .5rem;
         border-radius: 1rem;
         border: 1px solid #ccc;
-    }
-
-
+  }
   .container-notes{
     display: flex;
     flex-wrap: wrap;
@@ -378,38 +373,33 @@ buttons.forEach((button) => {
   .hidden {
     display: none !important;
   }
-
   .note-category{
     font-size: .8rem;
     color: var(--color-text-light);
     font-weight: 600;
     /* text-align: end; */
   }
-
   .note-title{
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--color-text-secondary);
 
   }
-    .note-content{
+  .note-content{
         flex-grow: 1;
         margin: .5rem 0;
         color: var(--color-text-primary);
-    }
-
-    .note-footer{
+  }
+  .note-footer{
         display: flex;
         justify-content: space-between;
         align-items: center;
-    }
-
-    .note-date{
+  }
+  .note-date{
         font-size: .8rem;
         color: var(--color-text-light);
-    }
-
-    .btn-view-note {
+  }
+  .btn-view-note {
         padding: .5rem;
         background-color: var(--secondary-color); /* Ajusta a tu paleta */
         color: white;
@@ -418,13 +408,108 @@ buttons.forEach((button) => {
         cursor: pointer;
         font-weight: bold;
         transition: background 0.3s ease;
-    }
-
-    .btn-view-note:hover {
+  }
+  .btn-view-note:hover {
         background-color: var(--tertidary-color);
-    }
+  }
 
-    
+  /**SECCION CREAR CUENTA */
+  .section-add{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem;
+      width: 100%;
+      text-align: center;
+      color: var(--white-color);
+      background-image: url(../assets/image/fondo-sectin-one.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.418);
+  }  
+  .section-add div{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding-top: 9rem;
+      padding-bottom: 9rem ;
+  }
+
+  .section-add h2{
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--white-color);
+  }
+
+  .section-add p{
+      font-size: 1.2rem;
+      color: var(--white-color);
+  }
+  .section-add button{
+      padding: 1rem 4rem;
+      background-color: #2fda43;
+      color: var(--black-color);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      font-size: 1rem;
+  }
+  .section-add button:hover{
+      background-color: #23b32f;
+      color: var(--white-color);
+  }
+
+  /**SECCION SUGERIR TEMA */
+
+  .section-theme, .section-aboutme{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+  .section-theme div, .section-aboutme div{
+      background-color: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 1.5rem;
+      padding: 3rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      height: 40svh;
+      width: 95%;
+  }
+  .section-theme h2, .section-aboutme h2{
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+  }
+  .section-theme p, .section-aboutme p{
+      font-size: 1.2rem;
+      color: var(--color-text-primary);
+  }
+  .section-theme button, .section-aboutme button{
+      padding: 1rem 4rem;
+      background-color: var(--secondary-color);
+      color: var(--white-color);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      font-size: 1rem;
+  }
+  .section-theme button:hover, .section-aboutme button:hover{
+      background-color: #23b32f;
+  }
+
+/**FRAMES */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
