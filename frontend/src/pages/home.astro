@@ -36,7 +36,7 @@ const formatDate = (dateString: string) => {
 };
 
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 
 ---
 
@@ -72,8 +72,8 @@ const ITEMS_PER_PAGE = 6;
       <aside class="aside-notes">
           <h2>Últimas notas</h2>
         <div class="content-search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
             <label for="">
-                <i class="fa-light fa-magnifying-glass"></i>
             <input type="search" name="" id="" placeholder="Hooks de React">
         </div>
         <div id="notes-container" class="container-notes">
@@ -144,8 +144,7 @@ const ITEMS_PER_PAGE = 6;
   const buttons = document.querySelectorAll('.btn-view-note');
   const filterButtons = document.querySelectorAll('.filter-btn');
   const allCards = document.querySelectorAll('.note-card');
-  const ITEMS_PER_PAGE = 6;
-
+  const ITEMS_PER_PAGE = 10;
   
 buttons.forEach((button) => {
         
@@ -168,6 +167,31 @@ buttons.forEach((button) => {
     });
 });
 
+ const itemsPerPage = 10;
+
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+     
+      const hiddenNotes = document.querySelectorAll('.note-card.hidden');
+
+      if (hiddenNotes.length === 0) {
+        loadMoreBtn.style.display = 'none';
+        return;
+      }
+
+      for (let i = 0; i < itemsPerPage; i++) {
+        if (hiddenNotes[i]) {
+          hiddenNotes[i].classList.remove('hidden');
+        }
+      }
+
+      const remainingHidden = document.querySelectorAll('.note-card.hidden');
+      if (remainingHidden.length === 0) {
+        loadMoreBtn.style.display = 'none';
+      }
+    });
+  }
+
 
 /**FILTROS DE CATEGORIAS */    
 
@@ -179,11 +203,10 @@ buttons.forEach((button) => {
         (e.target as HTMLElement).classList.add('active');
 
         const selectedCat = (e.target as HTMLElement).id;
-        console.log("Filtrando por:", selectedCat);
 
         if (loadMoreBtn) {
             if (selectedCat === 'all') {
-                loadMoreBtn.style.display = 'block'; 
+                loadMoreBtn.style.display = 'block';
             } else {
                 loadMoreBtn.style.display = 'none';
             }
@@ -193,51 +216,72 @@ buttons.forEach((button) => {
           const cardElement = card as HTMLElement;
           const cardCat = cardElement.dataset.category?.toLowerCase();
 
-          if (selectedCat === 'all') {
-            cardElement.classList.remove('hidden');
+          // mostrar solo 10 notas al filtrar en all y que muestre el boton de ver mas
+          
+          if (selectedCat.length > 0 && selectedCat !== 'all') {
+              if (cardCat === selectedCat) {
+                  cardElement.classList.remove('hidden');
+              } else {
+                  cardElement.classList.add('hidden');
+              }
           } else {
-            if (cardCat === selectedCat) {
-              cardElement.classList.remove('hidden');
-            } else {
-              cardElement.classList.add('hidden');
-            }
+              // Si es 'all', mostrar todas las notas
+              const index = Array.from(allCards).indexOf(card);
+              if (index < ITEMS_PER_PAGE) {
+                  cardElement.classList.remove('hidden');
+              } else {
+                  cardElement.classList.add('hidden');
+              }
           }
         });
       });
     });
+
+    // if (loadMoreBtn) {
+    //     loadMoreBtn.addEventListener('click', () => {
+            
+    //         const activeBtn = document.querySelector('.filter-btn.active') as HTMLElement;
+    //         const currentCat = activeBtn ? activeBtn.dataset.category : 'all';
+
+            
+    //         const hiddenMatchingCards = Array.from(document.querySelectorAll('.note-card.hidden')).filter(card => {
+    //             const cardElement = card as HTMLElement;
+    //             // Si el filtro es 'all', devuelve true. Si no, compara categorías.
+    //             return currentCat === 'all' || cardElement.dataset.category === currentCat;
+    //         });
+
+    //         // 3. Mostrar las siguientes 10
+    //         for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+    //             if (hiddenMatchingCards[i]) {
+    //                 hiddenMatchingCards[i].classList.remove('hidden');
+    //             }
+    //         }
+
+    //         // 4. Si ya no quedan más ocultas de este tipo, esconder botón
+    //         if (hiddenMatchingCards.length <= ITEMS_PER_PAGE) {
+    //             loadMoreBtn.style.display = 'none';
+    //         }
+    //     });
+    // }
 
     
 
 </script>
 
 <style>
-  /* 5. ESTILOS NECESARIOS */
-  /* :root{
-		--primary-color: #fdfcfa;
-		--secondary-color: #447d4b;
-		--tertidary-color:#08453c;
-		--quaternary-color:#65e9f6;
-        --background-color: #F4EEE5;
-        --color-text-primary: #262626;
-        --color-text-secondary: #141414;
-        --color-text-light: #8a8989;
-		--black-color: #000000;
-		--white-color: #ffffff;
-    --border-color: #E7E7E7;
-	} */
 	* {
 		box-sizing: border-box;
 		padding: 0;
 		margin: 0;
 	}
 
-    .container-home{
+  .container-home{
         display: flex;
         flex-direction: column;
         gap: 4rem;
         margin-top: 5rem;
         align-items: center;
-    }
+  }
   .section-one{
       display: flex;
       flex-direction: column;
@@ -338,6 +382,12 @@ buttons.forEach((button) => {
         align-items: center;
         gap: .5rem;
         width: 100%;
+  }
+
+  .content-search svg{
+        width: 1.2rem;
+        height: auto;
+        fill: var(--color-text-light);
   }
   .content-search label{
         font-size: .8rem;
