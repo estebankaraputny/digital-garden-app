@@ -1,0 +1,218 @@
+---
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout title="login">
+  <main class="login-container">
+    <section>
+      <h1>Iniciar Sesión</h1>
+      
+      <form id="login-form">
+        <label>
+          Correo electrónico:
+          <input type="email" name="email" placeholder="admin@digitalgarden.com" required>
+        </label>
+        
+        <label>
+          Contraseña:
+          <input type="password" name="password" required>
+        </label>
+        
+        <button type="submit" id="submit-btn">
+          Ingresar
+        </button>
+
+        <p id="error-message" class="hidden error-text"></p>
+      </form>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import fetchDataPost from "../lib/api/fetchDataPost";
+
+  //DOM
+  const form = document.getElementById('login-form') as HTMLFormElement;
+  const errorMsg = document.getElementById('error-message') as HTMLParagraphElement;
+  const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+  //submit
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    errorMsg.textContent = '';
+    errorMsg.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+
+    try {
+      //Llamada al Backend
+      const response = await fetchDataPost('auth/login', data);
+      console.log('Respuesta:', response);
+
+      if (response.access_token) {
+        // Guardar Token y si es admin
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('isAdmin', 'true');
+        
+        // Redireccionar
+        window.location.href = '/user/dashboard'; // O la página que quieras
+      } else {
+        throw new Error('No se recibió el token');
+      }
+
+    } catch (error) {
+      console.error(error);
+      // UI: Mostrar error
+      errorMsg.textContent = 'Credenciales incorrectas o error de servidor.';
+      errorMsg.classList.remove('hidden');
+    } finally {
+      // UI: Restaurar botón
+      btn.disabled = false;
+      btn.textContent = 'Ingresar';
+    }
+  });
+</script>
+
+<style>
+  /* Usamos las variables que definimos en tu Layout global */
+  /* Si no las toma, asegúrate de que estén definidas en :root en tu Layout.astro */
+  
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Centrado vertical */
+    font-family: 'Figtree', system-ui, sans-serif;
+    padding: 1rem;
+    background-color: var(--primary-color); /* O var(--background-color) si prefieres el beige de fondo */
+  }
+  
+  section {
+    background: var(--white-color);
+    padding: 3rem 2.5rem;
+    border-radius: 16px; /* Bordes más suaves */
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); /* Sombra moderna y difusa */
+    border: 1px solid var(--border-color);
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--tertidary-color); /* Verde oscuro */
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    gap: 0.5rem;
+  }
+
+  input {
+    padding: 0.85rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fafafa;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  /* Efecto al hacer clic en el input */
+  input:focus {
+    background-color: var(--white-color);
+    border-color: var(--secondary-color); /* Verde medio */
+    box-shadow: 0 0 0 4px rgba(68, 125, 75, 0.1); /* Resplandor verde suave */
+  }
+
+  button {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(68, 125, 75, 0.2);
+  }
+
+  button:hover {
+    background-color: var(--tertidary-color); /* Verde más oscuro */
+    transform: translateY(-2px); /* Pequeño efecto de elevación */
+    box-shadow: 0 6px 12px rgba(68, 125, 75, 0.3);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  button:disabled {
+    background-color: #a3a3a3;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Estilos para el mensaje de error */
+  .error-text {
+    background-color: #fef2f2;
+    color: #dc2626;
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #fecaca;
+    margin-top: 0.5rem;
+    animation: shake 0.4s ease-in-out;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* Animación de error */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 480px) {
+    section {
+        padding: 2rem 1.5rem;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+    
+    .login-container {
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+
+    input {
+        font-size: 16px; /* Evita zoom en iPhone */
+    }
+  }
+</style>

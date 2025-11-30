@@ -27,7 +27,7 @@
 
   <div class="notes-container">
     
-    {
+    <!-- {
       notes.map((note: any) => (
         <article class="note-card" id={note.id}>
           <h2 class="note-title">{note.title}</h2>
@@ -56,7 +56,44 @@
           </div>
         </article>
       ))
-    }
+    } -->
+    {
+  notes.map((note: any) => (
+    <article class="note-card" id={note.id}>
+      
+      {/* CABECERA: Título y Botón alineados */}
+      <div class="card-header">
+          <h2 class="note-title">{note.title}</h2>
+          <button 
+            class="delete-btn" 
+            data-id={note.id} 
+            type="button"
+            title="Eliminar nota"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          </button>
+      </div>
+
+      <div class="note-body">
+        <p class="note-content">{note.content}</p>
+      </div>
+
+      <div class="note-footer">
+        <div class="meta-info">
+            <span class="category-badge">{note.category || 'General'}</span>
+            <span class={`status-badge ${note.status === 'Publicado' ? 'published' : 'draft'}`}>
+                {note.status}
+            </span>
+        </div>
+        
+        <div class="meta-date">
+             <small>👤 {note.author?.name || "Admin"}</small>
+             <time datetime={note.createdAt}>{formatDate(note.createdAt)}</time>
+        </div>
+      </div>
+    </article>
+  ))
+}
   </div>
 
   {notes.length === 0 && <p>No hay notas para mostrar.</p>}
@@ -109,43 +146,142 @@
 
 
 <style>
-  /* 3. Un poco de CSS para que se vea ordenado */
+  /* Usamos tus variables globales */
+  
   .notes-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    /* Grid responsivo automático: Mínimo 280px, Máximo lo que quepa */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
-    padding: 1rem;
+    padding: 1rem 0;
   }
 
   .note-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    justify-content: space-between;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .note-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: var(--secondary-color);
+  }
+
+  /* --- CABECERA --- */
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.8rem;
+    gap: 1rem;
   }
 
   .note-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.3;
     margin: 0;
-    color: #2d3748;
   }
 
-  .note-meta,
+  /* Botón Eliminar Estilizado */
+  .delete-btn {
+    background: transparent;
+    border: 1px solid #fee2e2;
+    color: #ef4444; /* Rojo suave */
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0; /* Evita que se aplaste */
+  }
+
+  .delete-btn:hover {
+    background-color: #ef4444;
+    color: white;
+    border-color: #ef4444;
+  }
+
+  /* --- CONTENIDO --- */
+  .note-body {
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  .note-content {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    line-height: 1.5;
+    
+    /* Truco para cortar texto largo con '...' después de 3 líneas */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* --- FOOTER & METADATA --- */
   .note-footer {
     display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #718096;
-    margin-top: auto;
-    border-top: 1px solid #f7fafc;
-    padding-top: 0.5rem;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
   }
 
-  .category {
-    font-weight: bold;
-    color: #4a5568;
+  .meta-info {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .category-badge {
+    background-color: #f3f4f6;
+    color: var(--color-text-light);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* Colores dinámicos para el estado */
+  .published {
+    background-color: #dcfce7; /* Verde claro */
+    color: #166534;
+  }
+  .draft {
+    background-color: #ffedd5; /* Naranja claro */
+    color: #9a3412;
+  }
+
+  .meta-date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+  
+  .meta-date time {
+    font-style: italic;
   }
 </style>

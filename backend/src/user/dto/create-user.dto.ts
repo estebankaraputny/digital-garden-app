@@ -16,9 +16,9 @@ export class CreateUserDto{
     @IsOptional()
     @IsEnum(Role, {
         each: true,
-        message: 'Sos admin'
+        message: 'Tu rol es'
     })
-    roles?: Role[] = [Role.ADMIN]
+    role?: Role = Role.USER
 
     @IsString({ message: 'La contraseña debe ser una cadena de texto'})
     @IsNotEmpty( { message:'La contraseña es obligatoria'})

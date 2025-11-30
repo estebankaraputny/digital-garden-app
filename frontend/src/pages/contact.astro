@@ -1,0 +1,371 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Publica con nosotros | Digital Garden">
+  <main class="publish-container">
+    
+    <section class="hero-section">
+      <h1>Publica con <span class="highlight">Nosotros</span></h1>
+      <p>
+        ¿Tienes conocimientos que compartir? Únete a nuestra comunidad de creadores. 
+        Publicar tus notas ayuda a otros a aprender y te posiciona como experto.
+      </p>
+    </section>
+
+    <section class="plans-section">
+      <h2>Elige tu plan ideal</h2>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <h3>Gratuito</h3>
+          <div class="price">$0,00 <span class="period">/mes</span></div>
+          <p>Ideal para empezar.</p>
+          <ul class="features">
+            <li>Hasta <strong>10 notas</strong> al mes</li>
+            <li>Perfil básico</li>
+          </ul>
+        </div>
+
+        <div class="plan-card featured">
+          <div class="badge">Popular</div>
+          <h3>Básico</h3>
+          <div class="price">$0,99 <span class="period">/mes</span></div>
+          <p>Para creadores constantes.</p>
+          <ul class="features">
+            <li>Hasta <strong>200 notas</strong> al mes</li>
+            <li>Perfil destacado</li>
+            <li>Soporte por email</li>
+          </ul>
+        </div>
+
+        <div class="plan-card">
+          <h3>Premium</h3>
+          <div class="price">$2,99 <span class="period">/mes</span></div>
+          <p>Para expertos en la materia.</p>
+          <ul class="features">
+            <li>Hasta <strong>1000 notas</strong> al mes</li>
+            <li>Estadísticas de lectura</li>
+            <li>Soporte prioritario</li>
+          </ul>
+        </div>
+
+        <div class="plan-card">
+          <h3>Ilimitado</h3>
+          <div class="price">$4,99 <span class="period">/mes</span></div>
+          <p>Sin límites de creatividad.</p>
+          <ul class="features">
+            <li>Notas <strong>ilimitadas</strong></li>
+            <li>Todas las funciones</li>
+            <li>Acceso anticipado</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-grid">
+      <div class="info-card">
+        <h2>¿Por qué compartir tu saber?</h2>
+        <p>Compartir no solo ayuda a otros a crecer, sino que refuerza tu propio aprendizaje. Al publicar, contribuyes a una inteligencia colectiva y dejas tu huella en este jardín digital.</p>
+      </div>
+      <div class="info-card">
+        <h2>¿Cómo funciona?</h2>
+        <p>Es muy simple: creas una cuenta, eliges tu plan y empiezas a escribir. Puedes usar etiquetas, categorías y nuestro editor minimalista para que tu contenido brille sin distracciones.</p>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="form-wrapper">
+        <h2>¡Empieza hoy mismo!</h2>
+        <p>Rellena el formulario y nos pondremos en contacto para configurar tu perfil de autor.</p>
+        
+        <form action="/submit-contact" method="POST">
+          <div class="input-group">
+            <label for="name">Nombre completo</label>
+            <input type="text" id="name" name="name" placeholder="Ej: Esteban Karaputny" required />
+          </div>
+      
+          <div class="input-group">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" placeholder="hola@ejemplo.com" required />
+          </div>
+      
+          <div class="input-group">
+            <label for="message">Cuéntanos qué quieres publicar</label>
+            <textarea id="message" name="message" rows="4" placeholder="Me gustaría escribir sobre tecnología y finanzas..." required></textarea>
+          </div>
+      
+          <button type="submit" class="btn-submit">Enviar solicitud</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Variables locales para facilitar ajustes rápidos */
+  :root {
+      /* Traemos tus variables aquí para referencia, 
+         pero el componente usará las globales definidas en tu Layout */
+  }
+
+  /* Contenedor Principal */
+  .publish-container {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  /* --- Hero Section --- */
+  .hero-section {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .highlight {
+    color: var(--secondary-color);
+    position: relative;
+  }
+  
+  /* Subrayado orgánico */
+  .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background-color: var(--quaternary-color);
+    opacity: 0.3;
+    z-index: -1;
+    border-radius: 4px;
+  }
+
+  .hero-section p {
+    font-size: 1.2rem;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* --- Plans Section --- */
+  .plans-section {
+    margin-bottom: 5rem;
+  }
+  
+  .plans-section h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .plan-card {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-color: var(--secondary-color);
+  }
+
+  /* Tarjeta destacada (Básico) */
+  .plan-card.featured {
+    border: 2px solid var(--secondary-color);
+    background-color: #fdfdfd;
+  }
+
+  .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--secondary-color);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.3rem 0.8rem;
+    border-bottom-left-radius: 10px;
+  }
+
+  .plan-card h3 {
+    color: var(--color-text-secondary);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 1rem 0;
+  }
+
+  .period {
+    font-size: 1rem;
+    color: var(--color-text-light);
+    font-weight: normal;
+  }
+
+  .features {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+  }
+
+  .features li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .features li:last-child {
+    border-bottom: none;
+  }
+
+  /* --- Info Grid --- */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 5rem;
+  }
+
+  .info-card {
+    background: var(--background-color); /* Fondo suave beige */
+    padding: 2.5rem;
+    border-radius: 16px;
+  }
+
+  .info-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--tertidary-color);
+  }
+
+  .info-card p {
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+
+  /* --- Form Section --- */
+  .form-section {
+    display: flex;
+    justify-content: center;
+  }
+
+  .form-wrapper {
+    background: var(--white-color);
+    padding: 3rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-wrapper h2 {
+    text-align: center;
+    color: var(--tertidary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-wrapper > p {
+    text-align: center;
+    color: var(--color-text-light);
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+
+  input, textarea {
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: var(--primary-color);
+    transition: border-color 0.2s;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(68, 125, 75, 0.1);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .btn-submit {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-top: 1rem;
+  }
+
+  .btn-submit:hover {
+    background-color: var(--tertidary-color);
+    transform: translateY(-1px);
+  }
+
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-section h1 { font-size: 2.2rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    .form-wrapper { padding: 1.5rem; }
+  }
+</style>

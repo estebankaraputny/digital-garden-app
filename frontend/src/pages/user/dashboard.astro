@@ -1,0 +1,245 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import FormNote from "../../components/FormNote/FormNote.astro";
+import Notes from "../../components/Notes/Notes.astro";
+---
+
+<Layout title="Panel de Admin | Digital Garden">
+  <main class="dashboard-wrapper">
+    
+    <header class="dashboard-header">
+      <div class="header-info">
+        <h1>Panel de <span class="highlight">Administración</span></h1>
+        <p>Gestiona el contenido de tu jardín digital.</p>
+      </div>
+      
+      <button id="singOut" class="btn-logout">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Cerrar Sesión
+      </button>
+    </header>
+
+    <div class="dashboard-grid">
+      
+      <section class="dashboard-card create-section">
+        <div class="card-header">
+          <h2>🌱 Crear Nueva Nota</h2>
+          <p>Publica un nuevo conocimiento.</p>
+        </div>
+        <FormNote />
+      </section>
+      <section class="dashboard-card list-section">
+        <div class="card-header">
+          <h2>📝 Tus Notas</h2>
+          <p>Historial de publicaciones.</p>
+        </div>
+        <div class="notes-scroll-area">
+          <Notes />
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+</Layout>
+
+<script>
+  // --- TU LÓGICA EXISTENTE (INTACTA) ---
+  const isAdmin = localStorage.getItem('isAdmin');
+  if (isAdmin !== 'true') {
+      window.location.href = '/'; 
+  }
+
+  import fetchDataPostWithToken from "../../lib/api/fetchDataPostWithToken";
+
+  // Nota: Estos elementos están dentro de <FormNote />, pero como se renderizan en el DOM, podemos seleccionarlos aquí.
+  const form = document.getElementById("note-form") as HTMLFormElement;
+  const errorMsg = document.getElementById("error-message") as HTMLParagraphElement;
+  const btn = document.getElementById("submit-btn") as HTMLButtonElement;
+  const singOut = document.getElementById("singOut") as HTMLButtonElement;
+
+  // Lógica Crear Nota
+  if (form) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (errorMsg) {
+            errorMsg.textContent = "";
+            errorMsg.classList.add("hidden");
+        }
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "Cargando...";
+        }
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        // console.log(data);
+
+        try {
+          const myToken = localStorage.getItem("token");
+          // Pequeña validación extra de seguridad
+          if (!myToken) throw new Error("No token found");
+
+          const response = await fetchDataPostWithToken("notes", data, myToken);
+          // console.log("Respuesta:", response);
+
+          if (response && response.id) {
+            window.location.href = "/admin/dashboard"; 
+          } else {
+            throw new Error("Error al crear la nota");
+          }
+        } catch (error) {
+          // console.error(error);
+          if (errorMsg) {
+              errorMsg.textContent = "Credenciales incorrectas o error de servidor.";
+              errorMsg.classList.remove("hidden");
+          }
+        } finally {
+          if (btn) {
+              btn.disabled = false;
+              btn.textContent = "Crear Nota";
+          }
+        }
+      });
+  }
+
+  // Lógica Cerrar Sesión
+  if (singOut) {
+      singOut.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem('isAdmin');
+        window.location.href = "/";
+      });
+  }
+</script>
+
+<style>
+  /* Variables locales de referencia (idealmente vienen del Layout) */
+  :root {
+      --secondary-color: #447d4b;
+      --tertiary-color: #08453c;
+      --background-color: #F4EEE5;
+      --white-color: #ffffff;
+      --border-color: #E7E7E7;
+      --color-text-primary: #262626;
+      --color-text-light: #666666;
+  }
+
+  .dashboard-wrapper {
+    max-width: 1400px; /* Ancho amplio para dashboard */
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: 'Figtree', system-ui, sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  /* --- HEADER --- */
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-info h1 {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .header-info p {
+    color: var(--color-text-light);
+    margin-top: 0.2rem;
+  }
+
+  .highlight {
+    color: var(--secondary-color);
+  }
+
+  /* Botón Logout Estilizado */
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: white;
+    color: #dc2626; /* Rojo */
+    border: 1px solid #fee2e2;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-logout:hover {
+    background-color: #fee2e2;
+    border-color: #dc2626;
+  }
+
+  /* --- GRID LAYOUT --- */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Móvil: 1 columna */
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .dashboard-grid {
+      /* Desktop: Izquierda 400px (Form), Derecha flexible (Lista) */
+      grid-template-columns: 400px 1fr; 
+    }
+  }
+
+  /* --- CARDS (Contenedores Blancos) --- */
+  .dashboard-card {
+    background-color: var(--white-color);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .card-header h2 {
+    font-size: 1.3rem;
+    color: var(--tertiary-color);
+    margin-bottom: 0.2rem;
+  }
+
+  .card-header p {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+  }
+
+  /* Área de scroll para las notas si son muchas */
+  .notes-scroll-area {
+    /* Opcional: Si quieres que la lista tenga scroll interno */
+    /* max-height: 800px;
+    overflow-y: auto; */
+  }
+
+  /* Ajustes Responsive */
+  @media (max-width: 600px) {
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .btn-logout {
+      width: 100%;
+      justify-content: center;
+    }
+    .dashboard-card {
+        padding: 1.5rem;
+    }
+  }
+</style>

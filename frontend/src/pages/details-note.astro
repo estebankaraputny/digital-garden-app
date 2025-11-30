@@ -1,79 +1,139 @@
 ---
 import Layout from "../layouts/Layout.astro";
-// No importamos fetchDataGetById aquí arriba porque no tenemos el ID todavía
 ---
 
-<Layout title="Detalle de Nota">
-    <main class="detail-container">
-        
-        <div id="loading">
-            <h2>Cargando nota...</h2>
+<Layout title="Detalle de Nota | Digital Garden">
+  <main class="page-wrapper">
+    
+    <div id="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Recuperando conocimiento...</p>
+    </div>
+
+    <div id="error" class="error-container hidden">
+      <div class="error-box">
+        <h2>⚠️ Nota no encontrada</h2>
+        <p>Parece que esta hoja se ha perdido en el jardín.</p>
+        <a href="/" class="btn-back">Volver al inicio</a>
+      </div>
+    </div>
+
+    <div id="content" class="content-grid hidden">
+      
+      <article class="article-card">
+        <header class="article-header">
+          <div class="meta-top">
+            <span id="note-category" class="category-pill">Categoría</span>
+            <time id="note-date" class="date-text">Fecha</time>
+          </div>
+          <h1 id="note-title" class="article-title">Título de la nota</h1>
+          <div class="author-line">
+            <span class="avatar-placeholder">👤</span>
+            <span class="author-name">Por <strong id="note-author">Autor</strong></span>
+          </div>
+        </header>
+
+        <hr class="divider" />
+
+        <div class="article-body">
+          <p id="note-body" class="body-text">
+            </p>
         </div>
 
-        <section id="content" class="hidden">
-            <h1 id="note-title" class="title"></h1>
-            
-            <div class="meta">
-                <span id="note-category" class="badge"></span>
-                <span id="note-date" class="date"></span>
+        <footer class="article-footer">
+            <div class="share-box">
+                <h3>¿Te sirvió esta nota?</h3>
+                <p>Compártela con otros cultivadores digitales.</p>
+                <div class="share-buttons">
+                    <button class="btn-share copy">Copiar Link</button>
+                    <button class="btn-share twitter">X / Twitter</button>
+                </div>
             </div>
+        </footer>
+      </article>
 
-            <hr />
-
-            <p id="note-body" class="body-text"></p>
-        </section>
-
-        <div id="error" class="hidden">
-            <h2>⚠️ Nota no encontrada</h2>
-            <a href="/">Volver al inicio</a>
+      <aside class="sidebar">
+        
+        <div class="ad-container">
+            <span class="ad-label">Publicidad</span>
+            <div class="ad-placeholder">
+                <p>Espacio para tu AdSense o Banner</p>
+                </div>
         </div>
 
-    </main>
+        <div class="widget-box">
+            <h3>Sigue explorando</h3>
+            <p>Otros temas que podrían interesarte en el jardín:</p>
+            <ul class="related-list">
+                <li><a href="/?category=Tecnologia">Tecnología</a></li>
+                <li><a href="/?category=Productividad">Productividad</a></li>
+                <li><a href="/?category=Finanzas">Finanzas</a></li>
+            </ul>
+        </div>
+
+        <div class="widget-box highlight">
+            <h3>🌱 Newsletter</h3>
+            <p>Recibe las mejores notas en tu correo cada semana.</p>
+            <button class="btn-subscribe">Suscribirme</button>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
 </Layout>
 
 <script>
-    // Importamos la función aquí para usarla en el navegador
     import fetchDataGetById from "../lib/api/fetchDataGetById";
 
     async function loadNote() {
-        
         const params = new URLSearchParams(window.location.search);
         const id = localStorage.getItem('noteId') || params.get('id');
 
-        
         const loadingDiv = document.getElementById('loading');
         const contentDiv = document.getElementById('content');
         const errorDiv = document.getElementById('error');
    
+        // Elementos a rellenar
         const titleEl = document.getElementById('note-title');
         const bodyEl = document.getElementById('note-body');
         const catEl = document.getElementById('note-category');
+        const dateEl = document.getElementById('note-date');
+        const authorEl = document.getElementById('note-author');
+
+        // Helpers de formateo
+        const formatDate = (dateString: string) => {
+            if (!dateString) return "";
+            return new Date(dateString).toLocaleDateString("es-AR", {
+                year: "numeric", month: "long", day: "numeric"
+            });
+        };
 
         if (!id) {
-            console.error("No hay ID en la URL");
+            // console.error("No hay ID en la URL");
             window.location.href = '/'; 
             return;
         }
 
         try {
-            console.log("Buscando nota con ID:", id);
-            
-
+            // console.log("Buscando nota con ID:", id);
             const note = await fetchDataGetById("notes", id);
 
             if (!note) throw new Error("Nota vacía");
 
-           
+            // Rellenar datos
             if(titleEl) titleEl.textContent = note.title;
             if(bodyEl) bodyEl.textContent = note.content;
-            if(catEl) catEl.textContent = note.category || 'Sin categoría';
+            if(catEl) catEl.textContent = note.category || 'General';
+            if(dateEl) dateEl.textContent = formatDate(note.createdAt);
+            if(authorEl) authorEl.textContent = note.author?.name || 'Esteban Karaputny'; // Default si no hay autor
 
-            
+            // Mostrar contenido
             loadingDiv?.classList.add('hidden');
             contentDiv?.classList.remove('hidden');
 
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             loadingDiv?.classList.add('hidden');
             errorDiv?.classList.remove('hidden');
         }
@@ -83,35 +143,241 @@ import Layout from "../layouts/Layout.astro";
 </script>
 
 <style>
-    .detail-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-    
-    .hidden {
-        display: none;
+    /* Variables locales (Asumiendo que existen en Layout global) */
+    :root {
+        --secondary-color: #447d4b;
+        --tertiary-color: #08453c;
+        --background-color: #F4EEE5;
+        --color-text-primary: #262626;
+        --white-color: #ffffff;
+        --border-color: #E7E7E7;
     }
 
-    .title {
-        font-size: 2.5rem;
-        color: #111;
+    .page-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        min-height: 80vh;
+    }
+
+    .hidden { display: none !important; }
+
+    /* --- LAYOUT GRID (Lo más importante) --- */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Móvil: 1 columna */
+        gap: 3rem;
+    }
+
+    @media (min-width: 900px) {
+        .content-grid {
+            /* Desktop: Contenido principal (2fr) + Sidebar (1fr) */
+            grid-template-columns: 2fr 1fr;
+            align-items: start;
+        }
+    }
+
+    /* --- ESTILOS ARTÍCULO (IZQUIERDA) --- */
+    .article-card {
+        background-color: var(--white-color);
+        padding: 3rem; /* Espaciado generoso tipo libro */
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .article-header { margin-bottom: 2rem; }
+
+    .meta-top {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
         margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #666;
     }
 
-    .badge {
-        background: #e0f2fe;
-        color: #0369a1;
-        padding: 0.25rem 0.75rem;
+    .category-pill {
+        background-color: #e8f5e9;
+        color: var(--tertiary-color);
+        padding: 0.3rem 0.8rem;
         border-radius: 99px;
-        font-size: 0.8rem;
-        font-weight: bold;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+
+    .article-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        color: var(--color-text-primary);
+        margin-bottom: 1rem;
+        font-family: 'Figtree', serif; /* O la fuente que uses para títulos */
+    }
+
+    .author-line {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .divider {
+        border: 0;
+        height: 1px;
+        background: var(--border-color);
+        margin: 2rem 0;
     }
 
     .body-text {
-        font-size: 1.2rem;
-        line-height: 1.6;
-        color: #374151;
-        white-space: pre-line; /* Respeta los saltos de línea de la nota */
+        font-size: 1.15rem;
+        line-height: 1.8; /* Lectura cómoda */
+        color: #333;
+        white-space: pre-line;
+    }
+
+    /* --- FOOTER DEL ARTICULO (VALOR) --- */
+    .article-footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .share-box {
+        background-color: var(--background-color);
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .share-box h3 { margin-bottom: 0.5rem; color: var(--tertiary-color); }
+    
+    .share-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .btn-share {
+        padding: 0.5rem 1.2rem;
+        border: 1px solid var(--secondary-color);
+        background: transparent;
+        color: var(--secondary-color);
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-share:hover {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    /* --- SIDEBAR (DERECHA) --- */
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        position: sticky;
+        top: 2rem; /* Se queda fija al scrollear si hay espacio */
+    }
+
+    /* ANUNCIOS */
+    .ad-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .ad-label {
+        font-size: 0.7rem;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .ad-placeholder {
+        width: 100%;
+        height: 250px; /* Tamaño estándar MPU */
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        border-radius: 8px;
+        border: 1px dashed #ccc;
+    }
+
+    /* WIDGETS */
+    .widget-box {
+        background: var(--white-color);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+
+    .widget-box.highlight {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+    }
+    .widget-box.highlight p { color: #e0e0e0; }
+
+    .widget-box h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    
+    .related-list {
+        list-style: none;
+        margin-top: 1rem;
+    }
+    .related-list li {
+        margin-bottom: 0.5rem;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+    }
+    .related-list a {
+        text-decoration: none;
+        color: #555;
+        transition: color 0.2s;
+    }
+    .related-list a:hover { color: var(--secondary-color); }
+
+    .btn-subscribe {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.8rem;
+        background: white;
+        color: var(--secondary-color);
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    /* --- LOADING & ERROR --- */
+    .loading-container, .error-container {
+        text-align: center;
+        padding: 4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--secondary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        .article-card { padding: 1.5rem; }
+        .article-title { font-size: 1.8rem; }
+        .sidebar { position: static; } /* Quitar sticky en móvil */
     }
 </style>

@@ -1,0 +1,389 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+// Asegúrate de tener una imagen en esta ruta o cambia el src
+// Si no tienes imagen, el CSS tiene un color de respaldo.
+import registerImage from "../assets/image/garden-register.jpg"; 
+---
+
+<Layout title="Crear Cuenta | Digital Garden">
+
+    <main class="register-container">
+        
+        <div class="visual-side">
+            <div class="visual-content">
+                <h2>Únete a la comunidad</h2>
+                <p class="hero-text">
+                    Cultiva tus ideas y deja que florezcan. Crea notas que generen impacto y conecta con otros jardineros del conocimiento.
+                </p>
+                
+                <div class="benefits-box">
+                    <h3>¿Por qué unirte?</h3>
+                    <ul class="benefits-list">
+                        <li>✨ Tu saber es valioso</li>
+                        <li>🚀 Crece profesionalmente</li>
+                        <li>🌱 Aprende en comunidad</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="overlay"></div>
+        </div>
+
+        <div class="form-side">
+            <div class="form-wrapper">
+                <div class="form-header">
+                    <h1>Crear cuenta</h1>
+                    <p>Empieza tu viaje en Digital Garden hoy.</p>
+                </div>
+
+                <form class="modern-form">
+                    
+                    <div class="input-group">
+                        <label for="name">Nombre completo</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <input type="text" name="name" id="name" placeholder="Ej: Esteban Karaputny" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email">Correo electrónico</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <input type="email" name="email" id="email" placeholder="hola@ejemplo.com" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Contraseña</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <input type="password" name="password" id="password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <p class="error-message hidden"></p>
+                    <button type="submit" class="btn-register">
+                        Registrarme
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+
+                    <div class="form-footer">
+                        <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+                        </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+</Layout>
+
+<script>
+    import fetchDataPost from "../lib/api/fetchDataPost";
+
+    // 1. Seleccionamos el formulario
+    const form = document.querySelector('.modern-form') as HTMLFormElement;
+    const btn = document.querySelector('.btn-register') as HTMLButtonElement;
+    
+    // (Opcional) Elemento para mostrar errores
+    // Asegúrate de haber agregado <p class="error-message"></p> en tu HTML si quieres usarlo
+    const errorMsg = document.querySelector('.error-message');
+
+    if (form) {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Evita que la página se recargue
+
+            // Feedback visual: Desactivar botón
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Procesando...';
+            }
+
+            // 2. Capturar los datos AUTOMÁTICAMENTE
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData); 
+            // Esto crea un objeto: { name: "Juan", email: "juan@test.com", password: "123" }
+
+            try {
+                // 3. Enviar al Backend
+                // Asegúrate de que la ruta 'auth/register' sea la correcta en tu API
+                const response = await fetchDataPost('auth/register', data);
+                
+                // console.log('Respuesta registro:', response);
+
+                // 4. Validar éxito
+                if (response && (response.id || response.access_token || response.email)) {
+                    alert('¡Cuenta creada con éxito!');
+                    window.location.href = '/login';
+                } else {
+                    throw new Error('No se pudo crear la cuenta.');
+                }
+
+            } catch (error) {
+                // console.error(error);
+                alert('Ocurrió un error al registrarse. Revisa los datos.');
+                if (errorMsg) errorMsg.textContent = 'Error en el registro.';
+            } finally {
+                // Restaurar botón
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Registrarme';
+                }
+            }
+        });
+    }
+</script>
+
+
+<style>
+    /* Variables locales (Asumiendo que existen en Layout) */
+    :root {
+        --secondary-color: #447d4b;
+        --tertiary-color: #08453c;
+        --background-color: #F4EEE5;
+        --white-color: #ffffff;
+        --color-text-primary: #262626;
+        --color-text-light: #666666;
+    }
+
+    /* Layout Principal: Split Screen */
+    .register-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    @media (min-width: 900px) {
+        .register-container {
+            grid-template-columns: 1fr 1fr; /* 50% imagen, 50% formulario */
+        }
+    }
+
+    /* --- LADO IZQUIERDO: VISUAL --- */
+    .visual-side {
+        background-color: var(--tertiary-color);
+        background-image: linear-gradient(135deg, var(--tertiary-color), var(--secondary-color));
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--white-color);
+        overflow: hidden;
+    }
+
+    /* Fondo decorativo opcional */
+    .bg-image {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        opacity: 0.2; /* Hacemos que la imagen sea sutil */
+        z-index: 0;
+    }
+
+    .visual-content {
+        position: relative;
+        z-index: 1;
+        max-width: 450px;
+    }
+
+    .visual-content h2 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        font-family: 'Oswald', sans-serif;
+    }
+
+    .hero-text {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        opacity: 0.9;
+        margin-bottom: 3rem;
+    }
+
+    .benefits-box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .benefits-box h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--white-color);
+    }
+
+    .benefits-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .benefits-list li {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    /* --- LADO DERECHO: FORMULARIO --- */
+    .form-side {
+        background-color: var(--background-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .form-wrapper {
+        background-color: var(--white-color);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .form-header h1 {
+        font-size: 2rem;
+        color: var(--tertiary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+        color: var(--color-text-light);
+        font-size: 0.95rem;
+    }
+
+    /* Inputs Modernos */
+    .modern-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-text-primary);
+    }
+
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        color: #999;
+        pointer-events: none;
+        transition: color 0.3s;
+    }
+
+    .input-wrapper input {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 2.8rem; /* Espacio para el icono */
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 1rem;
+        background-color: #fafafa;
+        transition: all 0.2s ease;
+    }
+
+    .input-wrapper input:focus {
+        outline: none;
+        background-color: var(--white-color);
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 4px rgba(68, 125, 75, 0.1);
+    }
+
+    .input-wrapper input:focus + .input-icon,
+    .input-wrapper:focus-within .input-icon {
+        color: var(--secondary-color);
+    }
+
+    /* Botón Registrar */
+    .btn-register {
+        margin-top: 1rem;
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-register:hover {
+        background-color: var(--tertiary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(68, 125, 75, 0.3);
+    }
+
+    .form-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--color-text-light);
+    }
+
+    .form-footer a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .form-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+    color: #e11d48; /* Rojo rosado */
+    background-color: #ffe4e6;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    border: 1px solid #fecdd3;
+    }
+
+    .error-message.hidden {
+        display: none;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+        .visual-side {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .benefits-box {
+            display: none; /* Ocultamos beneficios en móvil para ahorrar espacio */
+        }
+        .form-wrapper {
+            padding: 2rem;
+            box-shadow: none; /* Quitamos sombra en móvil para que se vea plano */
+            background-color: transparent;
+        }
+        .input-wrapper input {
+            font-size: 16px; /* Evita zoom en iOS */
+        }
+    }
+</style>

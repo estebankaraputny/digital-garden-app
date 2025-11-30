@@ -1,6 +1,8 @@
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/common/decorators/public.decorator';
+import { ApiBody } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,4 +14,13 @@ export class AuthController {
   signIn(@Body() signInDto: Record<string, any>) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
+
+  /**Rgistro */
+  @Public()
+  @ApiBody({ type: CreateUserDto })
+  @Post('register')
+  signUp(@Body() signUpDto: CreateUserDto) { // <--- Corregido
+    return this.authService.signUp(signUpDto);
+  }
+  
 }

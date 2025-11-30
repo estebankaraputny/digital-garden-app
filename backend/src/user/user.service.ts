@@ -41,6 +41,13 @@ export class UserService {
     }
   }
 
+
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
   async findAll() {
     const users = await this.prisma.user.findMany();
     return users.map((user) => ({ ...user, roles: user.roles as Role[] }));
@@ -81,6 +88,7 @@ export class UserService {
   //     throw error;
   //   }
   // }
+  
 
   async remove(id: string): Promise<User> {
     try {
@@ -99,13 +107,13 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (!user) return null;
-    return { ...user, roles: user.roles as Role[] };
-  }
+  // async findByEmail(email: string): Promise<User | null> {
+  //   const user = await this.prisma.user.findUnique({
+  //     where: { email },
+  //   });
+  //   if (!user) return null;
+  //   return { ...user, roles: user.roles as Role[] };
+  // }
 
   // async findByRole(role: Role): Promise<User[]> {
   //   const users = await this.prisma.user.findMany({

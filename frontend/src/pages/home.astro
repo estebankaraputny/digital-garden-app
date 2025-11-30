@@ -15,14 +15,14 @@ try {
   }
 
   if (notes && notes.length > 0) {
-        const categorySet = new Set();
-        notes.forEach((note: any) => {
-            if (note.category) {
-                categorySet.add(note.category);
-            }
-        });
-        categories = Array.from(categorySet);
-    }
+    const categorySet = new Set();
+    notes.forEach((note: any) => {
+      if (note.category) {
+        categorySet.add(note.category);
+      }
+    });
+    categories = Array.from(categorySet);
+  }
 
 } catch (error) {
   console.error("Error cargando notas:", error);
@@ -35,533 +35,741 @@ const formatDate = (dateString: string) => {
   });
 };
 
-
 const ITEMS_PER_PAGE = 10;
-
 ---
 
 <Layout title="Digital Garden - Home">
-  <main class="container-home">
-    <section class="section-one">
-      <h1>Digital <span>Garden</span></h1>
-      <p>Encuentra notas de los temas que te interesan.</p>
-      <p>Algunas notas estan creadas con IA. Realizamos busquedas para realizar notas lo más correctas posibles.</p>
-    </section>
-    <section class="content-asides">
-      <aside class="aside-category">
-        <h2>Categorías</h2>
-        <div class="content-list-category">
-          <ul class="list-category">
+  <main class="home-container">
+    
+    <header class="hero-section">
+      <div class="hero-content">
+        <h1>Digital <span class="highlight">Garden</span></h1>
+        <p class="subtitle">Tu espacio para cultivar conocimientos.</p>
+        <p class="description">
+          Explora notas sobre tecnología, desarrollo y crecimiento personal. 
+          Algunas notas son asistidas por IA para maximizar la precisión.
+        </p>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      
+      <aside class="sidebar">
+        <div class="sidebar-sticky">
+            <h3>Categorías</h3>
+            <ul class="category-list">
             <li>
-              <button class="filter-btn active" id="all">
+                <button class="filter-btn active" id="all">
                 Todas
-              </button>
+                </button>
             </li>
-            {
-              categories.map((category: string) => {
-                  return (
-                      <li class="content-link-category">
-                          <button class="filter-btn" id={category.toLocaleLowerCase()}>{category}</a>
-                      </li>
-                  )
-              })
-            }
-          </ul>
+            {categories.map((category: string) => (
+                <li>
+                <button class="filter-btn" id={category.toLocaleLowerCase()}>
+                    {category}
+                </button>
+                </li>
+            ))}
+            </ul>
         </div>
       </aside>
-      <aside class="aside-notes">
-          <h2>Últimas notas</h2>
-        <div class="content-search">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
-            <label for="">
-            <input type="search" name="" id="" placeholder="Hooks de React">
-        </div>
-        <div id="notes-container" class="container-notes">
-          {
-            notes.map((note: any, index: number) => (
-              <article 
-                class={`note-card ${index >= ITEMS_PER_PAGE ? 'hidden' : ''}`} 
-                id={note.id}
-                data-category={note.category}
-              >
-                <div>
-                  <p class="note-category">{note.category}</p>
-                </div>
-                <h2 class="note-title">{note.title}</h2>
 
-                <div class="note-content">
-                  <p>{note.content.slice(0, 50)}...</p>         
-                </div>
-                <div class="note-footer">
-                    <div>
-                        <button class="btn-view-note" id={note.id}>Leer nota completa</button>
-                    </div>
-                    <time class="note-date" datetime={note.createdAt} class="date">
-                    {formatDate(note.createdAt)}
-                    </time>
-                </div>
-              </article>
-            ))
-          }
-        </div>
-          {notes.length === 0 && <p>No hay notas para mostrar.</p>}
-          {notes.length > ITEMS_PER_PAGE && (
-            <div class="pagination-container">
-              <button id="load-more-btn">Cargar más notas</button>
+      <section class="notes-area">
+        <div class="notes-header">
+            <h2>Últimas notas</h2>
+            <div class="search-wrapper">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+                </svg>
+                <input type="search" placeholder="Buscar temas (ej: React Hooks)..." id="search-input"/>
             </div>
-          )}
+        </div>
 
+        <div id="notes-container" class="notes-grid">
+          {notes.map((note: any, index: number) => (
+            <article 
+              class={`note-card ${index >= ITEMS_PER_PAGE ? 'hidden' : ''}`} 
+              id={note.id}
+              data-category={note.category?.toLowerCase()}
+              data-title={note.title.toLowerCase()}
+              data-content={note.content.toLowerCase()}
+            >
+              <div class="card-header">
+                <span class="category-badge">{note.category || 'General'}</span>
+                <time datetime={note.createdAt}>{formatDate(note.createdAt)}</time>
+              </div>
+              
+              <h3 class="card-title">{note.title}</h3>
+              <p class="card-excerpt">{note.content.slice(0, 120)}...</p>
+              
+              <div class="card-footer">
+                <button class="btn-read-more btn-view-note" id={note.id}>
+                    Leer más →
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
 
-      </aside>
+        {notes.length === 0 && <div class="empty-state"><p>No hay notas para mostrar.</p></div>}
+        
+        <div id="search-spinner" class="hidden spinner-container">
+            <div class="spinner"></div>
+        </div>
+
+        <div id="no-results" class="hidden no-results-container">
+            <p>No encontramos notas que coincidan con tu búsqueda.</p>
+            <button id="clear-search-btn" class="btn-outline-small">Limpiar búsqueda</button>
+        </div>
+        <div class="pagination-wrapper">
+          <button id="load-more-btn" class={notes.length <= ITEMS_PER_PAGE ? 'hidden' : ''}>
+            Cargar más notas
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <section class="cta-dashboard">
+        <div class="cta-banner highlight-banner">
+            <div class="banner-content">
+                <h2>¿Quieres ser autor?</h2>
+                <p>Únete a nuestra comunidad y comparte tu saber con el mundo.</p>
+                <button onclick="window.location.href='/apply-author'" class="btn-primary">Postularme</button>
+            </div>
+        </div>
+
+        <div class="cta-secondary-grid">
+            <div class="cta-card">
+                <h3>¿No encuentras un tema?</h3>
+                <p>Sugiérenos qué te gustaría leer próximamente.</p>
+                <button onclick="window.location.href='/suggest-topic'" class="btn-outline">Sugerir tema</button>
+            </div>
+            <div class="cta-card">
+                <h3>Contribuye ahora</h3>
+                <p>Crea y publica tus propias notas directamente.</p>
+                <button onclick="window.location.href='/create-note'" class="btn-outline">Crear nota</button>
+            </div>
+        </div>
     </section>
-    <section class="section-add">
-      <div>
-        <h2>¿Queres crear notas?</h2>
-        <p>Envia tu postulación en el siguiente formulario.</p>
-        <button onclick="window.location.href='/apply-author'">Postularme</button>
-      </div>
-    </section>
-    <section class="section-theme">
-      <div>
-        <h2>¿No encontraste lo que buscabas?</h2>
-        <p>Envianos tus sugerencias o temas de interés y los agregaremos a nuestro jardín digital.</p>
-        <button onclick="window.location.href='/suggest-topic'">Sugerir tema</button>
-      </div>
-    </section>
-    <section class="section-aboutme">
-      <div>
-        <h2>Tus pensamientos y saberes son valiosos para otros.</h2>
-        <p>Comparte tus conocimientos creando y publicando tus propias notas en nuestro jardín digital.</p>
-        <button onclick="window.location.href='/create-note'">Crear nota</button>
-      </div>
-    </section>
+
   </main>
 </Layout>
 
 <script>
-
-  const loadMoreBtn = document.getElementById('load-more-btn');
-  const buttons = document.querySelectorAll('.btn-view-note');
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const allCards = document.querySelectorAll('.note-card');
-  const ITEMS_PER_PAGE = 10;
   
-buttons.forEach((button) => {
-        
-    button.addEventListener('click', (event) => {
-        const currentBtn = event.currentTarget as HTMLButtonElement;
-        const idNote = currentBtn.id;
+  document.addEventListener('DOMContentLoaded', () => {
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const buttonsView = document.querySelectorAll('.btn-view-note');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const allCards = document.querySelectorAll('.note-card');
+    const ITEMS_PER_PAGE = 10;
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    let debounceTimer: ReturnType<typeof setTimeout>;
+    const spinner = document.getElementById('search-spinner');
+    const noResultsMsg = document.getElementById('no-results');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
 
-        if (idNote) {
-                console.log('ID de la nota:', idNote);
-                
-                // B. Guardamos en LocalStorage
+    // 1. Ver detalles de nota
+    buttonsView.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const currentBtn = event.currentTarget as HTMLButtonElement;
+            const idNote = currentBtn.id;
+            if (idNote) {
                 localStorage.setItem('noteId', idNote);
-                
-                // C. Redirigimos
                 window.location.href = '/details-note';
             }
-            else {
-                console.error('No se encontró el ID de la nota.');
+        });
+    });
+
+    // 2. Cargar más
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            const hiddenNotes = document.querySelectorAll('.note-card.hidden');
+            if (hiddenNotes.length === 0) {
+                loadMoreBtn.style.display = 'none';
+                return;
             }
-    });
-});
-
- const itemsPerPage = 10;
-
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', () => {
-     
-      const hiddenNotes = document.querySelectorAll('.note-card.hidden');
-
-      if (hiddenNotes.length === 0) {
-        loadMoreBtn.style.display = 'none';
-        return;
-      }
-
-      for (let i = 0; i < itemsPerPage; i++) {
-        if (hiddenNotes[i]) {
-          hiddenNotes[i].classList.remove('hidden');
-        }
-      }
-
-      const remainingHidden = document.querySelectorAll('.note-card.hidden');
-      if (remainingHidden.length === 0) {
-        loadMoreBtn.style.display = 'none';
-      }
-    });
-  }
-
-
-/**FILTROS DE CATEGORIAS */    
-
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        filterButtons.forEach(b => b.classList.remove('active'));
-        (e.target as HTMLElement).classList.add('active');
-
-        const selectedCat = (e.target as HTMLElement).id;
-
-        if (loadMoreBtn) {
-            if (selectedCat === 'all') {
-                loadMoreBtn.style.display = 'block';
-            } else {
+            for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+                if (hiddenNotes[i]) hiddenNotes[i].classList.remove('hidden');
+            }
+            if (document.querySelectorAll('.note-card.hidden').length === 0) {
                 loadMoreBtn.style.display = 'none';
             }
-        }
-
-        allCards.forEach(card => {
-          const cardElement = card as HTMLElement;
-          const cardCat = cardElement.dataset.category?.toLowerCase();
-
-          // mostrar solo 10 notas al filtrar en all y que muestre el boton de ver mas
-          
-          if (selectedCat.length > 0 && selectedCat !== 'all') {
-              if (cardCat === selectedCat) {
-                  cardElement.classList.remove('hidden');
-              } else {
-                  cardElement.classList.add('hidden');
-              }
-          } else {
-              // Si es 'all', mostrar todas las notas
-              const index = Array.from(allCards).indexOf(card);
-              if (index < ITEMS_PER_PAGE) {
-                  cardElement.classList.remove('hidden');
-              } else {
-                  cardElement.classList.add('hidden');
-              }
-          }
         });
-      });
+    }
+
+    //Filtros
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterButtons.forEach(b => b.classList.remove('active'));
+            const clickedBtn = e.currentTarget as HTMLElement;
+            clickedBtn.classList.add('active');
+
+            const selectedCat = clickedBtn.id; 
+
+
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const cardElement = card as HTMLElement;
+                const cardCat = cardElement.dataset.category; 
+                
+                const isMatch = selectedCat === 'all' || cardCat === selectedCat;
+
+                if (isMatch) {
+                    visibleCount++;
+                    if (visibleCount <= ITEMS_PER_PAGE) {
+                        cardElement.classList.remove('hidden');
+                    } else {
+                        cardElement.classList.add('hidden');
+                    }
+                } else {
+                    cardElement.classList.add('hidden');
+                }
+            });
+
+            
+            if (loadMoreBtn) {
+                
+                const totalInCat = Array.from(allCards).filter(c => 
+                    selectedCat === 'all' || (c as HTMLElement).dataset.category === selectedCat
+                ).length;
+
+                if (totalInCat > ITEMS_PER_PAGE) {
+                    loadMoreBtn.style.display = 'block';
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+            }
+        });
     });
 
-    // if (loadMoreBtn) {
-    //     loadMoreBtn.addEventListener('click', () => {
-            
-    //         const activeBtn = document.querySelector('.filter-btn.active') as HTMLElement;
-    //         const currentCat = activeBtn ? activeBtn.dataset.category : 'all';
+    // Búsqueda
+  const resetView = () => {
+        searchInput.value = '';
+        noResultsMsg?.classList.add('hidden');
+        spinner?.classList.add('hidden');
+        
+        // Restaurar filtros visuales
+        filterButtons.forEach(b => b.classList.remove('active'));
+        document.getElementById('all')?.classList.add('active');
 
-            
-    //         const hiddenMatchingCards = Array.from(document.querySelectorAll('.note-card.hidden')).filter(card => {
-    //             const cardElement = card as HTMLElement;
-    //             // Si el filtro es 'all', devuelve true. Si no, compara categorías.
-    //             return currentCat === 'all' || cardElement.dataset.category === currentCat;
-    //         });
+        // Restaurar paginación inicial
+        allCards.forEach((card, index) => {
+            if (index < ITEMS_PER_PAGE) card.classList.remove('hidden');
+            else card.classList.add('hidden');
+        });
 
-    //         // 3. Mostrar las siguientes 10
-    //         for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-    //             if (hiddenMatchingCards[i]) {
-    //                 hiddenMatchingCards[i].classList.remove('hidden');
-    //             }
-    //         }
+        if (loadMoreBtn && allCards.length > ITEMS_PER_PAGE) {
+            loadMoreBtn.style.display = 'block';
+        }
+    };
 
-    //         // 4. Si ya no quedan más ocultas de este tipo, esconder botón
-    //         if (hiddenMatchingCards.length <= ITEMS_PER_PAGE) {
-    //             loadMoreBtn.style.display = 'none';
-    //         }
-    //     });
-    // }
+    // Evento del botón "Limpiar búsqueda" del mensaje de error
+    clearSearchBtn?.addEventListener('click', resetView);
 
-    
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
 
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            // 1. ESTADO: ESCRIBIENDO
+            // Si hay texto, mostramos spinner y ocultamos el mensaje de error previo
+            if (searchTerm !== '') {
+                spinner?.classList.remove('hidden');
+                noResultsMsg?.classList.add('hidden');
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none'; // Ocultar paginación mientras busca
+            } else {
+                resetView();
+                return;
+            }
+
+            // Esperar a que termine de escribir
+            debounceTimer = setTimeout(() => {
+                
+                // console.log("Buscando:", searchTerm);
+                
+                // Desactivar filtros de categorías visuales
+                filterButtons.forEach(b => b.classList.remove('active'));
+
+                let resultsCount = 0;
+
+                allCards.forEach(card => {
+                    const cardElement = card as HTMLElement;
+                    const title = cardElement.dataset.title || '';
+                    const content = cardElement.dataset.content || '';
+                    const category = cardElement.dataset.category || '';
+
+                    const isMatch = title.includes(searchTerm) || 
+                                    content.includes(searchTerm) || 
+                                    category.includes(searchTerm);
+
+                    if (isMatch) {
+                        cardElement.classList.remove('hidden');
+                        resultsCount++;
+                    } else {
+                        cardElement.classList.add('hidden');
+                    }
+                });
+
+                // FIN DE BÚSQUEDA
+                // Ocultamos spinner
+                spinner?.classList.add('hidden');
+
+                // Mostrar mensaje si no hay resultados
+                if (resultsCount === 0) {
+                   noResultsMsg?.classList.remove('hidden');
+                } else {
+                   noResultsMsg?.classList.add('hidden');
+                }
+
+            }, 500);
+        });
+    }
+  });
 </script>
 
 <style>
-	* {
-		box-sizing: border-box;
-		padding: 0;
-		margin: 0;
-	}
-
-  .container-home{
-        display: flex;
-        flex-direction: column;
-        gap: 4rem;
-        margin-top: 5rem;
-        align-items: center;
-  }
-  .section-one{
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      width: 95%;
-      background-color: var(--background-color);
-      border-radius: 1rem;
-      border: 1px solid #e6e6e6;
-      height: 40svh;
-      gap: 1.3rem;
-      padding: 2rem;
-  }
-  .section-one h1{
-    font-weight: 600;
-    font-size: 3rem;
-  }
-  .section-one h1 span{
-
-    background-color: var(--secondary-color);
-    padding: .5rem 1rem;
-    border-radius: 10px;
-    color: var(--white-color);
-  }
-  .section-one p{
-    font-size: 1.2rem;
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  .home-container {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
     color: var(--color-text-primary);
   }
-  .pagination-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-  #load-more-btn {
-    padding: 0.8rem 1.5rem;
-    background-color: var(--tertidary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s ease;
-  }
-  #load-more-btn:hover {
-    background-color: var(--secondary-color);
+
+  /* --- 1. Hero Section --- */
+  .hero-section {
+    background-color: var(--background-color);
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 4rem;
+    border: 1px solid var(--border-color);
   }
 
-  /* Info */
-  .content-asides{
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    width: 95%;
+  .hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
   }
-  .aside-category {
-    width: 20%;
-    border-radius: 8px;
-    height: fit-content;
+
+  .highlight {
+    color: var(--secondary-color);
+    position: relative;
+    z-index: 1;
   }
-  h2 {
+  
+  .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: -5px;
+    width: 105%;
+    height: 12px;
+    background-color: var(--quaternary-color);
+    opacity: 0.4;
+    z-index: -1;
+    border-radius: 6px;
+    transform: rotate(-1deg);
+  }
+
+  .subtitle {
     font-size: 1.5rem;
+    color: var(--tertidary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
   }
-  .list-category{
+
+  .description {
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Content Grid (Sidebar + Notes)*/
+  .content-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 3rem;
+    margin-bottom: 5rem;
+    align-items: start;
+  }
+
+  /* Sidebar categorias */
+  /* .sidebar {
+    
+  } */
+
+  .sidebar-sticky {
+    position: sticky;
+    top: 2rem; 
+    background: var(--white-color);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .sidebar h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--background-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .category-list {
+    list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    list-style: none;
-    margin-top: 1rem;
+    gap: 0.5rem;
   }
+
   .filter-btn {
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: 1rem;
-    color: var(--color-text-primary);
-    cursor: pointer;
-    padding: 0;
+    width: 100%;
     text-align: left;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    cursor: pointer;
     transition: all 0.2s ease;
   }
+
   .filter-btn:hover {
-    color: var(--secondary-color); 
-  }
-  .filter-btn.active {
-    color: var(--secondary-color);
-    font-weight: bold;
-    text-decoration: underline;
-  }
-  .aside-notes{
-    width: 75%;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  .content-search{
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-        width: 100%;
+    background-color: var(--background-color);
+    color: var(--tertidary-color);
   }
 
-  .content-search svg{
-        width: 1.2rem;
-        height: auto;
-        fill: var(--color-text-light);
+  .filter-btn.active {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(68, 125, 75, 0.2);
   }
-  .content-search label{
-        font-size: .8rem;
-        color: var(--color-text-light);
-        width: 90%;
-  }
-  .content-search input{
-        width: 70%;
-        padding: .5rem;
-        border-radius: 1rem;
-        border: 1px solid #ccc;
-  }
-  .container-notes{
+
+  /* Notes Area */
+  .notes-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
     flex-wrap: wrap;
     gap: 1rem;
   }
+
+  .notes-header h2 {
+    font-size: 2rem;
+    color: var(--color-text-secondary);
+  }
+
+  .search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    fill: var(--color-text-light);
+  }
+
+  .search-wrapper input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.8rem; /* Espacio para el icono */
+    border: 1px solid var(--border-color);
+    border-radius: 99px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background-color: var(--primary-color);
+  }
+
+  .search-wrapper input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(68, 125, 75, 0.1);
+  }
+
+  /* Notes Grid */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
   .note-card {
-    flex-basis: calc(50% - 1rem);
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: var(--white-color);
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 8px;
-    /* Animación suave al aparecer */
-    animation: fadeIn 0.5s ease-in-out;
-    gap: .5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
   }
 
-   /* Clase para ocultar elementos */
-  .hidden {
+  .note-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-color: var(--secondary-color);
+  }
+
+  /* Ocultar tarjeta*/
+  .note-card.hidden {
     display: none !important;
   }
-  .note-category{
-    font-size: .8rem;
-    color: var(--color-text-light);
-    font-weight: 600;
-    /* text-align: end; */
-  }
-  .note-title{
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--color-text-secondary);
 
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
   }
-  .note-content{
-        flex-grow: 1;
-        margin: .5rem 0;
-        color: var(--color-text-primary);
-  }
-  .note-footer{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-  }
-  .note-date{
-        font-size: .8rem;
-        color: var(--color-text-light);
-  }
-  .btn-view-note {
-        padding: .5rem;
-        background-color: var(--secondary-color); /* Ajusta a tu paleta */
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s ease;
-  }
-  .btn-view-note:hover {
-        background-color: var(--tertidary-color);
-  }
-
-  /**SECCION CREAR CUENTA */
-  .section-add{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      padding: 2rem;
-      width: 100%;
-      text-align: center;
-      color: var(--white-color);
-      background-image: url(../assets/image/fondo-sectin-one.png);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.418);
-  }  
-  .section-add div{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-      padding-top: 9rem;
-      padding-bottom: 9rem ;
-  }
-
-  .section-add h2{
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--white-color);
-  }
-
-  .section-add p{
-      font-size: 1.2rem;
-      color: var(--white-color);
-  }
-  .section-add button{
-      padding: 1rem 4rem;
-      background-color: #2fda43;
-      color: var(--black-color);
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease;
-      font-size: 1rem;
-  }
-  .section-add button:hover{
-      background-color: #23b32f;
-      color: var(--white-color);
-  }
-
-  /**SECCION SUGERIR TEMA */
-
-  .section-theme, .section-aboutme{
-      width: 100%;
+  .spinner-container {
       display: flex;
       justify-content: center;
-      align-items: center;
-  }
-  .section-theme div, .section-aboutme div{
-      background-color: var(--background-color);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
-      gap: 1.5rem;
-      padding: 3rem;
-      border-radius: 1rem;
-      border: 1px solid var(--border-color);
-      height: 40svh;
-      width: 95%;
-  }
-  .section-theme h2, .section-aboutme h2{
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--color-text-secondary);
-  }
-  .section-theme p, .section-aboutme p{
-      font-size: 1.2rem;
-      color: var(--color-text-primary);
-  }
-  .section-theme button, .section-aboutme button{
-      padding: 1rem 4rem;
-      background-color: var(--secondary-color);
-      color: var(--white-color);
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease;
-      font-size: 1rem;
-  }
-  .section-theme button:hover, .section-aboutme button:hover{
-      background-color: #23b32f;
+      padding: 3rem 0;
+      width: 100%;
   }
 
-/**FRAMES */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: var(--secondary-color); /* Tu verde */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+  }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+    .no-results-container {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--color-text-light);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .no-results-container p {
+        font-size: 1.1rem;
+    }
+
+    .btn-outline-small {
+        background: transparent;
+        border: 1px solid var(--secondary-color);
+        color: var(--secondary-color);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .btn-outline-small:hover {
+        background: var(--secondary-color);
+        color: var(--white-color);
+    }
+    .spinner-container.hidden,
+    .no-results-container.hidden {
+        display: none !important;
+    }
+
+  .category-badge {
+    background-color: #e8f5e9; /* Verde muy claro */
+    color: var(--tertidary-color);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .card-header time {
+    color: var(--color-text-light);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+  }
+
+  .card-excerpt {
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .card-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    text-align: right;
+  }
+
+  .btn-read-more {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  .btn-read-more:hover {
+    color: var(--tertidary-color);
+    text-decoration: underline;
+  }
+
+  /* Pagination */
+  .pagination-wrapper {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  #load-more-btn {
+    background-color: var(--white-color);
+    color: var(--color-text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  #load-more-btn:hover {
+    background-color: var(--background-color);
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+  }
+  
+  #load-more-btn.hidden {
+    display: none;
+  }
+
+  /* --- 3. Bottom CTAs (Dashboard) --- */
+  .cta-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Banner Principal */
+  .cta-banner {
+    background: linear-gradient(135deg, var(--tertidary-color), var(--secondary-color));
+    border-radius: 20px;
+    padding: 3rem;
+    color: var(--white-color);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cta-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url('data:image/svg+xml,...'); /* Podrías poner una textura sutil */
+    opacity: 0.1;
+  }
+
+  .banner-content { position: relative; z-index: 2; }
+
+  .cta-banner h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+  .cta-banner p { font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9; }
+
+  .btn-primary {
+    background-color: var(--white-color);
+    color: var(--tertidary-color);
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+  /* Grid Secundario */
+  .cta-secondary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .cta-card {
+    background: var(--background-color);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .cta-card h3 { font-size: 1.5rem; color: var(--color-text-secondary); }
+  .cta-card p { color: var(--color-text-primary); margin-bottom: 0.5rem; }
+
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover {
+    background: var(--secondary-color);
+    color: var(--white-color);
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px) {
+    .content-grid {
+      grid-template-columns: 1fr; /* Colapsar sidebar */
+    }
+    .sidebar-sticky {
+      position: static;
+      margin-bottom: 2rem;
+    }
+    .category-list {
+      flex-direction: row;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .filter-btn { white-space: nowrap; width: auto;}
+  }
+
+  @media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.5rem; }
+    .cta-secondary-grid { grid-template-columns: 1fr; }
   }
 </style>
