@@ -8,6 +8,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  /*Login */
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
@@ -15,11 +16,11 @@ export class AuthController {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
-  /**Rgistro */
+  /**Registro */
   @Public()
   @ApiBody({ type: CreateUserDto })
   @Post('register')
-  signUp(@Body() signUpDto: CreateUserDto) { // <--- Corregido
+  signUp(@Body() signUpDto: CreateUserDto) {
     return this.authService.signUp(signUpDto);
   }
   

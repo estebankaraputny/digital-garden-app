@@ -13,35 +13,24 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  // @Roles(Role.ADMIN)
+  // @Roles(Role.USER || Role.ADMIN || Role.MODERATOR)
   @Public()
   @UsePipes(new ValidationPipe())
-  // @Public()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
-  // @Get()
   // // @UseGuards(AuthGuard, RolesGuard)
-  // @Public()
   // // @Roles(Role.ADMIN)
-  // async findAll(@Query() query: FindUsersDto) {
-  //   return await this.userService.findAll(query);
-  // }
-
-
-   @Get()
-  // // @UseGuards(AuthGuard, RolesGuard)
+  @Get()
   @Public()
-  // // @Roles(Role.ADMIN)
   async findAll() {
     return await this.userService.findAll();
   }
 
   @Get(':id')
   @Public()
-  // @Roles(Role.ADMIN)
   async findOne(@Param('id') id: string) {
     return await this.userService.findOne(id);
   }

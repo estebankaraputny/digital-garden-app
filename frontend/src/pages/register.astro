@@ -81,20 +81,16 @@ import registerImage from "../assets/image/garden-register.jpg";
 
 <script>
     import fetchDataPost from "../lib/api/fetchDataPost";
-
-    // 1. Seleccionamos el formulario
+    // Seleccionamos el formulario
     const form = document.querySelector('.modern-form') as HTMLFormElement;
     const btn = document.querySelector('.btn-register') as HTMLButtonElement;
-    
-    // (Opcional) Elemento para mostrar errores
-    // Asegúrate de haber agregado <p class="error-message"></p> en tu HTML si quieres usarlo
+    // Elemento para mostrar errores
     const errorMsg = document.querySelector('.error-message');
 
     if (form) {
         form.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Evita que la página se recargue
+            event.preventDefault();
 
-            // Feedback visual: Desactivar botón
             if (btn) {
                 btn.disabled = true;
                 btn.textContent = 'Procesando...';
@@ -103,7 +99,7 @@ import registerImage from "../assets/image/garden-register.jpg";
             // 2. Capturar los datos AUTOMÁTICAMENTE
             const formData = new FormData(form);
             const data = Object.fromEntries(formData); 
-            // Esto crea un objeto: { name: "Juan", email: "juan@test.com", password: "123" }
+            // console.log("Enviamos a back", data);
 
             try {
                 // 3. Enviar al Backend

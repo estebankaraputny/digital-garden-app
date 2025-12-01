@@ -27,7 +27,7 @@ export class NoteService {
         status: createNoteDto.status,
         author: {
           connect: {
-            id: authorId,
+            id: authorId
           }
         }
       }
@@ -39,6 +39,19 @@ export class NoteService {
   async findAll() {
     return await this.prisma.note.findMany();
   }
+
+  async findAllLogin(userId: string) {
+    return await this.prisma.note.findMany({
+      where: {
+        authorId: userId,
+      },
+      include: {
+        author: true
+      }
+    });
+  }
+
+
 
   async findOne(id: string) {
     return await this.prisma.note.findUnique({

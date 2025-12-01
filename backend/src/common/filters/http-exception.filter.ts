@@ -36,10 +36,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       `🔥 Error ${status}: ${exception.message} - ${request.method} ${request.url}`,
     );
 
-    // this.logger.error(
-    //   `Logger de Nest [${request.method}] ${request.url} -> ${exception.message}`,
-    // );
-
     response.status(status).json(errorResponse);
   }
 }

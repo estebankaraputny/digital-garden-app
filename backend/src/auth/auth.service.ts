@@ -28,21 +28,14 @@ export class AuthService{
   }
 
   async signUp(signUpDto: CreateUserDto) {
-    const { email, password, ...userData } = signUpDto;
+      // Verificamos si existe
+      const userExists = await this.userService.findByEmail(signUpDto.email);
+      if (userExists) {
+        throw new ConflictException('El email ya está en uso');
+      }
 
-    console.log(signUpDto);
-
-    const userExists = await this.userService.findByEmail(email);
-    if (userExists) {
-      throw new ConflictException('El email ya está en uso');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = await this.userService.create({
-      ...userData,
-      email,
-      password: hashedPassword
-    });
+      const newUser = await this.userService.create(signUpDto);
+      
+      return newUser;
   }
 }

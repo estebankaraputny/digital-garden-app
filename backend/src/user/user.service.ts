@@ -20,7 +20,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      const hashedPassword = (await bcrypt.hash(createUserDto.password, 10)).split(' ').join('');
 
       const newUser = await this.prisma.user.create({
         data: {
@@ -40,7 +40,6 @@ export class UserService {
       throw error;
     }
   }
-
 
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({

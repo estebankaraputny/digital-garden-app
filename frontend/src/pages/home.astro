@@ -6,7 +6,7 @@ let notes = [];
 let categories: any = [];
 
 try {
-  notes = await fetchDataGet("notes");
+  notes = await fetchDataGet("notes/all-notes");
 
   if (notes && notes.length > 0) {
     notes.sort((a: any, b: any) => 

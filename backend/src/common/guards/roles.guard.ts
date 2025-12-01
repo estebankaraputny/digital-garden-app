@@ -19,7 +19,7 @@ export class RolesGuard implements CanActivate {
     ]);
 
     if (!requiredRoles) {
-      return true; // No se requieren roles específicos
+      return true;
     }
 
     const { user } = context.switchToHttp().getRequest();
@@ -29,7 +29,6 @@ export class RolesGuard implements CanActivate {
     console.log('2. ID del Usuario:', user?.id || user?.sub);
     console.log('3. Roles que tiene el usuario:', user?.roles);
     console.log('-----------------------------');
-    // 👆👆👆 FIN DEL BLOQUE DE DEBUG 👆👆👆
 
     if (!user) {
       throw new ForbiddenException('Usuario no autenticado');

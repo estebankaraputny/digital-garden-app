@@ -11,15 +11,13 @@ import { Public } from 'src/common/decorators/public.decorator';
 export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
-  // src/note/note.controller.ts
-
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MODERATOR, Role.USER)
   async create(
     @Body() createNoteDto: CreateNoteDto,
     @Req() req: any,
   ) {
-    // El Guard ya verificó el token y puso el usuario en req.user
+   
     const authorId = req.user.sub; 
     
     if(!authorId){
@@ -30,23 +28,23 @@ export class NoteController {
     return await this.noteService.create(createNoteDto, authorId);
   }
 
-  @Get()
+  @Get('user-notes')
+  @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
+  async findAllLogin(@Req() req: any) {
+    const userId = req.user.sub;
+    return await this.noteService.findAllLogin(userId);
+  }
+
+  @Get('all-notes')
   @Public()
   async findAll() {
     return await this.noteService.findAll();
   }
 
-
   @Get(':id')
   @Public()
   async findOne(@Param('id') id: string) {
     return await this.noteService.findOne(id);
-  }
-
-  @Get('category/:category')
-  @Public()
-  async findAllCategory(@Param('category') category: string) {
-    return await this.noteService.findAllCategory(category);
   }
 
   @Patch(':id')
