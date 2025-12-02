@@ -14,14 +14,26 @@ const fetchDataPostWithToken = async (endpoint: string, data: any, token: string
 
         
         if(!post.ok){
-            const errorMessage = await post.json().catch(() => ({}));
-            throw new Error(errorMessage || "Error en el post :Ñ");
+            const errorData = await post.json().catch(() => ({}));
+            
+            let errorMessage = "Ocurrió un error desconocido";
+
+            if (errorData.message) {
+                // Si es un array (varios errores), los unimos. Si es texto, lo usamos directo.
+                errorMessage = Array.isArray(errorData.message) 
+                    ? errorData.message.join(', ') 
+                    : errorData.message;
+            }
+
+            //error con EL TEXTO REAL del backend
+            throw new Error(errorMessage);
         }
 
+        // const dataPost = await post.json();
         return await post.json();
 
     } catch (error: any) {
-        throw new Error(error || "Error function post :|")
+        throw new Error(error || "Error de conexión :|")
     }
 }
 

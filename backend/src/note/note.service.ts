@@ -27,7 +27,7 @@ export class NoteService {
         status: createNoteDto.status,
         author: {
           connect: {
-            id: authorId
+            id: authorId,
           }
         }
       }
@@ -37,7 +37,31 @@ export class NoteService {
   }
 
   async findAll() {
-    return await this.prisma.note.findMany();
+    return await this.prisma.note.findMany({
+      // 👇 ¡AGREGA ESTO! Sin esto, el autor nunca llegará al frontend
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          }
+        }
+      }
+    });
+  }
+
+  async findOne(id: string) {
+    return await this.prisma.note.findUnique({
+      where: { id },
+      // 👇 Agrégalo aquí también por si abres el detalle de una nota
+      include: {
+        author: {
+          select: {
+            name: true,
+          }
+        }
+      }
+    });
   }
 
   async findAllLogin(userId: string) {
@@ -48,14 +72,6 @@ export class NoteService {
       include: {
         author: true
       }
-    });
-  }
-
-
-
-  async findOne(id: string) {
-    return await this.prisma.note.findUnique({
-      where: { id },
     });
   }
 

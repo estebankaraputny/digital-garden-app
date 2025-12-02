@@ -36,6 +36,7 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
                         <li><a href="/home">Inicio</a></li>
                         <li><a href="/contact">Quiero publicar</a></li>
                         <li class="mobile-only"><a href="login" class="btn-login">Ingresar</a></li>
+                        <li><a href="/register" class="btn-register">Registrarse</a></li>
                     </ul>
                 </nav>
             </div>
@@ -127,7 +128,7 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
     :root{
         --primary-color: #fdfcfa;
         --secondary-color: #447d4b;
-        --tertiary-color: #08453c; /* Corregí el typo 'tertidary' */
+        --tertiary-color: #08453c;
         --quaternary-color: #65e9f6;
         --background-color: #F4EEE5;
         --color-text-primary: #262626;
@@ -137,6 +138,7 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         --white-color: #ffffff;
         --border-color: #E7E7E7;
         --navbar-height: 80px;
+        
     }
 
     * {
@@ -236,6 +238,21 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
 	.btn-login:hover {
 		background-color: var(--tertiary-color);
 	}
+
+    .btn-register{
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--secondary-color);
+        border-radius: 8px;
+    }
+
+    .btn-register:hover{
+        background-color: var(--secondary-color);
+        color: var(--white-color) !important;
+        font-weight: 600;
+    }
+
+    
+
     /* --- HAMBURGER MENU (Móvil) --- */
     .hamburger {
         display: none; /* Oculto en desktop */

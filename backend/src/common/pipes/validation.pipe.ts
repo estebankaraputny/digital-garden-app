@@ -31,7 +31,7 @@ export class ValidationPipe implements PipeTransform<any> {
         .map((error) => Object.values(error.constraints || {}).join(', '))
         .join('; ');
 
-      throw new BadRequestException(`Errores de validación: ${errorMessages}`);
+      throw new BadRequestException(`Error de validación: ${errorMessages}`);
     }
 
     // Si no pasó nada de lo anterior devuelve lo que le llegó

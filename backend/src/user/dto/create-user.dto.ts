@@ -9,7 +9,7 @@ export class CreateUserDto{
     @MaxLength(50, { message: 'El nombre debe tener menos de 20 caracteres'})
     name: string;
     
-    @IsEmail({}, {message: 'Debe ser un mail compa'})
+    @IsEmail({}, {message: 'Debe ser un mail'})
     @IsNotEmpty({ message:'Email obligatorio'})
     email: string;
 

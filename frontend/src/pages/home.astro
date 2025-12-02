@@ -28,11 +28,41 @@ try {
   console.error("Error cargando notas:", error);
 }
 
-const formatDate = (dateString: string) => {
-  if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString("es-AR", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
+const timeAgo = (dateString: string) => {
+  if (!dateString) return '';
+  
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  const rtf = new Intl.RelativeTimeFormat('es-AR', { numeric: 'auto' });
+
+  if (diffInSeconds < 60) {
+    return rtf.format(-diffInSeconds, 'second');
+  }
+  
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return rtf.format(-diffInMinutes, 'minute');
+  }
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return rtf.format(-diffInHours, 'hour');
+  }
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) {
+    return rtf.format(-diffInDays, 'day');
+  }
+  
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return rtf.format(-diffInMonths, 'month');
+  }
+  
+  const diffInYears = Math.floor(diffInDays / 365);
+  return rtf.format(-diffInYears, 'year');
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -87,6 +117,7 @@ const ITEMS_PER_PAGE = 10;
 
         <div id="notes-container" class="notes-grid">
           {notes.map((note: any, index: number) => (
+
             <article 
               class={`note-card ${index >= ITEMS_PER_PAGE ? 'hidden' : ''}`} 
               id={note.id}
@@ -96,7 +127,9 @@ const ITEMS_PER_PAGE = 10;
             >
               <div class="card-header">
                 <span class="category-badge">{note.category || 'General'}</span>
-                <time datetime={note.createdAt}>{formatDate(note.createdAt)}</time>
+                <time datetime="${note.createdAt}" title="${new Date(note.createdAt).toLocaleString()}">
+                    {timeAgo(note.createdAt)}
+                </time>
               </div>
               
               <h3 class="card-title">{note.title}</h3>
@@ -159,7 +192,7 @@ const ITEMS_PER_PAGE = 10;
   
   document.addEventListener('DOMContentLoaded', () => {
     const loadMoreBtn = document.getElementById('load-more-btn');
-    const buttonsView = document.querySelectorAll('.btn-view-note');
+    const cardView = document.querySelectorAll('.note-card');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const allCards = document.querySelectorAll('.note-card');
     const ITEMS_PER_PAGE = 10;
@@ -170,10 +203,10 @@ const ITEMS_PER_PAGE = 10;
     const clearSearchBtn = document.getElementById('clear-search-btn');
 
     // 1. Ver detalles de nota
-    buttonsView.forEach((button) => {
+    cardView.forEach((button) => {
         button.addEventListener('click', (event) => {
-            const currentBtn = event.currentTarget as HTMLButtonElement;
-            const idNote = currentBtn.id;
+            const currentCard = event.currentTarget as HTMLButtonElement;
+            const idNote = currentCard.id;
             if (idNote) {
                 localStorage.setItem('noteId', idNote);
                 window.location.href = '/details-note';

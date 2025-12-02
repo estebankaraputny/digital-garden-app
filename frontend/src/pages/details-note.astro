@@ -20,25 +20,29 @@ import Layout from "../layouts/Layout.astro";
 
     <div id="content" class="content-grid hidden">
       
-      <article class="article-card">
-        <header class="article-header">
-          <div class="meta-top">
-            <span id="note-category" class="category-pill">Categoría</span>
-            <time id="note-date" class="date-text">Fecha</time>
-          </div>
-          <h1 id="note-title" class="article-title">Título de la nota</h1>
-          <div class="author-line">
-            <span class="avatar-placeholder">👤</span>
-            <span class="author-name">Por <strong id="note-author">Autor</strong></span>
-          </div>
-        </header>
+        <article class="article-card">
+            <header class="article-header">
+                <div class="meta-top">
+                    <a href="./" class="btn-home">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M112 320C112 205.1 205.1 112 320 112C434.9 112 528 205.1 528 320C528 434.9 434.9 528 320 528C205.1 528 112 434.9 112 320zM576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576C461.4 576 576 461.4 576 320zM188.7 308.7C182.5 314.9 182.5 325.1 188.7 331.3L292.7 435.3C297.3 439.9 304.2 441.2 310.1 438.8C316 436.4 320 430.5 320 424L320 352L424 352C437.3 352 448 341.3 448 328L448 312C448 298.7 437.3 288 424 288L320 288L320 216C320 209.5 316.1 203.7 310.1 201.2C304.1 198.7 297.2 200.1 292.7 204.7L188.7 308.7z"/></svg>
+                        Volver
+                    </a>
+                    <span id="note-category" class="category-pill">Categoría</span>
+                    <time id="note-date" class="date-text">Fecha</time>
+            </div>
+            <h1 id="note-title" class="article-title">Título de la nota</h1>
+            <div class="author-line">
+                <span class="avatar-placeholder">👤</span>
+                <span class="author-name">Por <strong id="note-author">Autor</strong></span>
+            </div>
+            </header>
 
-        <hr class="divider" />
+            <hr class="divider" />
 
-        <div class="article-body">
-          <p id="note-body" class="body-text">
-            </p>
-        </div>
+            <div class="article-body">
+            <p id="note-body" class="body-text">
+                </p>
+            </div>
 
         <footer class="article-footer">
             <div class="share-box">
@@ -118,6 +122,7 @@ import Layout from "../layouts/Layout.astro";
         try {
             // console.log("Buscando nota con ID:", id);
             const note = await fetchDataGetById("notes", id);
+            console.log(note);
 
             if (!note) throw new Error("Nota vacía");
 
@@ -143,16 +148,11 @@ import Layout from "../layouts/Layout.astro";
 </script>
 
 <style>
-    /* Variables locales (Asumiendo que existen en Layout global) */
-    :root {
-        --secondary-color: #447d4b;
-        --tertiary-color: #08453c;
-        --background-color: #F4EEE5;
-        --color-text-primary: #262626;
-        --white-color: #ffffff;
-        --border-color: #E7E7E7;
+   * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
-
     .page-wrapper {
         max-width: 1200px;
         margin: 0 auto;
@@ -196,6 +196,18 @@ import Layout from "../layouts/Layout.astro";
         font-size: 0.9rem;
         color: #666;
     }
+    .btn-home {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            gap: 0.5rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+    }
 
     .category-pill {
         background-color: #e8f5e9;
@@ -213,7 +225,7 @@ import Layout from "../layouts/Layout.astro";
         line-height: 1.2;
         color: var(--color-text-primary);
         margin-bottom: 1rem;
-        font-family: 'Figtree', serif; /* O la fuente que uses para títulos */
+        font-family: 'Figtree', serif;
     }
 
     .author-line {
@@ -233,7 +245,7 @@ import Layout from "../layouts/Layout.astro";
 
     .body-text {
         font-size: 1.15rem;
-        line-height: 1.8; /* Lectura cómoda */
+        line-height: 1.8;
         color: #333;
         white-space: pre-line;
     }

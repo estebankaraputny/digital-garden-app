@@ -19,7 +19,8 @@ export class NoteController {
   ) {
    
     const authorId = req.user.sub; 
-    
+    console.log("id del autor:", authorId);
+
     if(!authorId){
        throw new UnauthorizedException("No se pudo identificar al autor");
     }
