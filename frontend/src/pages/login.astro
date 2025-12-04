@@ -89,7 +89,7 @@ import Layout from "../layouts/Layout.astro"
         localStorage.setItem('isAdmin', 'true');
         
         // Redireccionar
-        window.location.href = '/user/dashboard'; // O la página que quieras
+        window.location.href = '/dashboard';
       } else {
         throw new Error('No se recibió el token');
       }

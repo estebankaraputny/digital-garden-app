@@ -52,7 +52,7 @@
 
         <button type="submit" id="submit-btn"> Crear Nota </button>
 
-        <p id="error-message" class="hidden error-text"></p>
+        <p id="error-message" class="error-text hidden"></p>
       </form>
 </section>
 
@@ -62,20 +62,16 @@
 
 
   const form = document.getElementById("note-form") as HTMLFormElement;
-  const errorMsg = document.getElementById(
-    "error-message"
-  ) as HTMLParagraphElement;
+  const errorMsg = document.querySelector("#error-text");
   const btn = document.getElementById("submit-btn") as HTMLButtonElement;
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    errorMsg.textContent = "";
-    errorMsg.classList.add("hidden");
     btn.disabled = true;
     btn.textContent = "Cargando...";
 
-    // 3. Capturamos los datos del formulario automáticamente
+    //Capturamos los datos del formulario automáticamente
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     console.log(data);
@@ -87,14 +83,14 @@
       console.log("Respuesta:", response);
 
       if (response && response.id) { // Verifica si la respuesta es válida y tiene un ID
+         alert('¡Nota creada con éxito!')
         window.location.href = "dashboard"; // Redirige si la nota se creó con éxito
       } else {
         throw new Error("Error al crear la nota");
       }
-    } catch (error) {
-      console.error(error);
-      errorMsg.textContent = "Credenciales incorrectas o error de servidor.";
-      errorMsg.classList.remove("hidden");
+    } catch (error: any) {
+        if (errorMsg) errorMsg.textContent = error;
+        if (errorMsg) errorMsg.classList.remove('hidden');
     } finally {
       btn.disabled = false;
       btn.textContent = "Crear Nota";

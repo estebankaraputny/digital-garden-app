@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { Role } from 'src/common/types/admin.types';
@@ -8,6 +8,8 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import slugify from 'slugify';
 import { Note } from '@prisma/client'
+/**Planes */
+import { PLAN_LIMITS, Plan } from 'src/common/constants/plans.constants';
 
 @Injectable()
 export class NoteService {
@@ -16,6 +18,9 @@ export class NoteService {
 
   async create(createNoteDto: CreateNoteDto, authorId: string): Promise<Note> {
     const generatedSlug = slugify(createNoteDto.title, { lower: true, strict: true })
+
+    await this.checkPlanLimits(authorId);
+
 
     const newNote= await this.prisma.note.create({
       data: {
@@ -34,6 +39,45 @@ export class NoteService {
     });
     
     return newNote;
+  }
+
+/**METODO DE VALIDACION DE PLAN */
+
+private async checkPlanLimits(userId: string) {
+    // Obtenemos el usuario para saber su plan
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { plan: true } // Solo necesitamos el campo plan
+    });
+
+    if (!user) throw new ForbiddenException('Usuario no encontrado');
+
+    // ILIMITADO, pasamos directo
+    const userPlan = user.plan as Plan; 
+    if (userPlan === Plan.UNLIMITED) return;
+
+    //Calcular el primer día del mes actual
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    //Contar cuántas notas ha creado este usuario DESDE el día 1 del mes
+    const notesCount = await this.prisma.note.count({
+      where: {
+        authorId: userId,
+        createdAt: {
+          gte: firstDayOfMonth, 
+        },
+      },
+    });
+
+    //Comparar con el límite
+    const limit = PLAN_LIMITS[userPlan];
+
+    if (notesCount >= limit) {
+      throw new ForbiddenException(
+        `Has alcanzado el límite de ${limit} notas mensuales de tu plan ${userPlan}. Actualiza a un plan superior.`
+      );
+    }
   }
 
   async findAll() {

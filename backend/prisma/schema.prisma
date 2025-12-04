@@ -19,14 +19,24 @@ enum Role {
   MODERATOR
 }
 
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+  UNLIMITED
+}
+
 model User {
   id    String  @id @default(uuid())
   email String  @unique
   password String //Hash
   name String
-  notes Note[]
-  
+  //PLAN DEL USUARIO
+  plan Plan @default(FREE)
+
   roles Json @default("[\"USER\"]")
+  
+  notes Note[]
 }
 
 model Note {
