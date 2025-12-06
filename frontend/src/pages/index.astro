@@ -19,12 +19,12 @@ import Layout from '../layouts/Layout.astro';
 
 		console.log('Verificando quién está entrando...');
         
-        const isAdmin = localStorage.getItem('isAdmin');
+        const isUser = localStorage.getItem('isUser');
 
-        if (isAdmin === 'true') {
+        if (isUser === 'true') {
             
-            console.log('Hola Admin, yendo al login.');
-           return window.location.href = 'admin/login'; ; 
+            console.log('Hola User, yendo al login.');
+           return window.location.href = '/login'; ; 
         } else {
             
             console.log('Visitante detectado, yendo al home público.');

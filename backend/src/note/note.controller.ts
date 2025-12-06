@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException, UsePipes, ValidationPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { NoteService } from './note.service'; 
 import { UserService } from 'src/user/user.service';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -13,6 +13,8 @@ export class NoteController {
 
   @Post()
   @Roles(Role.ADMIN, Role.MODERATOR, Role.USER)
+  @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createNoteDto: CreateNoteDto,
     @Req() req: any,

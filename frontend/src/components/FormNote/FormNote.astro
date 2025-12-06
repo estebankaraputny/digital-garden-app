@@ -22,13 +22,24 @@
         </label>
 
         <label for="category">
-          <input
-            type="text"
-            name="category"
-            id="category"
-            placeholder="Categoria"
-            required
-          />
+          <select name="category" id="category" required>
+            <option value="Criptomonedas y Web3">Criptomonedas y Web3</option>
+            <option value="Ciberseguridad y Privacidad">Ciberseguridad y Privacidad</option>
+            <option value="Crianza y Familia">Crianza y Familia</option>
+            <option value="Desarrollo de Software y No-Code">Desarrollo de Software y No-Code</option>
+            <option value="Desarrollo Personal y Liderazgo">Desarrollo Personal y Liderazgo</option>
+            <option value="Emprendimiento y Startups">Emprendimiento y Startups</option>
+            <option value="Fitness, Nutrición y Biohacking">Fitness, Nutrición y Biohacking</option>
+            <option value="Finanzas Personales e Inversiones">Finanzas Personales e Inversiones</option>
+            <option value="Idiomas y Aprendizaje Acelerado">Idiomas y Aprendizaje Acelerado</option>
+            <option value="Inteligencia Artificial (IA) y Prompt Engineering">Inteligencia Artificial (IA) y Prompt Engineering</option>  
+            <option value="Moda y Estilo Personal">Moda y Estilo Personal</option>
+            <option value="Marketing Digital y Marca Personal">Marketing Digital y Marca Personal</option>
+            <option value="Productividad y Gestión del Conocimiento">Productividad y Gestión del Conocimiento</option>
+            <option value="Salud Mental y Psicología">Salud Mental y Psicología</option>
+            <option value="Salud">Salud</option>
+            <option value="Viajes y Nómadas Digitales">Viajes y Nómadas Digitales</option>
+          </select>
         </label>
 
         <label for="issue">
@@ -44,15 +55,15 @@
         <label for="status">
           Estado
           <select name="status" id="status" required>
-            <option value="pendiente">Pendiente</option>
-            <option value="en proceso">En Proceso</option>
-            <option value="terminado">Terminado</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En proceso">En Proceso</option>
+            <option value="Terminado">Terminado</option>
           </select>
         </label>
 
         <button type="submit" id="submit-btn"> Crear Nota </button>
 
-        <p id="error-message" class="error-text hidden"></p>
+        <p id="error-form-message" class="error-text hidden"></p>
       </form>
 </section>
 
@@ -62,8 +73,10 @@
 
 
   const form = document.getElementById("note-form") as HTMLFormElement;
-  const errorMsg = document.querySelector("#error-text");
+  const errorMsg = document.getElementById("error-form-message") as HTMLParagraphElement;
   const btn = document.getElementById("submit-btn") as HTMLButtonElement;
+
+  console.log(form);
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -82,14 +95,15 @@
       const response = await fetchDataPostWithToken("notes", data, myToken);
       console.log("Respuesta:", response);
 
-      if (response && response.id) { // Verifica si la respuesta es válida y tiene un ID
+      if (response && response.id) {
          alert('¡Nota creada con éxito!')
-        window.location.href = "dashboard"; // Redirige si la nota se creó con éxito
+        window.location.href = "dashboard";
       } else {
         throw new Error("Error al crear la nota");
       }
     } catch (error: any) {
-        if (errorMsg) errorMsg.textContent = error;
+        console.log("Error form:", error.message);
+        if (errorMsg) errorMsg.textContent = error.message;
         if (errorMsg) errorMsg.classList.remove('hidden');
     } finally {
       btn.disabled = false;

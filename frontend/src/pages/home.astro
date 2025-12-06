@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import fetchDataGet from "../lib/api/fetchDataGet";
+import { Image } from "astro:assets";
+import BannerHome from "../assets/image/bannerdg.png"
 
 let notes = [];
 let categories: any = [];
@@ -79,6 +81,9 @@ const ITEMS_PER_PAGE = 10;
           Explora notas sobre tecnología, desarrollo y crecimiento personal. 
           Algunas notas son asistidas por IA para maximizar la precisión.
         </p>
+        <div class="content-banner-home">
+          <Image src={BannerHome} alt="" class="banner-home"/>
+        </div>
       </div>
     </header>
 
@@ -106,7 +111,7 @@ const ITEMS_PER_PAGE = 10;
 
       <section class="notes-area">
         <div class="notes-header">
-            <h2>Últimas notas</h2>
+            <h2>Explora el jardín</h2>
             <div class="search-wrapper">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
@@ -167,7 +172,7 @@ const ITEMS_PER_PAGE = 10;
             <div class="banner-content">
                 <h2>¿Quieres ser autor?</h2>
                 <p>Únete a nuestra comunidad y comparte tu saber con el mundo.</p>
-                <button onclick="window.location.href='/apply-author'" class="btn-primary">Postularme</button>
+                <button onclick="window.location.href='/register'" class="btn-primary">Postularme</button>
             </div>
         </div>
 
@@ -175,12 +180,11 @@ const ITEMS_PER_PAGE = 10;
             <div class="cta-card">
                 <h3>¿No encuentras un tema?</h3>
                 <p>Sugiérenos qué te gustaría leer próximamente.</p>
-                <button onclick="window.location.href='/suggest-topic'" class="btn-outline">Sugerir tema</button>
+                <button onclick="window.location.href='/contact'" class="btn-outline">Sugerir tema</button>
             </div>
             <div class="cta-card">
                 <h3>Contribuye ahora</h3>
                 <p>Crea y publica tus propias notas directamente.</p>
-                <button onclick="window.location.href='/create-note'" class="btn-outline">Crear nota</button>
             </div>
         </div>
     </section>
@@ -369,8 +373,8 @@ const ITEMS_PER_PAGE = 10;
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
   .home-container {
-    max-width: 1200px;
-    margin: 4rem auto;
+    max-width: 1300px;
+    margin: 3rem auto;
     padding: 0 1.5rem;
     font-family: system-ui, -apple-system, sans-serif;
     color: var(--color-text-primary);
@@ -381,14 +385,15 @@ const ITEMS_PER_PAGE = 10;
     background-color: var(--background-color);
     border-radius: 24px;
     padding: 4rem 2rem;
+    padding-bottom: 0;
     text-align: center;
     margin-bottom: 4rem;
     border: 1px solid var(--border-color);
   }
 
   .hero-content h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
+    font-size: 3rem;
+    font-weight: 700;
     margin-bottom: 1rem;
     color: var(--color-text-secondary);
   }
@@ -428,19 +433,27 @@ const ITEMS_PER_PAGE = 10;
     line-height: 1.6;
   }
 
+  .content-banner-home{
+    width: 70%;
+    margin: auto;
+  }
+
+  .banner-home{
+    max-width: 100%;
+    height: auto;
+    border-radius: 20px 20px 0 0;
+    /* box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); */
+  }
   /* Content Grid (Sidebar + Notes)*/
   .content-grid {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 3rem;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
     margin-bottom: 5rem;
     align-items: start;
   }
 
   /* Sidebar categorias */
-  /* .sidebar {
-    
-  } */
 
   .sidebar-sticky {
     position: sticky;
@@ -629,7 +642,7 @@ const ITEMS_PER_PAGE = 10;
     }
 
   .category-badge {
-    background-color: #e8f5e9; /* Verde muy claro */
+    background-color: #e8f5e9;
     color: var(--tertidary-color);
     padding: 0.25rem 0.6rem;
     border-radius: 6px;
@@ -704,7 +717,7 @@ const ITEMS_PER_PAGE = 10;
     display: none;
   }
 
-  /* --- 3. Bottom CTAs (Dashboard) --- */
+  /* Bottom CTAs (Dashboard) --- */
   .cta-dashboard {
     display: flex;
     flex-direction: column;
@@ -726,8 +739,10 @@ const ITEMS_PER_PAGE = 10;
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url('data:image/svg+xml,...'); /* Podrías poner una textura sutil */
-    opacity: 0.1;
+    background-image: url('../assets/image/fondo-sectin-one.png');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
   }
 
   .banner-content { position: relative; z-index: 2; }
@@ -736,8 +751,8 @@ const ITEMS_PER_PAGE = 10;
   .cta-banner p { font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9; }
 
   .btn-primary {
-    background-color: var(--white-color);
-    color: var(--tertidary-color);
+    background-color: var(--secondary-color);
+    color: var(--white-color);
     border: none;
     padding: 1rem 2.5rem;
     border-radius: 8px;
@@ -746,7 +761,10 @@ const ITEMS_PER_PAGE = 10;
     font-size: 1rem;
     transition: transform 0.2s;
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+  .btn-primary:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+  }
 
   /* Grid Secundario */
   .cta-secondary-grid {

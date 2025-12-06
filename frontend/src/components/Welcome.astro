@@ -1,7 +1,7 @@
 ---
----
 
-  import fetchDataGet from "../../lib/api/fetchDataGet";
+
+  import fetchDataGet from "../lib/api/fetchDataGet";
 
   let notes = [];
   try {
@@ -65,7 +65,7 @@
 </section>
 
 <script>
-  import fetchDataDelete from "../../lib/api/fetchDataDelete";
+  import fetchDataDelete from "../lib/api/fetchDataDelete";
 
   // 1. Obtenemos el token
   const myToken = localStorage.getItem("token");

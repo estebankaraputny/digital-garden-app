@@ -13,7 +13,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  // @Roles(Role.USER || Role.ADMIN || Role.MODERATOR)
   @Public()
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.CREATED)
