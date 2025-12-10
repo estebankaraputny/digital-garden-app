@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Detalle de Nota | Digital Garden">
-  <main class="page-wrapper">
+  <section class="page-wrapper">
     
     <div id="loading" class="loading-container">
       <div class="spinner"></div>
@@ -44,16 +44,16 @@ import Layout from "../layouts/Layout.astro";
                 </p>
             </div>
 
-        <footer class="article-footer">
+        <aside class="article-footer">
             <div class="share-box">
                 <h3>¿Te sirvió esta nota?</h3>
                 <p>Compártela con otros cultivadores digitales.</p>
                 <div class="share-buttons">
                     <button class="btn-share copy">Copiar Link</button>
-                    <button class="btn-share twitter">X / Twitter</button>
+                    <button class="btn-share twitter">Instagram</button>
                 </div>
             </div>
-        </footer>
+        </aside>
       </article>
 
       <aside class="sidebar">
@@ -66,12 +66,12 @@ import Layout from "../layouts/Layout.astro";
         </div>
 
         <div class="widget-box">
-            <h3>Sigue explorando</h3>
-            <p>Otros temas que podrían interesarte en el jardín:</p>
+            <h3>Más notas del usuario</h3>
+            <p>Otros aportes que podrían interesarte de su jardín:</p>
             <ul class="related-list">
-                <li><a href="/?category=Tecnologia">Tecnología</a></li>
-                <li><a href="/?category=Productividad">Productividad</a></li>
-                <li><a href="/?category=Finanzas">Finanzas</a></li>
+                <li><a href="/">Titulo 1</a></li>
+                <li><a href="/">Titulo 2</a></li>
+                <li><a href="/">Titulo 3</a></li>
             </ul>
         </div>
 
@@ -84,7 +84,7 @@ import Layout from "../layouts/Layout.astro";
       </aside>
 
     </div>
-  </main>
+</section>
 </Layout>
 
 <script>

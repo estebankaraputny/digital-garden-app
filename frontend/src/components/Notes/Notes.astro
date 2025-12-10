@@ -1,68 +1,176 @@
 ---
-
+import "../Notes/notes.css"
 ---
 
-  <section>
-    <h1>Mis Notas</h1>
+  <section class="section-container-card">
 
     <div id="notes-container" class="notes-container">
       <p class="loading-text">Cargando tus notas...</p>
     </div>
 
     <p id="no-notes-msg" class="hidden">No hay notas para mostrar.</p>
+
+    <article class="modal-edit hidden" id="modal-edit">
+    
+      
+      <form id="note-form-edit" class="form-edit">
+        <h2>Editar nota</h2>
+        <label for="title">
+          <input
+            type="text"
+            name="title"
+            id="title"
+            placeholder="Titulo"
+            required
+          />
+        </label>
+
+        <label for="content">
+          <textarea
+            name="content"
+            id="content"
+            placeholder="Descripcion"
+            required></textarea>
+        </label>
+
+        <label for="category">
+          <select name="category" id="category" required>
+            <option value="Criptomonedas y Web3">Criptomonedas y Web3</option>
+            <option value="Ciberseguridad y Privacidad">Ciberseguridad y Privacidad</option>
+            <option value="Crianza y Familia">Crianza y Familia</option>
+            <option value="Desarrollo de Software y No-Code">Desarrollo de Software y No-Code</option>
+            <option value="Desarrollo Personal y Liderazgo">Desarrollo Personal y Liderazgo</option>
+            <option value="Emprendimiento y Startups">Emprendimiento y Startups</option>
+            <option value="Fitness, Nutrición y Biohacking">Fitness, Nutrición y Biohacking</option>
+            <option value="Finanzas Personales e Inversiones">Finanzas Personales e Inversiones</option>
+            <option value="Idiomas y Aprendizaje Acelerado">Idiomas y Aprendizaje Acelerado</option>
+            <option value="Inteligencia Artificial (IA) y Prompt Engineering">Inteligencia Artificial (IA) y Prompt Engineering</option>  
+            <option value="Moda y Estilo Personal">Moda y Estilo Personal</option>
+            <option value="Marketing Digital y Marca Personal">Marketing Digital y Marca Personal</option>
+            <option value="Productividad y Gestión del Conocimiento">Productividad y Gestión del Conocimiento</option>
+            <option value="Salud Mental y Psicología">Salud Mental y Psicología</option>
+            <option value="Salud">Salud</option>
+            <option value="Viajes y Nómadas Digitales">Viajes y Nómadas Digitales</option>
+          </select>
+        </label>
+
+        <label for="issue">
+          <input
+            type="text"
+            name="issue"
+            id="issue"
+            placeholder="Tema"
+            required
+          />
+        </label>
+
+        <label for="status">
+          Estado
+          <select name="status" id="status" required>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En proceso">En Proceso</option>
+            <option value="Terminado">Terminado</option>
+          </select>
+        </label>
+
+        <div class="btn-content"> 
+
+          <button type="submit" id="submit-edit-btn" class="btn-save"> Guardar</button>
+          <button type="button" id="cancel-edit-btn" class="btn-cancel">Cancelar</button>
+        </div>
+
+        <p id="error-form-message-edit" class="error-text hidden"></p>
+      </form>
+    
+    </article>
   </section>
 
 <script>
   // Importamos las funciones necesarias
   import fetchDataGetWithToken from "../../lib/api/fetchDataGetWithToken";
+  import fetchDataPatch from "../../lib/api/fetchDataPatch";
   import fetchDataDelete from "../../lib/api/fetchDataDelete";
 
-  // --- 1. LÓGICA DE DATOS ---
+
+  // ---LÓGICA DE DATOS ---
   const container = document.getElementById("notes-container");
   const noNotesMsg = document.getElementById("no-notes-msg");
   const myToken = localStorage.getItem("token");
+  const modalEdit = document.getElementById("modal-edit") as HTMLElement;
+  const formEdit = document.getElementById("note-form-edit") as HTMLFormElement;
+  const btnEdit = document.getElementById("submit-edit-btn") as HTMLButtonElement;
+  const btnCancel = document.getElementById("cancel-edit-btn") as HTMLButtonElement;
+  const errorMsg = document.getElementById("error-form-message-edit") as HTMLParagraphElement;
 
-  // Función para formatear fechas (ahora en el cliente)
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("es-AR", {
-      weekday: "long", year: "numeric", month: "long", day: "numeric",
+//ORDENAR
+const sortNotesByDate = (notes : any[]) => {
+    // Creamos una copia con slice() para no mutar el original inesperadamente
+    return notes.slice().sort((a, b) => {
+      // Orden Descendente: El más nuevo (fecha mayor) primero
+      return new Date(b.createdAt) - new Date(a.createdAt);
     });
   };
 
   // Función para generar el HTML de una tarjeta
-  const createNoteCard = (note: any) => {
+  const createNoteCard = (note : any) => {
+
+    const authorName = note.author?.name || "Usuario";
+    const initial = authorName.charAt(0).toUpperCase();
+  
     return `
       <article class="note-card" id="${note.id}">
         <div class="card-header">
-            <h2 class="note-title">${note.title}</h2>
-            <button class="delete-btn" data-id="${note.id}" type="button" title="Eliminar nota">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-            </button>
+
+        <div class="user-info">
+                <div class="avatar-circle">${initial}</div>
+                <div class="user-meta">
+                    <span class="user-name">${authorName}</span>
+                    <div class="post-meta">
+                        <time datetime="${note.createdAt}">${timeAgo(note.createdAt)}</time>
+                        <span>•</span>
+                        <span class="status-text}">
+                           ${note.status || 'Borrador'}
+                        </span>
+                    </div>
+                </div>
+        </div>
+
+
+            <div class="card-actions-wrapper">
+              <button class="menu-trigger-card">
+                <svg class="points-options" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M320 208C289.1 208 264 182.9 264 152C264 121.1 289.1 96 320 96C350.9 96 376 121.1 376 152C376 182.9 350.9 208 320 208zM320 432C350.9 432 376 457.1 376 488C376 518.9 350.9 544 320 544C289.1 544 264 518.9 264 488C264 457.1 289.1 432 320 432zM376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320z"/></svg>
+              </button>
+
+              <div class="menu-dropdown hidden">
+                <button class="edit-btn menu-item" data-id="${note.id}" type="button" title="Editar nota"> Editar </button>
+                <button class="delete-btn menu-item" data-id="${note.id}" type="button" title="Eliminar nota">
+                  Eliminar
+                </button>
+                <button class="menu-item" type="button" title="Compartir">Compartir</button>
+              </div>
+              </div>
+
         </div>
         <div class="note-body">
+          <h2 class="note-title">${note.title}</h2>
           <p class="note-content">${note.content}</p>
         </div>
+        
+
         <div class="note-footer">
-          <div class="meta-info">
-              <span class="category-badge">${note.category || 'General'}</span>
-              <span class="status-badge ${note.status === 'Publicado' ? 'published' : 'draft'}">
-                  ${note.status || 'Borrador'}
-              </span>
-          </div>
-          <div class="meta-date">
-               <small>👤 ${note.author?.name || "Admin"}</small>
-               <time datetime="${note.createdAt}">${formatDate(note.createdAt)}</time>
-          </div>
+            <div class="badges-container">
+                <span class="pill-badge category-pill">${note.category || 'General'}</span>
+                ${note.issue ? `<span class="pill-badge issue-pill">#${note.issue}</span>` : ''}
+            </div>
         </div>
       </article>
+      
     `;
   };
 
-  // Función Principal: Cargar y Renderizar
   const loadNotes = async () => {
     if (!myToken) {
-      window.location.href = "/login"; // Si no hay token, adiós
+      window.location.href = "/login";
       return;
     }
 
@@ -71,17 +179,21 @@
       const userNotes = await fetchDataGetWithToken("notes/user-notes", myToken);
 
       if (!userNotes || userNotes.length === 0) {
-        container!.innerHTML = ""; // Limpiar loader
+        container!.innerHTML = ""; 
         noNotesMsg!.classList.remove("hidden");
         return;
       }
 
+      // APLICAR ORDENAMIENTO ANTES DE PINTAR
+      const sortedNotes = sortNotesByDate(userNotes);
       // Inyectar HTML
-      container!.innerHTML = userNotes.map((note: any) => createNoteCard(note)).join("");
+      container.innerHTML = sortedNotes.map((note) => createNoteCard(note)).join("");
 
-      // --- 2. ACTIVAR BOTONES DE BORRADO ---
-      // (Esto debe hacerse DESPUÉS de inyectar el HTML)
+      // ACTIVAR BOTONES DE EDITAR Y BORRAR---
+      activateEditButton();
       activateDeleteButtons();
+      activateMenus();
+
 
     } catch (error) {
       console.error("Error:", error);
@@ -89,23 +201,109 @@
     }
   };
 
-  // Función para borrar
+  //FUNCIONES AUXILIARES
+
+  if(formEdit) {
+    formEdit.addEventListener("submit", async(event) =>{
+      event.preventDefault();
+
+      if(!currentEditingId) return;
+
+      btnEdit.disabled = true;
+      btnEdit.textContent = "Cargando...";
+      errorMsg.classList.add("hidden");
+
+      const formData = new FormData(formEdit);
+      const data = Object.fromEntries(formData);
+      const idNote = currentEditingId;
+
+      // console.log("edicion:", data);
+
+      
+      
+
+      try{
+        await fetchDataPatch("notes", data, myToken, idNote);
+        // console.log("Respuesta:", response);
+        updateCardDOM(currentEditingId, data);
+
+        modalEdit.classList.add("hidden");
+        alert("Nota actualizada con éxito");
+        // window.location.reload();
+      } catch (error: any){
+        errorMsg.textContent = error.message;
+        errorMsg.classList.remove("hidden");
+        throw new Error(error.message);
+      } finally{
+        btnEdit.disabled = false;
+        btnEdit.textContent = "Editar nota";
+      }
+    });
+  }
+
+  let currentEditingId : any = null;
+
+  const openEditModal = (id: string, cardEdit: HTMLElement) =>{
+    currentEditingId = id;
+
+    const title = cardEdit.querySelector(".note-title")?.textContent;
+    const content = cardEdit.querySelector(".note-content")?.textContent;
+    const category = cardEdit.querySelector(".category-pill")?.textContent;
+    const issue = cardEdit.querySelector(".issue-pill")?.textContent;
+    const status = cardEdit.querySelector(".status-text")?.textContent;
+
+    formEdit.title.value = title;
+    formEdit.content.value = content;
+    formEdit.category.value = category;
+    formEdit.issue.value = issue;
+    formEdit.status.value = status;
+
+  
+    modalEdit.classList.remove("hidden");
+
+    const menu = cardEdit.querySelector(".menu-dropdown");
+    if (menu) menu.classList.add("hidden");
+
+  };
+
+  //Función para editar
+
+  const activateEditButton = () => {
+    const buttons = document.querySelectorAll(".edit-btn");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+
+        const target = event.currentTarget as HTMLButtonElement;
+        const idNote : any = target.dataset.id;
+
+
+        const card : any = target.closest(".note-card");
+
+        openEditModal(idNote, card);
+      });
+    });
+  }
+
+   // Función para borrar
   const activateDeleteButtons = () => {
     const buttons = document.querySelectorAll(".delete-btn");
     
     buttons.forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const target = e.currentTarget as HTMLButtonElement;
-        const id = target.dataset.id;
         
         if (!confirm("¿Estás seguro de borrar esta nota?")) return;
-
+        
+        const id = target.dataset.id;
         try {
           await fetchDataDelete(`notes/${id}`, myToken!);
-          // Opción A: Recargar página
+          // Recargar página
           // window.location.reload();
           
-          // Opción B (Mejor UX): Borrar el elemento del DOM sin recargar
+          //Borrar el elemento del DOM sin recargar
           const card = document.getElementById(id!);
           card?.remove();
           
@@ -121,61 +319,148 @@
     });
   };
 
+  //Menu card
+
+  const activateMenus = () => {
+    // 1. Seleccionamos todos los botones de tres puntos
+    const triggers = document.querySelectorAll('.menu-trigger-card');
+
+    triggers.forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Buscamos el menú hermano de este botón
+            const dropdown = trigger.nextElementSibling;
+            
+            // Cerramos CUALQUIER otro menú abierto antes de abrir este (opcional pero recomendado)
+            document.querySelectorAll('.menu-dropdown').forEach(m => {
+                if (m !== dropdown) m.classList.add('hidden');
+            });
+
+            // Alternamos la visibilidad
+            if(dropdown) dropdown.classList.toggle('hidden');
+        });
+    });
+};
+
+//FUNCION CANCELAR EDIT
+
+  if(btnCancel) {
+
+    btnCancel.addEventListener("click", (event) => {
+      // event.stopPropagation();
+      event.preventDefault();
+
+      modalEdit.classList.add("hidden");
+      currentEditingId = null;
+      formEdit.reset();
+      errorMsg.classList.add("hidden");
+      errorMsg.textContent = "";
+    });
+}
+
+// Click fuera cierra menús
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.card-actions-wrapper')) {
+        document.querySelectorAll('.menu-dropdown').forEach(menu => menu.classList.add('hidden'));
+    }
+    // Click fuera cierra modal (Opcional)
+    if (e.target === modalEdit) {
+        modalEdit.classList.add('hidden');
+    }
+  });
+
+const updateCardDOM = (id: string, newData: any) => {
+    const card = document.getElementById(id);
+    if (!card) return;
+
+    // 1. Actualizar Título (Verificamos que el elemento exista con ?)
+    const titleEl = card.querySelector('.note-title');
+    if (titleEl && newData.title) titleEl.textContent = newData.title;
+
+    // 2. Actualizar Contenido
+    const contentEl = card.querySelector('.note-content');
+    if (contentEl && newData.content) contentEl.textContent = newData.content;
+
+    // 3. Actualizar Categoría
+    // ¡OJO! Aquí estaba el error probable: cambiamos la clase a .category-pill
+    const categoryEl = card.querySelector('.category-pill'); 
+    if (categoryEl && newData.category) categoryEl.textContent = newData.category;
+
+    // 4. Actualizar Tema (Issue)
+    // El issue es delicado porque a veces no existe en el HTML original
+    const issueEl = card.querySelector('.issue-pill');
+    
+    if (newData.issue) {
+        if (issueEl) {
+            // Si ya existe el badge, solo cambiamos el texto
+            issueEl.textContent = "#" + newData.issue.replace('#', '');
+        } else {
+            // Si NO existe (porque la nota no tenía tema), lo creamos dinámicamente
+            // Buscamos el footer para inyectarlo ahí
+            const footer = card.querySelector('.note-footer');
+            if(footer) {
+                const newSpan = document.createElement('span');
+                newSpan.className = 'pill-badge issue-pill';
+                newSpan.textContent = "#" + newData.issue.replace('#', '');
+                footer.appendChild(newSpan);
+            }
+        }
+    }
+
+    // 5. Actualizar Estado
+    const statusEl = card.querySelector('.status-badge');
+    if (statusEl && newData.status) {
+        statusEl.textContent = newData.status;
+        // Actualizamos también el color (clases)
+        statusEl.className = 'status-badge'; // Reset
+        if(newData.status === 'Terminado') statusEl.classList.add('status-done');
+        else if(newData.status === 'En proceso') statusEl.classList.add('status-process');
+        else statusEl.classList.add('status-pending');
+    }
+};
+
+
+  //Hora y fecha
+  const timeAgo = (dateString: string) => {
+  if (!dateString) return '';
+  
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  const rtf = new Intl.RelativeTimeFormat('es-AR', { numeric: 'auto' });
+
+  if (diffInSeconds < 60) {
+    return rtf.format(-diffInSeconds, 'second');
+  }
+  
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return rtf.format(-diffInMinutes, 'minute');
+  }
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return rtf.format(-diffInHours, 'hour');
+  }
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) {
+    return rtf.format(-diffInDays, 'day');
+  }
+  
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return rtf.format(-diffInMonths, 'month');
+  }
+  
+  const diffInYears = Math.floor(diffInDays / 365);
+  return rtf.format(-diffInYears, 'year');
+  };
+
   // Ejecutar al cargar la página
   loadNotes();
 </script>
 
-<style>
-  /* --- Tu CSS original se mantiene igual --- */
-  .notes-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem 0;
-    min-height: 200px; /* Evita saltos de layout */
-  }
 
-  .hidden { display: none; }
-  .loading-text { color: #666; font-style: italic; }
-  .error-msg { color: red; }
-  
-  /* ... resto de tu CSS (note-card, headers, badges, etc) ... */
-  /* Asegúrate de copiar todo tu CSS anterior aquí */
-  
-  .note-card {
-    background: white; /* Asumiendo blanco si var falla */
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.2s ease-in-out;
-    position: relative;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  }
-  
-  /* ... Copia el resto de tus estilos aquí ... */
-  
-  /* Estilos específicos que faltaban en el ejemplo anterior */
-  .card-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
-  .note-title { font-size: 1.1rem; font-weight: 700; margin: 0; }
-  .delete-btn { 
-    background: transparent; border: 1px solid #fee2e2; color: #ef4444;
-    border-radius: 6px; width: 32px; height: 32px; 
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-  }
-  .delete-btn:hover { background-color: #ef4444; color: white; }
-  .note-body { flex-grow: 1; margin-bottom: 1.5rem; }
-  .note-content { 
-     font-size: 0.9rem; line-height: 1.5; color: #555;
-     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .note-footer { padding-top: 1rem; border-top: 1px solid #f3f4f6; }
-  .meta-info { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
-  .category-badge { background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-  .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-  .published { background: #dcfce7; color: #166534; }
-  .draft { background: #ffedd5; color: #9a3412; }
-  .meta-date { display: flex; justify-content: space-between; font-size: 0.8rem; color: #9ca3af; }
-</style>

@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Publica con nosotros | Digital Garden">
+<Layout title="Planes y publicaciones - Digital Garden">
   <main class="publish-container">
     
     <section class="hero-section">
@@ -14,9 +14,10 @@ import Layout from "../layouts/Layout.astro";
     </section>
 
     <section class="plans-section">
-      <h2>Elige tu plan ideal</h2>
+      <h2>Próximos Planes</h2>
       <div class="plans-grid">
-        <div class="plan-card">
+        <div class="plan-card featured">
+          <div class="badge ">Único disponible</div>
           <h3>Gratuito</h3>
           <div class="price">$0,00 <span class="period">/mes</span></div>
           <p>Ideal para empezar.</p>
@@ -26,8 +27,8 @@ import Layout from "../layouts/Layout.astro";
           </ul>
         </div>
 
-        <div class="plan-card featured">
-          <div class="badge">Popular</div>
+        <div class="plan-card">
+          <!-- <div class="badge">Popular</div> -->
           <h3>Básico</h3>
           <div class="price">$0,99 <span class="period">/mes</span></div>
           <p>Para creadores constantes.</p>
@@ -45,6 +46,8 @@ import Layout from "../layouts/Layout.astro";
           <ul class="features">
             <li>Hasta <strong>1000 notas</strong> al mes</li>
             <li>Estadísticas de lectura</li>
+            <li>Visibilidad de tus notas</li>
+            <li>Chat de IA</li>
             <li>Soporte prioritario</li>
           </ul>
         </div>
@@ -75,13 +78,13 @@ import Layout from "../layouts/Layout.astro";
 
     <section class="form-section">
       <div class="form-wrapper">
-        <h2>¡Empieza hoy mismo!</h2>
-        <p>Rellena el formulario y nos pondremos en contacto para configurar tu perfil de autor.</p>
+        <h2>Reportar un error</h2>
+        <p>Rellena el formulario y crezcamos juntos.</p>
         
-        <form action="/submit-contact" method="POST">
+        <form class="form-contact">
           <div class="input-group">
             <label for="name">Nombre completo</label>
-            <input type="text" id="name" name="name" placeholder="Ej: Esteban Karaputny" required />
+            <input type="text" id="name" name="name" placeholder="Esteban Karaputny" required />
           </div>
       
           <div class="input-group">
@@ -90,17 +93,26 @@ import Layout from "../layouts/Layout.astro";
           </div>
       
           <div class="input-group">
-            <label for="message">Cuéntanos qué quieres publicar</label>
-            <textarea id="message" name="message" rows="4" placeholder="Me gustaría escribir sobre tecnología y finanzas..." required></textarea>
+            <label for="message">Describe el error</label>
+            <textarea id="message" name="message" rows="4" placeholder="Tengo un problema al apretar el botón de..." required></textarea>
           </div>
       
-          <button type="submit" class="btn-submit">Enviar solicitud</button>
+          <button type="submit" class="btn-submit">Enviar aporte</button>
         </form>
       </div>
     </section>
 
   </main>
 </Layout>
+
+<script>
+  const formData = document.querySelector(".form-contact");
+
+// SERVICE ID: service_wzbl69p
+
+</script>
+
+
 
 <style>
   /* Variables locales para facilitar ajustes rápidos */

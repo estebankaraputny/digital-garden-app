@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import FormNote from "../components/FormNote/FormNote.astro";
 import Notes from "../components/Notes/Notes.astro";
+import { Image } from "astro:assets";
+import ImgProfile from "../assets/image/perfil.png"
 ---
 
 <Layout title="Perfil de usuario | Digital Garden">
@@ -9,23 +11,50 @@ import Notes from "../components/Notes/Notes.astro";
     
     <div class="dashboard-header">
       <div class="header-info">
-        <h1>Panel de <span class="highlight">Administración</span></h1>
-        <p>Gestiona el contenido de tu jardín digital.</p>
+        <div class="info-img">
+          <Image src={ImgProfile} alt="Foto de perfil del usuario" />
+        </div>
+        <div class="info-user">
+          <h1>Esteban Karaputny</h1>
+          <p>Me gusta aprender, siempre soy curioso con lo que veo o escucho y investigo más.</p>
+        </div>
       </div>
+      <!-- <div>
+        <button>Config</button>
+      </div> -->
     </div>
 
     <div class="dashboard-grid">
       
-      <section class="dashboard-card create-section">
-        <div class="card-header">
-          <h2>🌱 Crear Nueva Nota</h2>
-          <p>Publica un nuevo conocimiento.</p>
+      <section class="dashboard-card details-user">
+        <div class="dashboard-profile-info">
+          <div>
+              <div><span>Notas</span></div>
+              <div><span class="items-profile">20</span></div>
+          </div>
+          <div>
+            <div><span>Ranking</span></div>
+            <div><span class="items-profile">1</span></div>
+          </div>
+          <div>
+            <div><span>Plan</span></div>
+            <div><span class="items-profile">Gratuito</span></div>
+          </div>
+          <div>
+            <div><span>Likes</span></div>
+            <div><span class="items-profile">10</span></div>
+          </div>
+          <div></div>
         </div>
-        <FormNote />
       </section>
       <section class="dashboard-card list-section">
         <div class="card-header">
-          <h2>📝 Tus Notas</h2>
+          <h2>Crear Nota</h2>
+          <p>Publica un nuevo conocimiento.</p>
+        </div>
+        <FormNote />
+        <div class="card-header create-note">
+          <h2>Tus Notas</h2>
           <p>Historial de publicaciones.</p>
         </div>
         <div class="notes-scroll-area">
@@ -124,41 +153,40 @@ import Notes from "../components/Notes/Notes.astro";
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border-color);
     flex-wrap: wrap;
+  }
+
+  .header-info{
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    place-items: center;
     gap: 1rem;
   }
 
-  .header-info h1 {
-    font-size: 2rem;
-    font-weight: 700;
+  .info-img{
+    width: 250px;
+    height: 250px;
   }
 
-  .header-info p {
+  .info-img img{
+    width: 100%;
+    height: 100%;
+    border-radius:50%;
+  }
+
+  .info-user h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    max-width: 90%;
+  }
+
+  .info-user p {
+    font-size: 1rem;
     color: var(--color-text-light);
-    margin-top: 0.2rem;
+    max-width: 90%;
   }
 
   .highlight {
     color: var(--secondary-color);
-  }
-
-  /* Botón Logout Estilizado */
-  .btn-logout {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: white;
-    color: #dc2626; /* Rojo */
-    border: 1px solid #fee2e2;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-logout:hover {
-    background-color: #fee2e2;
-    border-color: #dc2626;
   }
 
   /* --- GRID LAYOUT --- */
@@ -179,7 +207,7 @@ import Notes from "../components/Notes/Notes.astro";
   /* --- CARDS (Contenedores Blancos) --- */
   .dashboard-card {
     background-color: var(--white-color);
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     padding: 2rem;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -187,7 +215,7 @@ import Notes from "../components/Notes/Notes.astro";
 
   .card-header {
     margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
+    /* padding-bottom: 1rem; */
     border-bottom: 1px solid var(--border-color);
   }
 
@@ -202,6 +230,10 @@ import Notes from "../components/Notes/Notes.astro";
     color: var(--color-text-light);
   }
 
+  .create-note{
+    margin-top: 2rem;
+  }
+
   /* Área de scroll para las notas si son muchas */
   .notes-scroll-area {
     /* Opcional: Si quieres que la lista tenga scroll interno */
@@ -209,6 +241,24 @@ import Notes from "../components/Notes/Notes.astro";
     overflow-y: auto; */
   }
 
+  .details-user{
+
+  }
+
+  .dashboard-profile-info{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .dashboard-profile-info div{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .items-profile{
+    color: var(--secondary-color);
+    font-weight: 700;
+  }
   /* Ajustes Responsive */
   @media (max-width: 600px) {
     .dashboard-header {

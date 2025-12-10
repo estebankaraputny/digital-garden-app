@@ -5,7 +5,7 @@ export class CreateNoteDto {
     @IsString({ message:'El titulo debe ser un texto'})
     @IsNotEmpty({message:'El titulo es obligatorio'})
     @MinLength(5, { message: 'El titulo debe tener más de 5 caracteres'})
-    @MaxLength(50, { message: 'El titulo debe tener menos de 50 caracteres'})
+    @MaxLength(60, { message: 'El titulo debe tener menos de 60 caracteres'})
     title: string;
 
     @IsString({ message:'El contenido debe ser un texto'})

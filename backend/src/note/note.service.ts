@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { Role } from 'src/common/types/admin.types';
@@ -82,7 +82,6 @@ private async checkPlanLimits(userId: string) {
 
   async findAll() {
     return await this.prisma.note.findMany({
-      // 👇 ¡AGREGA ESTO! Sin esto, el autor nunca llegará al frontend
       include: {
         author: {
           select: {
@@ -97,7 +96,6 @@ private async checkPlanLimits(userId: string) {
   async findOne(id: string) {
     return await this.prisma.note.findUnique({
       where: { id },
-      // 👇 Agrégalo aquí también por si abres el detalle de una nota
       include: {
         author: {
           select: {
@@ -129,14 +127,43 @@ private async checkPlanLimits(userId: string) {
   }
 
 
-  async update(id: string, updateNoteDto: UpdateNoteDto) {
+async update(id: string, updateNoteDto: UpdateNoteDto, user: any, updateAt?: Date) {
+    // Buscamos la nota existente
+    const note = await this.prisma.note.findUnique({ where: { id } });
+
+    if (!note) throw new NotFoundException('Nota no encontrada');
+
+    //VALIDACIÓN DE PERMISOS
+    const userId = user.sub || user.id; 
+    
+    // Verificamos: ¿Es el dueño? O ¿Es Admin?
+    const isOwner = note.authorId === userId;
+    const isAdmin = user.roles && user.roles.includes('admin'); 
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('No tienes permiso para editar');
+    }
+
+    // Ejecutamos la actualización
     return await this.prisma.note.update({
       where: { id },
       data: updateNoteDto,
     });
+  }
+
+ async remove(id: string, user: any) {
+    const note = await this.prisma.note.findUnique({ where: { id } });
+
+    if (!note) throw new NotFoundException('Nota no encontrada');
+
+    const userId = user.sub || user.id;
+    const isOwner = note.authorId === userId;
+    const isAdmin = user.roles && user.roles.includes('admin');
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('No tienes permiso para eliminar esta nota');
     }
 
-  async remove(id: string) {
     return await this.prisma.note.delete({
       where: { id },
     });

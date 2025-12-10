@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException, UsePipes, ValidationPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { NoteService } from './note.service'; 
-import { UserService } from 'src/user/user.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -51,14 +50,15 @@ export class NoteController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
-  async update(@Param('id') id: string, @Body() updateNoteDto: UpdateNoteDto) {
-    return await this.noteService.update(id, updateNoteDto);
+  @UsePipes(new ValidationPipe())
+  @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
+  async update(@Param('id') id: string, @Body() updateNoteDto: UpdateNoteDto, @Req() req) {
+    return await this.noteService.update(id, updateNoteDto, req.user);
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
-  async remove(@Param('id') id: string) {
-    return await this.noteService.remove(id);
+  @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
+  async remove(@Param('id') id: string, @Req() req) {
+    return await this.noteService.remove(id, req.user);
   }
 }

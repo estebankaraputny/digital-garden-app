@@ -1,7 +1,6 @@
 ---
 ---
 <section class="section-create">
-      <h1 class="title-note">Crear Nota</h1>
       <form id="note-form">
         <label for="title">
           <input
@@ -76,7 +75,7 @@
   const errorMsg = document.getElementById("error-form-message") as HTMLParagraphElement;
   const btn = document.getElementById("submit-btn") as HTMLButtonElement;
 
-  console.log(form);
+  // console.log(form);
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -87,13 +86,13 @@
     //Capturamos los datos del formulario automáticamente
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    console.log(data);
+    // console.log(data);
 
     try {
-      const myToken = localStorage.getItem("token");
+      const myToken: any = localStorage.getItem("token");
 
       const response = await fetchDataPostWithToken("notes", data, myToken);
-      console.log("Respuesta:", response);
+      // console.log("Respuesta:", response);
 
       if (response && response.id) {
          alert('¡Nota creada con éxito!')
@@ -102,7 +101,7 @@
         throw new Error("Error al crear la nota");
       }
     } catch (error: any) {
-        console.log("Error form:", error.message);
+        // console.log("Error form:", error.message);
         if (errorMsg) errorMsg.textContent = error.message;
         if (errorMsg) errorMsg.classList.remove('hidden');
     } finally {
@@ -151,9 +150,9 @@
   input, select {
     padding: 0.5rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     margin-top: 0.25rem;
-    border-radius: 1rem;
+    border-radius: .3rem;
   }
 
     input:focus-visible, select:focus-visible, textarea:focus-visible {
@@ -162,7 +161,7 @@
 
   textarea{
     padding: .5rem;
-    border-radius: 1rem;
+    border-radius: .3rem;
     border: 1px solid #ccc;
     resize: none;
     height: 7rem;

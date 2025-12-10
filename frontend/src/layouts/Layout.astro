@@ -168,7 +168,7 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         --primary-color: #fdfcfa;
         --secondary-color: #447d4b;
         --tertiary-color: #08453c;
-        --quaternary-color: #65e9f6;
+        --quaternary-color: #e8f5e9;
         --background-color: #F4EEE5;
         --color-text-primary: #262626;
         --color-text-secondary: #141414;
@@ -176,8 +176,9 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         --black-color: #000000;
         --white-color: #ffffff;
         --border-color: #E7E7E7;
+        --green-light: #e8f5e9;
         --navbar-height: 4rem;
-        
+        --border-radius: 1rem;
     }
 
     * {
@@ -194,9 +195,10 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         background-color: var(--primary-color);
         font-family: 'Figtree', sans-serif;
         color: var(--color-text-primary);
-        display: flex;
-        flex-direction: column;
+        display: grid;
         min-height: 100dvh;
+        grid-template-rows: auto 1fr auto;
+        /* grid-template-columns: 1fr; */
     }
     body.no-scroll {
         overflow: hidden;
@@ -208,8 +210,8 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
 
     /* --- HEADER & NAVBAR --- */
     .container-navbar {
-        background-color: rgba(253, 252, 250, 0.95); /* Semi-transparente */
-        backdrop-filter: blur(10px); /* Efecto vidrio moderno */
+        background-color: rgba(253, 252, 250, 0.95);
+        backdrop-filter: blur(10px);
         position: fixed;
         width: 100%;
         z-index: 1000;
@@ -342,10 +344,10 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
     .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
     /* Espacio para que el contenido no quede debajo del header fijo */
-    /* .page-content {
-        padding-top: var(--navbar-height);
+    .page-content {
+        padding-top: 4rem;
         /* flex: 1; */
-    } */
+    }
 
     /* --- FOOTER --- */
     .container-footer {

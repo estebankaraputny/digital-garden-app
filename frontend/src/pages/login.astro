@@ -17,24 +17,32 @@ import BannerLogin from "../assets/image/bannerlogin.png"
       <aside class="content-form">
         <form id="login-form" class="form-login">
           <h2>Inicia sesión</h2>
-          <label>
-            Correo electrónico
-            <input type="email" name="email" placeholder="admin@digitalgarden.com" required>
-          </label>
-          
-          <label>
-            Contraseña
-            <div class="password-wrapper">
-              <input type="password" name="password" id="password-input" required>
-
-              <button class="toggle-password-btn" type="button" id="toggle-password-btn" aria-label="Mostrar constraseña">
-                  <svg id="eye-in-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M73 39.1C63.6 29.7 48.4 29.7 39.1 39.1C29.8 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L504.5 470.8C507.2 468.4 509.9 466 512.5 463.6C559.3 420.1 590.6 368.2 605.5 332.5C608.8 324.6 608.8 315.8 605.5 307.9C590.6 272.2 559.3 220.2 512.5 176.8C465.4 133.1 400.7 96.2 319.9 96.2C263.1 96.2 214.3 114.4 173.9 140.4L73 39.1zM208.9 175.1C241 156.2 278.1 144 320 144C385.2 144 438.8 173.6 479.9 211.7C518.4 247.4 545 290 558.5 320C544.9 350 518.3 392.5 479.9 428.3C476.8 431.1 473.7 433.9 470.5 436.7L425.8 392C439.8 371.5 448 346.7 448 320C448 249.3 390.7 192 320 192C293.3 192 268.5 200.2 248 214.2L208.9 175.1zM390.9 357.1L282.9 249.1C294 243.3 306.6 240 320 240C364.2 240 400 275.8 400 320C400 333.4 396.7 346 390.9 357.1zM135.4 237.2L101.4 203.2C68.8 240 46.4 279 34.5 307.7C31.2 315.6 31.2 324.4 34.5 332.3C49.4 368 80.7 420 127.5 463.4C174.6 507.1 239.3 544 320.1 544C357.4 544 391.3 536.1 421.6 523.4L384.2 486C364.2 492.4 342.8 496 320 496C254.8 496 201.2 466.4 160.1 428.3C121.6 392.6 95 350 81.5 320C91.9 296.9 110.1 266.4 135.5 237.2z"/></svg>
-                
-                  <svg id="eye-in-open" class="hidden"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 144C254.8 144 201.2 173.6 160.1 211.7C121.6 247.5 95 290 81.4 320C95 350 121.6 392.5 160.1 428.3C201.2 466.4 254.8 496 320 496C385.2 496 438.8 466.4 479.9 428.3C518.4 392.5 545 350 558.6 320C545 290 518.4 247.5 479.9 211.7C438.8 173.6 385.2 144 320 144zM127.4 176.6C174.5 132.8 239.2 96 320 96C400.8 96 465.5 132.8 512.6 176.6C559.4 220.1 590.7 272 605.6 307.7C608.9 315.6 608.9 324.4 605.6 332.3C590.7 368 559.4 420 512.6 463.4C465.5 507.1 400.8 544 320 544C239.2 544 174.5 507.2 127.4 463.4C80.6 419.9 49.3 368 34.4 332.3C31.1 324.4 31.1 315.6 34.4 307.7C49.3 272 80.6 220 127.4 176.6zM320 400C364.2 400 400 364.2 400 320C400 290.4 383.9 264.5 360 250.7C358.6 310.4 310.4 358.6 250.7 360C264.5 383.9 290.4 400 320 400zM240.4 311.6C242.9 311.9 245.4 312 248 312C283.3 312 312 283.3 312 248C312 245.4 311.8 242.9 311.6 240.4C274.2 244.3 244.4 274.1 240.5 311.5zM286 196.6C296.8 193.6 308.2 192.1 319.9 192.1C328.7 192.1 337.4 193 345.7 194.7C346 194.8 346.2 194.8 346.5 194.9C404.4 207.1 447.9 258.6 447.9 320.1C447.9 390.8 390.6 448.1 319.9 448.1C258.3 448.1 206.9 404.6 194.7 346.7C192.9 338.1 191.9 329.2 191.9 320.1C191.9 309.1 193.3 298.3 195.9 288.1C196.1 287.4 196.2 286.8 196.4 286.2C208.3 242.8 242.5 208.6 285.9 196.7z"/></svg>
-              </button>
+          <div class="input-group">
+            <label for="email">
+              Correo electrónico
+            </label>
+            <div class="input-wrapper">
+              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <input type="email" name="email" placeholder="miguel@digitalgarden.com" required>            
             </div>
-          </label>
+          </div>
           
+          <div class="input-group">
+            <label for="password">
+              Contraseña
+            </label>
+            <div class="input-wrapper">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" name="password" id="password-input" placeholder="••••••••" required>
+  
+                <button class="toggle-password-btn" type="button" id="toggle-password-btn" aria-label="Mostrar constraseña">
+                    <svg id="eye-in-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M73 39.1C63.6 29.7 48.4 29.7 39.1 39.1C29.8 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L504.5 470.8C507.2 468.4 509.9 466 512.5 463.6C559.3 420.1 590.6 368.2 605.5 332.5C608.8 324.6 608.8 315.8 605.5 307.9C590.6 272.2 559.3 220.2 512.5 176.8C465.4 133.1 400.7 96.2 319.9 96.2C263.1 96.2 214.3 114.4 173.9 140.4L73 39.1zM208.9 175.1C241 156.2 278.1 144 320 144C385.2 144 438.8 173.6 479.9 211.7C518.4 247.4 545 290 558.5 320C544.9 350 518.3 392.5 479.9 428.3C476.8 431.1 473.7 433.9 470.5 436.7L425.8 392C439.8 371.5 448 346.7 448 320C448 249.3 390.7 192 320 192C293.3 192 268.5 200.2 248 214.2L208.9 175.1zM390.9 357.1L282.9 249.1C294 243.3 306.6 240 320 240C364.2 240 400 275.8 400 320C400 333.4 396.7 346 390.9 357.1zM135.4 237.2L101.4 203.2C68.8 240 46.4 279 34.5 307.7C31.2 315.6 31.2 324.4 34.5 332.3C49.4 368 80.7 420 127.5 463.4C174.6 507.1 239.3 544 320.1 544C357.4 544 391.3 536.1 421.6 523.4L384.2 486C364.2 492.4 342.8 496 320 496C254.8 496 201.2 466.4 160.1 428.3C121.6 392.6 95 350 81.5 320C91.9 296.9 110.1 266.4 135.5 237.2z"/></svg>
+                  
+                    <svg id="eye-in-open" class="hidden"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 144C254.8 144 201.2 173.6 160.1 211.7C121.6 247.5 95 290 81.4 320C95 350 121.6 392.5 160.1 428.3C201.2 466.4 254.8 496 320 496C385.2 496 438.8 466.4 479.9 428.3C518.4 392.5 545 350 558.6 320C545 290 518.4 247.5 479.9 211.7C438.8 173.6 385.2 144 320 144zM127.4 176.6C174.5 132.8 239.2 96 320 96C400.8 96 465.5 132.8 512.6 176.6C559.4 220.1 590.7 272 605.6 307.7C608.9 315.6 608.9 324.4 605.6 332.3C590.7 368 559.4 420 512.6 463.4C465.5 507.1 400.8 544 320 544C239.2 544 174.5 507.2 127.4 463.4C80.6 419.9 49.3 368 34.4 332.3C31.1 324.4 31.1 315.6 34.4 307.7C49.3 272 80.6 220 127.4 176.6zM320 400C364.2 400 400 364.2 400 320C400 290.4 383.9 264.5 360 250.7C358.6 310.4 310.4 358.6 250.7 360C264.5 383.9 290.4 400 320 400zM240.4 311.6C242.9 311.9 245.4 312 248 312C283.3 312 312 283.3 312 248C312 245.4 311.8 242.9 311.6 240.4C274.2 244.3 244.4 274.1 240.5 311.5zM286 196.6C296.8 193.6 308.2 192.1 319.9 192.1C328.7 192.1 337.4 193 345.7 194.7C346 194.8 346.2 194.8 346.5 194.9C404.4 207.1 447.9 258.6 447.9 320.1C447.9 390.8 390.6 448.1 319.9 448.1C258.3 448.1 206.9 404.6 194.7 346.7C192.9 338.1 191.9 329.2 191.9 320.1C191.9 309.1 193.3 298.3 195.9 288.1C196.1 287.4 196.2 286.8 196.4 286.2C208.3 242.8 242.5 208.6 285.9 196.7z"/></svg>
+                </button>
+              
+            </div>
+          </div>          
           <button type="submit" id="submit-btn" class="button-login">
             Ingresar
           </button>
@@ -125,33 +133,37 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     padding: 0;
     box-sizing: border-box;
   }
-  .container {
+  /* .container {
     display: flex;
     justify-content: center;
     align-items: center;
     /* min-height: 100dvh;  */
-    font-family: 'Figtree', system-ui, sans-serif;
+    /* font-family: 'Figtree', system-ui, sans-serif; */
     /* padding: 1rem; */
-    background-color: var(--primary-color); 
-  }
+    /* background-color: var(--primary-color);  */
+  /* }  */
   
+
+  .container{
+    display: grid;
+    place-items: center;
+    min-height: 100dvh;
+    /* padding: 2rem; */
+  }
+
+
   .login-container{
-    /* background: var(--white-color); */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    padding: 1rem;
-    border-radius: 16px; /* Bordes más suaves */
-    max-width: 80%;
-    /* max-width: 420px; */
-    /* box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); Sombra moderna y difusa */
-    /* border: 1px solid var(--border-color); */
-
+    border-radius: 16px;
+    max-width: 90%;
   }
   .content-welcome{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-bottom: 10rem;
   }
 
   .content-welcome h2{
@@ -184,22 +196,42 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     gap: 1.5rem;
     background-color: var(--white-color);
     padding: 3rem;
-    width: 70%;
+    width: 60%;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
     border: 1px solid var(--border-color);
     border-radius: 1rem;
   }
 
-  label {
+  .form-login h2 {
+    font-size: 2rem;
+    color: var(--tertiary-color);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  /* label {
     display: flex;
     flex-direction: column;
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--color-text-secondary);
     gap: 0.5rem;
-  }
+  } */
+     .input-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-text-primary);
+    }
 
-  input {
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+  /* input {
     padding: 0.85rem 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -207,16 +239,46 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     background-color: #fafafa;
     transition: all 0.2s ease;
     outline: none;
-  }
-  input:focus {
+  } */
+  /* input:focus {
     background-color: var(--white-color);
     border-color: var(--secondary-color); 
     box-shadow: 0 0 0 4px rgba(68, 125, 75, 0.1);
-  }
+  } */
 
+  
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        color: #999;
+        pointer-events: none;
+        transition: color 0.3s;
+    }
+
+    .input-wrapper input {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 2.8rem; /* Espacio para el icono */
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 1rem;
+        background-color: #fafafa;
+        transition: all 0.2s ease;
+    }
+
+    .input-wrapper input:focus {
+        outline: none;
+        background-color: var(--white-color);
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 4px rgba(68, 125, 75, 0.1);
+    }
+
+    .input-wrapper input:focus + .input-icon,
+    .input-wrapper:focus-within .input-icon {
+        color: var(--secondary-color);
+    }
   /**VER CONTRA */
 
-  .password-wrapper {
+  /* .password-wrapper {
   position: relative; 
     display: flex;
     align-items: center;
@@ -228,7 +290,7 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     padding-right: 3rem;
     border: 1px solid #ccc;
     border-radius: 6px;
-  }
+  } */
 
   .toggle-password-btn {
     position: absolute;
