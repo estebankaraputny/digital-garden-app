@@ -1,0 +1,354 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Seguridad y Protección">
+  <main class="legal-container">
+    
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>Centro de <span class="highlight">Seguridad</span></h1>
+        <p class="subtitle">Protegemos lo que más te importa</p>
+        <p class="description">
+          Tu privacidad y la seguridad de tus datos son nuestra prioridad número uno. 
+          Conoce las medidas técnicas que implementamos para mantener tus notas a salvo.
+        </p>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      
+      <aside class="sidebar-sticky">
+        <h3>Índice de Seguridad</h3>
+        <nav>
+          <ul class="category-list">
+            <li><a href="#infraestructura" class="nav-btn active">1. Infraestructura</a></li>
+            <li><a href="#datos" class="nav-btn">2. Protección de Datos</a></li>
+            <li><a href="#autenticacion" class="nav-btn">3. Autenticación</a></li>
+            <li><a href="#pagos" class="nav-btn">4. Pagos Seguros</a></li>
+            <li><a href="#vulnerabilidades" class="nav-btn">5. Reporte de Fallos</a></li>
+          </ul>
+        </nav>
+        
+        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+           <a href="/home" class="btn-outline-small" style="text-decoration: none; display:inline-block;">
+             ← Volver al Inicio
+           </a>
+        </div>
+      </aside>
+
+      <article class="legal-card">
+        
+        <section id="infraestructura" class="legal-section">
+          <h2>1. Infraestructura Segura</h2>
+          <p>
+            Nuestros servicios están alojados en proveedores de nube de clase mundial que cumplen con los más altos estándares de certificación (ISO 27001, SOC 2).
+          </p>
+          <div class="security-feature">
+            <span class="icon">🔒</span>
+            <div>
+              <strong>Encriptación SSL/TLS</strong>
+              <p style="margin:0; font-size: 0.9rem;">Todo el tráfico entre tu dispositivo y nuestros servidores viaja encriptado mediante HTTPS, protegiendo tu información de interceptaciones.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="datos" class="legal-section">
+          <h2>2. Protección de Tus Notas</h2>
+          <p>Sabemos que tus notas pueden contener información sensible o ideas valiosas. Así las protegemos:</p>
+          <ul>
+            <li><strong>Encriptación en Reposo:</strong> Los datos almacenados en nuestras bases de datos están cifrados, lo que significa que incluso en el improbable caso de un acceso físico al servidor, los datos serían ilegibles.</li>
+            <li><strong>Copias de Seguridad:</strong> Realizamos backups automáticos diarios para prevenir la pérdida de información accidental.</li>
+            <li><strong>Aislamiento Lógico:</strong> La arquitectura de nuestra base de datos impide que un usuario pueda acceder a las notas de otro.</li>
+          </ul>
+        </section>
+
+        <section id="autenticacion" class="legal-section">
+          <h2>3. Autenticación y Contraseñas</h2>
+          <p>
+            Nunca almacenamos tu contraseña en texto plano. Utilizamos algoritmos de hash robustos (como Bcrypt o Argon2) con "salt" único para cada usuario.
+          </p>
+          <p class="highlight-text">
+            Recomendamos utilizar una contraseña única y compleja. Nuestro sistema bloquea temporalmente las cuentas tras múltiples intentos fallidos para prevenir ataques de fuerza bruta.
+          </p>
+        </section>
+
+        <section id="pagos" class="legal-section">
+          <h2>4. Transacciones y Pagos</h2>
+          <p>
+            Si adquieres servicios premium o realizas donaciones a través de nuestra plataforma, nosotros <strong>no procesamos ni almacenamos</strong> los datos de tu tarjeta de crédito.
+          </p>
+          <p>
+            Utilizamos pasarelas de pago externas certificadas (como Stripe o MercadoPago) que cumplen con el estándar PCI-DSS de la industria financiera.
+          </p>
+        </section>
+
+        <section id="vulnerabilidades" class="legal-section">
+          <h2>5. Reporte Responsable</h2>
+          <p>
+            Creemos en la colaboración con la comunidad de seguridad. Si has encontrado una vulnerabilidad en nuestra plataforma, te pedimos que nos la comuniques de manera responsable antes de hacerla pública.
+          </p>
+          <div class="contact-box">
+            <strong>Email de Seguridad:</strong> seguridad@digitalgarden.com <br>
+            <span style="font-size: 0.9rem; color: var(--color-text-light);">Intentaremos responder en un plazo máximo de 48 horas.</span>
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+  // Script para navegación activa (Scroll Spy)
+  const sections = document.querySelectorAll('.legal-section');
+  const navLi = document.querySelectorAll('.nav-btn');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    
+    sections.forEach(section => {
+      const sectionTop = (section as HTMLElement).offsetTop;
+      if (scrollY >= sectionTop - 200) { // Ajuste del offset para mejor UX
+        current = section.getAttribute('id') || '';
+      }
+    });
+
+    navLi.forEach(li => {
+      li.classList.remove('active');
+      if (li.getAttribute('href') === `#${current}`) {
+        li.classList.add('active');
+      }
+    });
+  });
+</script>
+
+<style>
+  :root {
+    --primary-color: #fdfcfa;
+    --secondary-color: #447d4b;
+    --tertiary-color: #08453c;
+    --quaternary-color: #e8f5e9;
+    --background-color: #F4EEE5;
+    --color-text-primary: #262626;
+    --color-text-secondary: #141414;
+    --color-text-light: #666666;
+    --black-color: #000000;
+    --white-color: #ffffff;
+    --border-color: #E7E7E7;
+    --green-light: #e8f5e9;
+    --border-radius: 1rem;
+  }
+
+  /* Reset básico */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  .legal-container {
+    max-width: 1300px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  /* --- Hero Section --- */
+  .hero-section {
+    /* background-color: var(--background-color);
+    border-radius: 24px; */
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 4rem;
+    /* border: 1px solid var(--border-color); */
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .highlight {
+    color: var(--secondary-color);
+    position: relative;
+    z-index: 1;
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+    color: var(--tertiary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* --- Grid Layout --- */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    margin-bottom: 5rem;
+    align-items: start;
+  }
+
+  /* --- Sidebar --- */
+  .sidebar-sticky {
+    position: sticky;
+    top: 2rem; 
+    background: var(--white-color);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .sidebar-sticky h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--background-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .category-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-btn:hover {
+    background-color: var(--background-color);
+    color: var(--tertiary-color);
+  }
+
+  .nav-btn.active {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(68, 125, 75, 0.2);
+  }
+
+  .btn-outline-small {
+    background: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .btn-outline-small:hover {
+    background: var(--secondary-color);
+    color: var(--white-color);
+  }
+
+  /* --- Content Card --- */
+  .legal-card {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+  }
+
+  .legal-section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 2rem; 
+  }
+
+  .legal-section h2 {
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .legal-section p, .legal-section li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+  }
+
+  .legal-section ul {
+    list-style-position: inside;
+    margin-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .legal-section strong {
+    color: var(--color-text-primary);
+  }
+
+  /* Elementos específicos de Seguridad */
+  .highlight-text {
+    background-color: var(--quaternary-color);
+    color: var(--tertiary-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 5px solid var(--secondary-color);
+    font-weight: 500;
+  }
+
+  .security-feature {
+    display: flex;
+    gap: 1rem;
+    background: var(--background-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+  }
+  
+  .security-feature .icon {
+    font-size: 2rem;
+  }
+
+  .contact-box {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    color: var(--color-text-primary);
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .hero-content h1 { font-size: 2.2rem; }
+    .legal-card { padding: 1.5rem; }
+    
+    .sidebar-sticky{
+        position: static;
+        top: auto;
+    }
+}
+
+</style>

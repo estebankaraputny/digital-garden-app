@@ -1,0 +1,368 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Guías para Autores y Creadores">
+  <main class="legal-container">
+    
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>Guías para <span class="highlight">Autores</span></h1>
+        <p class="subtitle">Crea contenido que inspire y aporte valor</p>
+        <p class="description">
+          Queremos que este sea un espacio de crecimiento y aprendizaje. 
+          Acá vas a encontrar las normas y mejores prácticas para publicar tus notas y artículos.
+        </p>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      
+      <aside class="sidebar-sticky">
+        <h3>Manual del Autor</h3>
+        <nav>
+          <ul class="category-list">
+            <li><a href="#principios" class="nav-btn active">1. Principios Básicos</a></li>
+            <li><a href="#sensibles" class="nav-btn">2. Temas Sensibles</a></li>
+            <li><a href="#conducta" class="nav-btn">3. Código de Conducta</a></li>
+            <li><a href="#formato" class="nav-btn">4. Formato y Estilo</a></li>
+            <li><a href="#moderacion" class="nav-btn">5. Moderación</a></li>
+          </ul>
+        </nav>
+        
+        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+           <a href="/home" class="btn-outline-small" style="text-decoration: none; display:inline-block;">
+             ← Volver al Inicio
+           </a>
+        </div>
+      </aside>
+
+      <article class="legal-card">
+        
+        <section id="principios" class="legal-section">
+          <h2>1. Principios Básicos</h2>
+          <p>
+            Buscamos construir una biblioteca de conocimiento útil y auténtico. Antes de publicar, pregúntate:
+          </p>
+          <div class="checklist-box">
+            <ul>
+              <li>✅ ¿Aporta valor real a la comunidad?</li>
+              <li>✅ ¿Es la información veraz y original?</li>
+              <li>✅ ¿Está clasificado en la categoría correcta?</li>
+            </ul>
+          </div>
+          <p>
+            Valoramos la originalidad. Si compartes ideas de otros autores o libros, por favor cita la fuente correspondiente para dar crédito a quien lo merece.
+          </p>
+        </section>
+
+        <section id="sensibles" class="legal-section">
+          <h2>2. Responsabilidad en Temas Sensibles</h2>
+          <p>
+            Dado que tratamos temas que impactan la vida de las personas, exigimos rigor extra en ciertas categorías:
+          </p>
+          
+          <div class="alert-box warning">
+            <strong>Finanzas y Criptomonedas:</strong>
+            <p>No publiques consejos financieros no verificados ni prometas ganancias garantizadas. El contenido debe ser educativo, no una recomendación de inversión directa.</p>
+          </div>
+
+          <div class="alert-box info">
+            <strong>Salud y Bienestar:</strong>
+            <p>Las notas sobre salud mental, nutrición o biohacking no sustituyen el consejo médico profesional. Evita promover prácticas extremas o peligrosas sin base científica.</p>
+          </div>
+        </section>
+
+        <section id="conducta" class="legal-section">
+          <h2>3. Código de Conducta</h2>
+          <p>
+            Queremos un entorno seguro y respetuoso. No toleraremos bajo ninguna circunstancia:
+          </p>
+          <ul>
+            <li>Discurso de odio, discriminación o acoso.</li>
+            <li>Contenido explícito, violento o ilegal.</li>
+            <li>Spam o autopromoción excesiva y repetitiva.</li>
+          </ul>
+          <p class="highlight-text">
+            La comunidad se basa en el respeto mutuo. Las críticas en los comentarios (si están habilitados) deben ser constructivas. En caso de no cumplimiento, tomaremos medidas que pueden incluir la eliminación de contenido o la suspensión de cuentas.
+          </p>
+        </section>
+
+        <section id="formato" class="legal-section">
+          <h2>4. Formato y Estilo</h2>
+          <p>
+            Para que tus notas sean fáciles de leer y lleguen a más personas:
+          </p>
+          <ul>
+            <li><strong>Títulos Claros:</strong> Usa títulos descriptivos que resuman el tema central.</li>
+            <li><strong>Etiquetas (Tags):</strong> Usa los <em>#Issues</em> para etiquetar palabras clave (ej: #javascript, #estoicismo).</li>
+            <li><strong>Ortografía:</strong> Revisa tu redacción antes de publicar. Un texto bien escrito genera mayor confianza.</li>
+          </ul>
+        </section>
+
+        <section id="moderacion" class="legal-section">
+          <h2>5. Política de Moderación</h2>
+          <p>
+            Nos reservamos el derecho de:
+          </p>
+          <ul>
+            <li>Cambiar el estado de una nota de "Público" a "Borrador" si requiere correcciones.</li>
+            <li>Reclasificar una nota si la categoría no es adecuada.</li>
+            <li>Suspender cuentas que violen repetidamente estas normas.</li>
+          </ul>
+          <p>
+            Si crees que tu contenido fue moderado por error, puedes contactar a soporte para una revisión manual.
+          </p>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+  // Script para navegación activa (Scroll Spy)
+  const sections = document.querySelectorAll('.legal-section');
+  const navLi = document.querySelectorAll('.nav-btn');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    
+    sections.forEach(section => {
+      const sectionTop = (section as HTMLElement).offsetTop;
+      if (scrollY >= sectionTop - 200) {
+        current = section.getAttribute('id') || '';
+      }
+    });
+
+    navLi.forEach(li => {
+      li.classList.remove('active');
+      if (li.getAttribute('href') === `#${current}`) {
+        li.classList.add('active');
+      }
+    });
+  });
+</script>
+
+<style>
+
+
+  /* Reset básico */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  .legal-container {
+    max-width: 1300px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  /* --- Hero Section --- */
+  .hero-section {
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .highlight {
+    color: var(--secondary-color);
+    position: relative;
+    z-index: 1;
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+    color: var(--tertiary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* --- Grid Layout --- */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    margin-bottom: 5rem;
+    align-items: start;
+  }
+
+  /* --- Sidebar --- */
+  .sidebar-sticky {
+    position: sticky;
+    top: 2rem; 
+    background: var(--white-color);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .sidebar-sticky h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--background-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .category-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-btn:hover {
+    background-color: var(--background-color);
+    color: var(--tertiary-color);
+  }
+
+  .nav-btn.active {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(68, 125, 75, 0.2);
+  }
+
+  .btn-outline-small {
+    background: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .btn-outline-small:hover {
+    background: var(--secondary-color);
+    color: var(--white-color);
+  }
+
+  /* --- Content Card --- */
+  .legal-card {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+  }
+
+  .legal-section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 2rem; 
+  }
+
+  .legal-section h2 {
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .legal-section p, .legal-section li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+  }
+
+  .legal-section ul {
+    list-style-position: inside;
+    margin-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .legal-section strong {
+    color: var(--color-text-primary);
+  }
+
+  /* --- Elementos Exclusivos de Guias --- */
+  
+  /* Checklist Box */
+  .checklist-box {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .checklist-box ul { margin: 0; list-style: none; }
+  .checklist-box li { margin-bottom: 0.5rem; font-weight: 500; color: var(--color-text-secondary); }
+
+  /* Alert Boxes */
+  .alert-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+  }
+  
+  .alert-box strong { display: block; margin-bottom: 0.5rem; font-size: 1.1rem; }
+  .alert-box p { margin: 0; font-size: 0.95rem; }
+
+  .alert-box.warning {
+    background-color: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning-text);
+  }
+  .alert-box.warning strong { color: var(--warning-text); }
+  .alert-box.warning p { color: var(--warning-text); }
+
+  .alert-box.info {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+  }
+  .alert-box.info strong { color: var(--info-text); }
+  .alert-box.info p { color: var(--info-text); }
+
+  .highlight-text {
+    background-color: var(--quaternary-color);
+    color: var(--tertiary-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 5px solid var(--secondary-color);
+    font-weight: 500;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .hero-content h1 { font-size: 2.2rem; }
+    .legal-card { padding: 1.5rem; }
+  }
+</style>

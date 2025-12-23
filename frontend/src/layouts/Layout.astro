@@ -179,6 +179,14 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         --green-light: #e8f5e9;
         --navbar-height: 4rem;
         --border-radius: 1rem;
+        /* Colores extra para alertas */
+        --warning-bg: #fff7ed;
+        --warning-border: #fdba74;
+        --warning-text: #9a3412;
+        
+        --info-bg: #eff6ff;
+        --info-border: #93c5fd;
+        --info-text: #1e40af;
     }
 
     * {
@@ -541,3 +549,136 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         }
     }
 </style>
+
+
+
+
+
+
+<!-- 
+/* src/components/CookieBanner.astro */ -->
+
+
+<!-- <div id="cookie-banner" class="cookie-banner hidden">
+  <div class="cookie-content">
+    <p>
+      🍪 <strong>Uso de Cookies:</strong> Utilizamos cookies propias y de terceros para mejorar tu experiencia y gestionar tu sesión. 
+      Al continuar navegando, aceptas nuestra 
+      <a href="/politicas" class="link">Política de Privacidad</a>.
+    </p>
+    <div class="cookie-actions">
+      <button id="accept-cookies" class="btn-accept">Aceptar y Continuar</button>
+      <a href="/politicas" class="btn-info">Leer más</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Lógica del cliente
+  const banner = document.getElementById('cookie-banner');
+  const btnAccept = document.getElementById('accept-cookies');
+
+  // 1. Verificar si ya aceptó
+  const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+
+  if (!cookiesAccepted && banner) {
+    // Si no ha aceptado, mostramos el banner (quitamos hidden)
+    // Usamos un pequeño timeout para que la animación de entrada se vea suave
+    setTimeout(() => {
+        banner.classList.remove('hidden');
+    }, 500);
+  }
+
+  // 2. Al hacer clic en aceptar
+  if (btnAccept && banner) {
+    btnAccept.addEventListener('click', () => {
+      // Guardamos en localStorage
+      localStorage.setItem('cookiesAccepted', 'true');
+      // Ocultamos el banner
+      banner.classList.add('hidden');
+    });
+  }
+</script>
+
+<style>
+  .cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px); /* Efecto vidrio */
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    z-index: 9999;
+    padding: 1.5rem;
+    
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hidden {
+    transform: translateY(100%); /* Se esconde hacia abajo */
+    /* display: none; <-- No usamos display none para poder animar el transform */
+  }
+
+  .cookie-content {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #374151;
+    line-height: 1.5;
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .link {
+    color: #1877f2;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .cookie-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-accept {
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .btn-accept:hover {
+    background-color: #145dbf;
+  }
+
+  .btn-info {
+    background-color: transparent;
+    color: #4b5563;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  
+  .btn-info:hover {
+    background-color: #f3f4f6;
+  }
+</style> -->

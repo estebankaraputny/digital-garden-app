@@ -1,0 +1,367 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Políticas de Privacidad">
+  <main class="legal-container">
+    
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>Política de <span class="highlight">Privacidad</span></h1>
+        <p class="subtitle">Transparencia y seguridad para tus datos</p>
+        <p class="description">
+          Última actualización: 23 de Diciembre, 2025. <br>
+          En esta página explicamos detalladamente cómo procesamos y protegemos tu información.
+        </p>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      
+      <aside class="sidebar-sticky">
+        <h3>Contenidos</h3>
+        <nav>
+          <ul class="category-list">
+            <li><a href="#intro" class="nav-btn active">1. Introducción</a></li>
+            <li><a href="#datos" class="nav-btn">2. Datos Recopilados</a></li>
+            <li><a href="#uso" class="nav-btn">3. Uso de Información</a></li>
+            <li><a href="#cookies" class="nav-btn">4. Cookies</a></li>
+            <li><a href="#derechos" class="nav-btn">5. Tus Derechos</a></li>
+            <li><a href="#contacto" class="nav-btn">6. Contacto</a></li>
+          </ul>
+        </nav>
+        
+        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+           <a href="/home" class="btn-outline-small" style="text-decoration: none; display:inline-block;">
+             ← Volver al Inicio
+           </a>
+        </div>
+      </aside>
+
+      <article class="legal-card">
+        
+        <section id="intro" class="legal-section">
+          <h2>1. Introducción</h2>
+          <p>
+            Bienvenido a nuestra plataforma. Nos tomamos muy en serio la privacidad de tus notas personales y tu información de perfil. 
+            Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos tus datos personales de acuerdo con las normativas vigentes.
+          </p>
+        </section>
+
+        <section id="datos" class="legal-section">
+          <h2>2. Información que recopilamos</h2>
+          <p>Para brindarte nuestro servicio de gestión de notas, recopilamos los siguientes datos:</p>
+          <ul>
+            <li><strong>Información de Cuenta:</strong> Nombre, correo electrónico y contraseña (almacenada de forma encriptada).</li>
+            <li><strong>Contenido Generado:</strong> El título, cuerpo, categorías y etiquetas de las notas que creas.</li>
+            <li><strong>Datos Técnicos:</strong> Dirección IP, tipo de navegador y datos de sesión para garantizar la seguridad.</li>
+          </ul>
+        </section>
+
+        <section id="uso" class="legal-section">
+          <h2>3. Uso de la Información</h2>
+          <p>Utilizamos tu información exclusivamente para:</p>
+          <ul>
+            <li>Proveer, mantener y mejorar la funcionalidad de la plataforma.</li>
+            <li>Personalizar tu experiencia (ej. filtros por categorías).</li>
+            <li>Detectar y prevenir fraudes o accesos no autorizados.</li>
+          </ul>
+          <p class="highlight-text">No vendemos ni alquilamos tus datos personales a terceros con fines comerciales.</p>
+        </section>
+
+        <section id="cookies" class="legal-section">
+          <h2>4. Cookies y Tecnologías Similares</h2>
+          <p>
+            Utilizamos cookies esenciales para mantener tu sesión activa y segura. Puedes configurar tu navegador para rechazar las cookies, 
+            pero es posible que algunas funciones de la plataforma (como el inicio de sesión) no funcionen correctamente.
+          </p>
+        </section>
+
+        <section id="derechos" class="legal-section">
+          <h2>5. Tus Derechos</h2>
+          <p>Como usuario, tienes derecho a:</p>
+          <ul>
+            <li><strong>Acceder</strong> a tus datos personales.</li>
+            <li><strong>Rectificar</strong> información inexacta desde tu perfil.</li>
+            <li><strong>Eliminar</strong> tu cuenta y todas tus notas asociadas ("Derecho al olvido").</li>
+            <li><strong>Exportar</strong> tu contenido antes de cerrar tu cuenta.</li>
+          </ul>
+        </section>
+
+        <section id="contacto" class="legal-section">
+          <h2>6. Contacto</h2>
+          <p>
+            Si tienes preguntas sobre esta política o deseas ejercer tus derechos, contáctanos a través de:
+          </p>
+          <div class="contact-box">
+            <strong>Email:</strong> hola@digitalgarden.com <br>
+            <strong>Formulario:</strong> <a href="/contact" class="redirect-contact">Contacto</a>
+            <!-- <strong>Tele:</strong>  -->
+          </div>
+        </section>
+
+      </article>
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+  // Script para marcar activo el item del sidebar al hacer scroll
+  const sections = document.querySelectorAll('.legal-section');
+  const navLi = document.querySelectorAll('.nav-btn');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = (section as HTMLElement).offsetTop;
+      if (scrollY >= sectionTop - 150) {
+        current = section.getAttribute('id') || '';
+      }
+    });
+
+    navLi.forEach(li => {
+      li.classList.remove('active');
+      if (li.getAttribute('href') === `#${current}`) {
+        li.classList.add('active');
+      }
+    });
+  });
+</script>
+
+<style>
+  :root {
+    --primary-color: #fdfcfa;
+    --secondary-color: #447d4b;
+    --tertiary-color: #08453c; /* Corregí 'tertidary' a 'tertiary' */
+    --quaternary-color: #e8f5e9;
+    --background-color: #F4EEE5;
+    --color-text-primary: #262626;
+    --color-text-secondary: #141414;
+    --color-text-light: #666666;
+    --black-color: #000000;
+    --white-color: #ffffff;
+    --border-color: #E7E7E7;
+    --green-light: #e8f5e9;
+    --border-radius: 1rem;
+  }
+
+  /* Reset básico local */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html { scroll-behavior: smooth; }
+
+  .legal-container {
+    max-width: 1300px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  /* --- Hero Section (Igual a Home) --- */
+  .hero-section {
+    /* background-color: var(--background-color); */
+    /* border-radius: 24px; */
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 4rem;
+    /* border: 1px solid var(--border-color); */
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .highlight {
+    color: var(--secondary-color);
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 5px; left: -5px; width: 100%; height: 12px;
+    background-color: var(--secondary-color);
+    opacity: 0.4;
+    z-index: -1;
+    border-radius: 6px;
+    transform: rotate(-1deg);
+  } */
+
+  .subtitle {
+    font-size: 1.5rem;
+    color: var(--tertiary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* --- Layout Grid --- */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    margin-bottom: 5rem;
+    align-items: start;
+  }
+
+  /* --- Sidebar Navigation --- */
+  .sidebar-sticky {
+    position: sticky;
+    top: 2rem; 
+    background: var(--white-color);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .sidebar-sticky h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--background-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .category-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Estilo Nav Link (Basado en .filter-btn del Home) */
+  .nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-btn:hover {
+    background-color: var(--background-color);
+    color: var(--tertiary-color);
+  }
+
+  .nav-btn.active {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(68, 125, 75, 0.2);
+  }
+
+  .btn-outline-small {
+    background: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .btn-outline-small:hover {
+    background: var(--secondary-color);
+    color: var(--white-color);
+  }
+
+  /* --- Legal Card (Contenido) --- */
+  .legal-card {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+  }
+
+  .legal-section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 2rem; /* Para que el sticky header no tape el título */
+  }
+
+  .legal-section h2 {
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .legal-section p, .legal-section li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+  }
+
+  .legal-section ul {
+    list-style-position: inside;
+    margin-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .legal-section li {
+    margin-bottom: 0.5rem;
+  }
+
+  .legal-section strong {
+    color: var(--color-text-primary);
+  }
+
+  .redirect-contact{
+    color: var(--secondary-color);
+    text-decoration: underline;
+  }
+
+  .highlight-text {
+    background-color: var(--quaternary-color);
+    color: var(--tertiary-color);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-color);
+    font-weight: 500;
+  }
+
+  .contact-box {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    color: var(--color-text-primary);
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+     .sidebar-sticky{
+        position: static;
+        top: auto;
+    }
+    
+    .hero-content h1 { font-size: 2.2rem; }
+    
+    .legal-card { padding: 1.5rem; }
+  }
+</style>

@@ -386,9 +386,38 @@ import Layout from "../layouts/Layout.astro";
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* Responsive */
-    @media (max-width: 600px) {
+    @media (max-width: 900px) {
         .article-card { padding: 1.5rem; }
         .article-title { font-size: 1.8rem; }
         .sidebar { position: static; } /* Quitar sticky en móvil */
+        
+        /* .page-wrapper {
+            padding: 1rem 0;
+        } */
+
+        .article-card{
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            width: 100%;
+            background-color: transparent;
+        }
+        .meta-top{
+            justify-content: space-between;
+            gap: 0;
+        }
+        .category-pill{
+            display: none;
+        }
+
+        .btn-home{
+            justify-content: flex-start;
+            gap: 0;
+        }
+
+        .body-text{
+            font-size: 0.95rem;
+        }
     }
 </style>
