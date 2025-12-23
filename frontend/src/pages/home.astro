@@ -71,9 +71,9 @@ const ITEMS_PER_PAGE = 6;
 ---
 
 <Layout title="Digital Garden - Home">
-  <main class="home-container">
+  <section class="home-container">
     
-    <header class="hero-section">
+    <aside class="hero-section">
       <div class="hero-content">
         <h1>Digital <span class="highlight">Garden</span></h1>
         <p class="subtitle">Tu espacio para cultivar conocimientos.</p>
@@ -85,7 +85,7 @@ const ITEMS_PER_PAGE = 6;
           <Image src={BannerHome} alt="" class="banner-home"/>
         </div>
       </div>
-    </header>
+    </aside>
 
     <div class="content-grid">
       
@@ -213,7 +213,7 @@ const ITEMS_PER_PAGE = 6;
       </div>
     </section>
 
-  </main>
+  </section>
 </Layout>
 
 <script>
@@ -848,8 +848,14 @@ const ITEMS_PER_PAGE = 6;
 
   /* --- Responsive --- */
   @media (max-width: 900px) {
+
+    .page-content{
+      grid-template-columns: 1fr;
+      width: 100%;
+    }
     .content-grid {
       grid-template-columns: 1fr; /* Colapsar sidebar */
+      
     }
     .sidebar-sticky {
       position: static;
@@ -860,7 +866,17 @@ const ITEMS_PER_PAGE = 6;
       overflow-x: auto;
       padding-bottom: 0.5rem;
     }
-    .filter-btn { white-space: nowrap; width: auto;}
+    .filter-btn { 
+      /* white-space: nowrap;  */
+      width: auto;}
+
+    .notes-grid{
+      grid-template-columns: 1fr;
+    }
+
+    .category-list{
+      flex-direction: column;
+    }
   }
 
   @media (max-width: 768px) {

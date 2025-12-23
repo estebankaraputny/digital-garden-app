@@ -216,7 +216,6 @@
 .category-pill { 
   background-color:var(--green-light); 
   color: var(--tertiary-color);
-  text-align: centers;
 }
 
 .issue-pill { background: transparent; color: var(--accent-color); padding: 6px 0; font-weight: normal; }
@@ -224,7 +223,9 @@
 
 /* --- MODAL DE EDICIÓN (Moderno) --- */
 .modal-edit {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    position: fixed; top: 0; left: 0; 
+    width: 100%; 
+    height: 100%;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     z-index: 1000;
@@ -234,16 +235,14 @@
 }
 
 .form-edit {
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;;
     background: white;
-    min-width: 90%; 
-    /* max-width: 500px; */
+    min-width: 60%;
     gap: 1rem;
     border-radius: 12px;
     box-shadow: var(--shadow-md);
-    display: flex; flex-direction: column;
     overflow: hidden;
     animation: fadeIn 0.2s ease-out;
     padding: 1rem;
@@ -259,24 +258,22 @@
     min-width: 100%;
     display: flex; 
     flex-direction: column; 
-    gap: 6px;
     font-size: 0.9rem; 
     font-weight: 600; 
     color: #333;
 }
 
-.form-edit input, .form-edit textarea, .form-edit select {
+.form-edit label input, .form-edit label textarea, .form-edit label select {
+    font-family: 'Figtree', sans-serif;
     padding:  0.5rem;
     border: 1px solid #ddd;
     border-radius: .3rem;
-    margin-top: 0.25rem;
     font-size: 1rem;
-    font-family: inherit;
 }
-.form-edit input:focus-visible, .form-edit textarea:focus-visible {
+.form-edit label input:focus-visible, .form-edit label textarea:focus-visible {
     outline: 1px solid #000;
 }
-.form-edit textarea { 
+.form-edit  textarea { 
     padding: .5rem;
     border-radius: 1rem;
     border: 1px solid #ccc;
@@ -338,4 +335,24 @@ textarea{
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 980px) {
+    .category-pill{
+        margin-bottom: .5rem;
+    }
+
+
+    .form-edit label{
+        font-size: .8rem;
+    }
+
+    .form-edit label input, .form-edit label textarea, .form-edit label select{
+        font-size: .8rem;
+    }
+
+
+    .category-edit{
+     width: 100%;   
+    }
 }

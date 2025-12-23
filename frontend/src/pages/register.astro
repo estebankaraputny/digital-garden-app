@@ -487,20 +487,55 @@ import BannerLogin from "../assets/image/bannerlogin.png"
 
     /* Mobile Responsive */
     @media (max-width: 900px) {
-        .visual-side {
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-        .benefits-box {
-            display: none; /* Ocultamos beneficios en móvil para ahorrar espacio */
-        }
-        .form-wrapper {
-            padding: 2rem;
-            box-shadow: none; /* Quitamos sombra en móvil para que se vea plano */
-            background-color: transparent;
-        }
-        .input-wrapper input {
-            font-size: 16px; /* Evita zoom en iOS */
-        }
+
+    .container{
+        padding: 1rem;
     }
+
+    .register-container{
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
+    
+    .banner-register{
+        width: 100%;
+    }
+    .visual-side {
+        padding: 0;
+        text-align: center;
+        margin-bottom: 0;
+    }
+    .benefits-box {
+        display: none; /* Ocultamos beneficios en móvil para ahorrar espacio */
+    }
+    .form-wrapper {
+        width: 100%;
+        padding: 1.5rem;
+        box-shadow: none; /* Quitamos sombra en móvil para que se vea plano */
+        background-color: transparent;
+    }
+    .input-wrapper input {
+        font-size: 16px; /* Evita zoom en iOS */
+    }
+}
+  
+  @media (max-width: 480px) {
+    section {
+        padding: 2rem 1.5rem;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+    
+    .login-container {
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+
+    input {
+        font-size: 16px;
+    }
+  }
+
+    
 </style>

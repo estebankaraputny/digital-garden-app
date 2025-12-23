@@ -147,7 +147,7 @@
     font-size: 0.9rem;
   }
 
-  input, select {
+  input, select, textarea {
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -155,16 +155,17 @@
     border-radius: .3rem;
   }
 
-    input:focus-visible, select:focus-visible, textarea:focus-visible {
+  select {
+    width: 100%;
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
         outline: 1px solid #000;
   }
 
   textarea{
-    padding: .5rem;
-    border-radius: .3rem;
-    border: 1px solid #ccc;
     resize: none;
     height: 7rem;
+    font-family: 'Figtree', sans-serif;
   }
 
   button {
@@ -197,4 +198,5 @@
   .hidden {
     display: none;
   }
+
 </style>
