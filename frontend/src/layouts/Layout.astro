@@ -338,6 +338,8 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
         border-radius: 2px;
     }
 
+    
+
     /* Animación Hamburguesa */
     .hamburger.active .bar:nth-child(2) { opacity: 0; }
     .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
@@ -483,6 +485,8 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
 
         .content-nav ul {
             flex-direction: column;
+            align-items: flex-start;
+            margin-left: 2rem;
             gap: 2.5rem;
         }
 
@@ -490,8 +494,16 @@ import logoImageByN from '../assets/image/logo-full-byn.png';
             font-size: 1.5rem; /* Texto más grande en móvil */
         }
 
-        .mobile-only {
+        /* .mobile-only {
             margin-top: 1rem;
+        } */
+
+        .btn-login, .btn-register {
+            border: none;
+            color: var(--secondary-color) !important;
+            font-size: 1.5rem;
+            padding: 0;
+            background-color: transparent;
         }
 
         /* Footer Móvil */
