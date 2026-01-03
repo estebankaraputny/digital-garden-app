@@ -23,7 +23,7 @@ import { NoteModule } from './note/note.module';
       useFactory: async (configService: ConfigService) => ({
         global: true,
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60m' },
+        signOptions: { expiresIn: '1d' },
       }),
     }),
     UserModule,

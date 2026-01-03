@@ -106,16 +106,46 @@ private async checkPlanLimits(userId: string) {
     });
   }
 
-  async findAllLogin(userId: string) {
-    return await this.prisma.note.findMany({
-      where: {
-        authorId: userId,
-      },
-      include: {
-        author: true
-      }
-    });
-  }
+  // backend/src/notes/notes.service.ts
+
+  // async findAllLogin(userId: string) {
+  //   return await this.prisma.note.findMany({
+  //     where: {
+  //       authorId: userId,
+  //     },
+  //     include: {
+  //       author: true
+  //     }
+  //   });
+  // }
+
+  // En NoteService
+
+async findAllLogin(userId: string, page: number = 1, limit: number = 10) {
+  const skip = (page - 1) * limit;
+
+  // Ejecutamos dos consultas: una para los datos y otra para el total
+  const [notes, total] = await Promise.all([
+    this.prisma.note.findMany({
+      where: { authorId: userId },
+      skip: skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' }, // IMPORTANTE: Ordenar en backend para que la paginación sea coherente
+      include: { author: true },
+    }),
+    this.prisma.note.count({ where: { authorId: userId } }),
+  ]);
+
+  return {
+    data: notes,
+    meta: {
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    },
+  };
+}
+
 
 
   async findAllCategory(category: string) {

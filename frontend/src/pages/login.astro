@@ -23,7 +23,7 @@ import BannerLogin from "../assets/image/bannerlogin.png"
             </label>
             <div class="input-wrapper">
               <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              <input type="email" name="email" placeholder="miguel@digitalgarden.com" required>            
+              <input type="email" id="email" name="email" placeholder="miguel@digitalgarden.com" required>            
             </div>
           </div>
           
@@ -102,9 +102,9 @@ import BannerLogin from "../assets/image/bannerlogin.png"
       console.log('Respuesta:', response);
 
       if (response.access_token) {
-        // Guardar Token y si es admin
+        // Guardar Token y si es admin o user
         localStorage.setItem('token', response.access_token);
-        localStorage.setItem('isUser', 'true');
+        localStorage.setItem('isAdmin', 'true'); 
         
         // Redireccionar
         window.location.href = '/dashboard';
@@ -133,25 +133,11 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     padding: 0;
     box-sizing: border-box;
   }
-  /* .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* min-height: 100dvh;  */
-    /* font-family: 'Figtree', system-ui, sans-serif; */
-    /* padding: 1rem; */
-    /* background-color: var(--primary-color);  */
-  /* }  */
-  
-
   .container{
     display: grid;
     place-items: center;
     min-height: 100dvh;
-    /* padding: 2rem; */
   }
-
-
   .login-container{
     display: grid;
     grid-template-columns: 1fr 1fr;

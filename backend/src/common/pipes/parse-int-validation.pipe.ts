@@ -7,7 +7,6 @@ import {
 
 @Injectable()
 export class ParseIntValidationPipe implements PipeTransform<string, number> {
-  // value: los datos del request (por ejemplo, el body de un POST).
   transform(value: string, _metadata: ArgumentMetadata): number {
     const val = parseInt(value, 10);
 

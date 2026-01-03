@@ -44,7 +44,3 @@ export class ValidationPipe implements PipeTransform<any> {
     return !types.includes(metatype);
   }
 }
-
-// Transforma datos de entrada (por ejemplo, convertir tipos).
-// Valida esos datos y lanzar errores si no cumplen condiciones.
-

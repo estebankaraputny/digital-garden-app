@@ -67,7 +67,8 @@ const timeAgo = (dateString: string) => {
   return rtf.format(-diffInYears, 'year');
 };
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 8;
+
 ---
 
 <Layout title="Digital Garden - Home">
@@ -159,10 +160,10 @@ const ITEMS_PER_PAGE = 6;
             <p>No encontramos notas que coincidan con tu búsqueda.</p>
             <button id="clear-search-btn" class="btn-outline-small">Limpiar búsqueda</button>
         </div>
-        <div class="pagination-wrapper">
-          <button id="load-more-btn" class={notes.length <= ITEMS_PER_PAGE ? 'hidden' : ''}>
-            Cargar más notas
-          </button>
+        <div id="pagination-controls" class="pagination-wrapper {notes.length <= ITEMS_PER_PAGE ? 'hidden' : ''}">
+          <button id="prev-page-btn" class="btn-pagination" disabled>⬅ Anterior</button>
+          <span id="page-info">Página 1 de 1</span>
+          <button id="next-page-btn" class="btn-pagination">Siguiente ➡</button>
         </div>
       </section>
     </div>
@@ -219,11 +220,10 @@ const ITEMS_PER_PAGE = 6;
 <script>
   
   document.addEventListener('DOMContentLoaded', () => {
-    const loadMoreBtn = document.getElementById('load-more-btn');
     const cardView = document.querySelectorAll('.note-card');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const allCards = document.querySelectorAll('.note-card');
-    const ITEMS_PER_PAGE = 6;
+    const ITEMS_PER_PAGE = 8;
     const searchInput = document.getElementById('search-input') as HTMLInputElement;
     let debounceTimer: ReturnType<typeof setTimeout>;
     const spinner = document.getElementById('search-spinner');
@@ -242,39 +242,59 @@ const ITEMS_PER_PAGE = 6;
         });
     });
 
-    // 2. Cargar más
+    // 2. Paginación (reemplaza "Cargar más")
 
     let currentCategory = 'all';
+    let currentPage = 1;
+    let totalPages = Math.max(1, Math.ceil(allCards.length / ITEMS_PER_PAGE));
 
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', () => {
-            const hiddenNotes = document.querySelectorAll('.note-card.hidden');
+    const paginationControls = document.getElementById('pagination-controls') as HTMLElement | null;
+    const prevBtn = document.getElementById('prev-page-btn') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('next-page-btn') as HTMLButtonElement | null;
+    const pageInfo = document.getElementById('page-info') as HTMLSpanElement | null;
 
-            const targetHiddenNotes = Array.from(hiddenNotes).filter(card => {
-            const cardElement = card as HTMLElement;
-            return currentCategory === 'all' || cardElement.dataset.category === currentCategory;
-             });
-
-            if (targetHiddenNotes.length === 0) {
-                loadMoreBtn.style.display = 'none';
-                return;
-            }
-            for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-                if (targetHiddenNotes[i]) targetHiddenNotes[i].classList.remove('hidden');
-            }
-            // if (document.querySelectorAll('.note-card.hidden').length === 0) {
-            //     loadMoreBtn.style.display = 'none';
-            // }
-            const remainingHidden = Array.from(document.querySelectorAll('.note-card.hidden')).filter(card => {
-            const cardElement = card as HTMLElement;
-            return currentCategory === 'all' || cardElement.dataset.category === currentCategory;
-            });
-
-            if (remainingHidden.length === 0) {
-                loadMoreBtn.style.display = 'none';
-            }
+    const computeFilteredCards = (selectedCat = currentCategory) => {
+        return Array.from(allCards).filter(c => {
+            const cardElement = c as HTMLElement;
+            return selectedCat === 'all' || cardElement.dataset.category === selectedCat;
         });
-    }
+    };
+
+    const updatePaginationButtons = () => {
+        const filtered = computeFilteredCards();
+        totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+        if (paginationControls) {
+            if (filtered.length <= ITEMS_PER_PAGE) paginationControls.classList.add('hidden');
+            else paginationControls.classList.remove('hidden');
+        }
+        if (pageInfo) pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+        if (prevBtn) prevBtn.disabled = currentPage <= 1;
+        if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    };
+
+    const renderPage = (page = 1) => {
+        currentPage = Math.min(Math.max(1, page), totalPages);
+        const filtered = computeFilteredCards();
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+
+        // Ocultar todo y mostrar solo el slice correspondiente
+        Array.from(allCards).forEach((c) => (c as HTMLElement).classList.add('hidden'));
+
+        filtered.forEach((card, idx) => {
+            const el = card as HTMLElement;
+            if (idx >= start && idx < end) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
+
+        updatePaginationButtons();
+    };
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPage > 1) renderPage(currentPage - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { if (currentPage < totalPages) renderPage(currentPage + 1); });
+
+    // Inicializar visual
+    renderPage(1);
 
     //Filtros
     filterButtons.forEach(btn => {
@@ -286,40 +306,8 @@ const ITEMS_PER_PAGE = 6;
 
             const selectedCat = clickedBtn.id; 
             currentCategory = selectedCat;
-
-            let visibleCount = 0;
-
-            allCards.forEach(card => {
-                const cardElement = card as HTMLElement;
-                const cardCat = cardElement.dataset.category; 
-                
-                const isMatch = selectedCat === 'all' || cardCat === selectedCat;
-
-                if (isMatch) {
-                    visibleCount++;
-                    if (visibleCount <= ITEMS_PER_PAGE) {
-                        cardElement.classList.remove('hidden');
-                    } else {
-                        cardElement.classList.add('hidden');
-                    }
-                } else {
-                    cardElement.classList.add('hidden');
-                }
-            });
-
-            
-            if (loadMoreBtn) {
-                
-                const totalInCat = Array.from(allCards).filter(c => 
-                    selectedCat === 'all' || (c as HTMLElement).dataset.category === selectedCat
-                ).length;
-
-                if (totalInCat > ITEMS_PER_PAGE) {
-                    loadMoreBtn.style.display = 'block';
-                } else {
-                    loadMoreBtn.style.display = 'none';
-                }
-            }
+            currentPage = 1;
+            renderPage(1);
         });
     });
 
@@ -328,20 +316,14 @@ const ITEMS_PER_PAGE = 6;
         searchInput.value = '';
         noResultsMsg?.classList.add('hidden');
         spinner?.classList.add('hidden');
-        
+
         // Restaurar filtros visuales
         filterButtons.forEach(b => b.classList.remove('active'));
         document.getElementById('all')?.classList.add('active');
 
-        // Restaurar paginación inicial
-        allCards.forEach((card, index) => {
-            if (index < ITEMS_PER_PAGE) card.classList.remove('hidden');
-            else card.classList.add('hidden');
-        });
-
-        if (loadMoreBtn && allCards.length > ITEMS_PER_PAGE) {
-            loadMoreBtn.style.display = 'block';
-        }
+        currentCategory = 'all';
+        currentPage = 1;
+        renderPage(1);
     };
 
     // Evento del botón "Limpiar búsqueda" del mensaje de error
@@ -358,7 +340,7 @@ const ITEMS_PER_PAGE = 6;
             if (searchTerm !== '') {
                 spinner?.classList.remove('hidden');
                 noResultsMsg?.classList.add('hidden');
-                if (loadMoreBtn) loadMoreBtn.style.display = 'none'; // Ocultar paginación mientras busca
+                if (paginationControls) paginationControls.classList.add('hidden'); // Ocultar paginación mientras busca
             } else {
                 resetView();
                 return;
@@ -749,6 +731,21 @@ const ITEMS_PER_PAGE = 6;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+  }
+  .btn-pagination {
+    background-color: var(--white-color);
+    color: var(--color-text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-pagination:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 
   #load-more-btn:hover {

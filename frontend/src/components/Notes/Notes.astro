@@ -8,6 +8,12 @@ import "../Notes/notes.css"
       <p class="loading-text">Cargando tus notas...</p>
     </div>
 
+    <div id="pagination-controls" class="pagination-container hidden">
+      <button id="prev-page-btn" class="btn-pagination" disabled>⬅ Anterior</button>
+        <span id="page-info">Página 1</span>
+      <button id="next-page-btn" class="btn-pagination">Siguiente ➡</button>
+    </div>
+
     <p id="no-notes-msg" class="hidden">No hay notas para mostrar.</p>
 
     <article class="modal-edit hidden" id="modal-edit">
@@ -102,12 +108,23 @@ import "../Notes/notes.css"
   const btnCancel = document.getElementById("cancel-edit-btn") as HTMLButtonElement;
   const errorMsg = document.getElementById("error-form-message-edit") as HTMLParagraphElement;
 
+  // --- PAGINACIÓN ---
+  const paginationContainer = document.getElementById("pagination-controls") as HTMLDivElement;
+  const prevBtn = document.getElementById("prev-page-btn") as HTMLButtonElement;
+  const nextBtn = document.getElementById("next-page-btn") as HTMLButtonElement;
+  const pageInfo = document.getElementById("page-info") as HTMLSpanElement;
+
+  const ITEMS_PER_PAGE = 6; // ajustar si se quiere otro tamaño
+  let currentPage = 1;
+  let totalPages = 1;
+  let notesData: any[] = [];
+
 //ORDENAR
 const sortNotesByDate = (notes : any[]) => {
     // Creamos una copia con slice() para no mutar el original inesperadamente
     return notes.slice().sort((a, b) => {
       // Orden Descendente: El más nuevo (fecha mayor) primero
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   };
 
@@ -128,7 +145,7 @@ const sortNotesByDate = (notes : any[]) => {
                     <div class="post-meta">
                         <time datetime="${note.createdAt}">${timeAgo(note.createdAt)}</time>
                         <span>•</span>
-                        <span class="status-text}">
+                        <span class="status-badge ${note.status === 'Terminado' ? 'status-done' : note.status === 'En proceso' ? 'status-process' : 'status-pending'}">
                            ${note.status || 'Borrador'}
                         </span>
                     </div>
@@ -168,6 +185,52 @@ const sortNotesByDate = (notes : any[]) => {
     `;
   };
 
+  const updatePaginationControls = () => {
+    totalPages = Math.max(1, Math.ceil(notesData.length / ITEMS_PER_PAGE));
+    if (!paginationContainer || !pageInfo || !prevBtn || !nextBtn) return;
+
+    if (notesData.length <= ITEMS_PER_PAGE) {
+      paginationContainer.classList.add("hidden");
+    } else {
+      paginationContainer.classList.remove("hidden");
+    }
+
+    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+  };
+
+  const renderPage = (page = 1) => {
+    if (!container || !noNotesMsg) return;
+
+    if (notesData.length === 0) {
+      container.innerHTML = "";
+      noNotesMsg.classList.remove("hidden");
+      if (paginationContainer) paginationContainer.classList.add("hidden");
+      return;
+    }
+
+    noNotesMsg.classList.add("hidden");
+    totalPages = Math.ceil(notesData.length / ITEMS_PER_PAGE);
+    currentPage = Math.min(Math.max(1, page), totalPages);
+
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    const pageNotes = notesData.slice(start, end);
+
+    container.innerHTML = pageNotes.map((note) => createNoteCard(note)).join("");
+
+    updatePaginationControls();
+
+    // Re-activar handlers para los elementos recién renderizados
+    activateEditButton();
+    activateDeleteButtons();
+    activateMenus();
+  };
+
+  if (prevBtn) prevBtn.addEventListener("click", () => { if (currentPage > 1) renderPage(currentPage - 1); });
+  if (nextBtn) nextBtn.addEventListener("click", () => { if (currentPage < totalPages) renderPage(currentPage + 1); });
+
   const loadNotes = async () => {
     if (!myToken) {
       window.location.href = "/login";
@@ -184,20 +247,29 @@ const sortNotesByDate = (notes : any[]) => {
         return;
       }
 
-      // APLICAR ORDENAMIENTO ANTES DE PINTAR
       const sortedNotes = sortNotesByDate(userNotes);
-      // Inyectar HTML
-      container.innerHTML = sortedNotes.map((note) => createNoteCard(note)).join("");
 
-      // ACTIVAR BOTONES DE EDITAR Y BORRAR---
-      activateEditButton();
-      activateDeleteButtons();
-      activateMenus();
+      notesData = sortedNotes;
+      totalPages = Math.ceil(notesData.length / ITEMS_PER_PAGE);
+      currentPage = 1;
+      renderPage(1);
 
 
-    } catch (error) {
-      console.error("Error:", error);
-      container!.innerHTML = `<p class="error-msg">Error al cargar las notas.</p>`;
+    } catch (error: any) {
+      console.error("Error:", error);if (error.message.includes("401") || error.message.toLowerCase().includes("unauthorized")) {
+         alert("La sesión expiró. Por favor, ingresa nuevamente.");
+         localStorage.removeItem("token");
+         window.location.href = "/login";
+         return;
+      }
+      container!.innerHTML = `
+        <div class="flex flex-col items-center justify-center p-4 text-red-500">
+           <p>⚠️ Error al cargar las notas.</p>
+           <small class="text-gray-500 text-xs mt-1">${error.message}</small>
+        </div>
+      `;
+    } finally {
+      if (paginationContainer) paginationContainer.classList.remove("hidden");
     }
   };
 
@@ -216,24 +288,26 @@ const sortNotesByDate = (notes : any[]) => {
       const formData = new FormData(formEdit);
       const data = Object.fromEntries(formData);
       const idNote = currentEditingId;
-
-      // console.log("edicion:", data);
-
       
-      
-
       try{
-        await fetchDataPatch("notes", data, myToken, idNote);
-        // console.log("Respuesta:", response);
-        updateCardDOM(currentEditingId, data);
+        await fetchDataPatch("notes", data, myToken!, idNote);
+
+        const idx = notesData.findIndex(n => n.id === currentEditingId);
+        if (idx !== -1) {
+          notesData[idx] = { ...notesData[idx], ...data };
+          notesData = sortNotesByDate(notesData);
+          const newIndex = notesData.findIndex(n => n.id === currentEditingId);
+          currentPage = Math.floor(newIndex / ITEMS_PER_PAGE) + 1;
+        }
+
+        // Re-render página actual
+        renderPage(currentPage);
 
         modalEdit.classList.add("hidden");
         alert("Nota actualizada con éxito");
-        // window.location.reload();
       } catch (error: any){
         errorMsg.textContent = error.message;
         errorMsg.classList.remove("hidden");
-        throw new Error(error.message);
       } finally{
         btnEdit.disabled = false;
         btnEdit.textContent = "Editar nota";
@@ -246,17 +320,23 @@ const sortNotesByDate = (notes : any[]) => {
   const openEditModal = (id: string, cardEdit: HTMLElement) =>{
     currentEditingId = id;
 
-    const title = cardEdit.querySelector(".note-title")?.textContent;
-    const content = cardEdit.querySelector(".note-content")?.textContent;
-    const category = cardEdit.querySelector(".category-pill")?.textContent;
-    const issue = cardEdit.querySelector(".issue-pill")?.textContent;
-    const status = cardEdit.querySelector(".status-text")?.textContent;
+    const title = cardEdit.querySelector(".note-title")?.textContent || "";
+    const content = cardEdit.querySelector(".note-content")?.textContent || "";
+    const category = cardEdit.querySelector(".category-pill")?.textContent || "";
+    const issue = cardEdit.querySelector(".issue-pill")?.textContent || "";
+    const status = cardEdit.querySelector(".status-badge")?.textContent || "";
 
-    formEdit.title.value = title;
-    formEdit.content.value = content;
-    formEdit.category.value = category;
-    formEdit.issue.value = issue;
-    formEdit.status.value = status;
+    const titleInput = formEdit.elements.namedItem('title') as HTMLInputElement | null;
+    const contentInput = formEdit.elements.namedItem('content') as HTMLTextAreaElement | null;
+    const categorySelect = formEdit.elements.namedItem('category') as HTMLSelectElement | null;
+    const issueInput = formEdit.elements.namedItem('issue') as HTMLInputElement | null;
+    const statusSelect = formEdit.elements.namedItem('status') as HTMLSelectElement | null;
+
+    if (titleInput) titleInput.value = title.replace(/^\s+|\s+$/g, '').replace(/^#/, '');
+    if (contentInput) contentInput.value = content;
+    if (categorySelect) categorySelect.value = category;
+    if (issueInput) issueInput.value = issue.replace(/^#/, '');
+    if (statusSelect) statusSelect.value = status;
 
   
     modalEdit.classList.remove("hidden");
@@ -300,17 +380,18 @@ const sortNotesByDate = (notes : any[]) => {
         const id = target.dataset.id;
         try {
           await fetchDataDelete(`notes/${id}`, myToken!);
-          // Recargar página
-          // window.location.reload();
-          
-          //Borrar el elemento del DOM sin recargar
-          const card = document.getElementById(id!);
-          card?.remove();
-          
-          // Si no quedan notas, mostrar mensaje
-          if (document.querySelectorAll(".note-card").length === 0) {
-             noNotesMsg!.classList.remove("hidden");
-          }
+
+        // Actualizamos los datos locales y re-renderizamos
+        notesData = notesData.filter(n => n.id !== id);
+        totalPages = Math.ceil(notesData.length / ITEMS_PER_PAGE);
+
+        if (notesData.length === 0) {
+          renderPage(1);
+          noNotesMsg!.classList.remove("hidden");
+        } else {
+          if (currentPage > totalPages) currentPage = totalPages;
+          renderPage(currentPage);
+        }
 
         } catch (error) {
           alert("Error al eliminar");
@@ -361,11 +442,13 @@ const sortNotesByDate = (notes : any[]) => {
 
 // Click fuera cierra menús
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.card-actions-wrapper')) {
+    const target = e.target as Element | null;
+
+    if (!target || !target.closest('.card-actions-wrapper')) {
         document.querySelectorAll('.menu-dropdown').forEach(menu => menu.classList.add('hidden'));
     }
     // Click fuera cierra modal (Opcional)
-    if (e.target === modalEdit) {
+    if (target === modalEdit) {
         modalEdit.classList.add('hidden');
     }
   });
@@ -374,30 +457,21 @@ const updateCardDOM = (id: string, newData: any) => {
     const card = document.getElementById(id);
     if (!card) return;
 
-    // 1. Actualizar Título (Verificamos que el elemento exista con ?)
-    const titleEl = card.querySelector('.note-title');
+   const titleEl = card.querySelector('.note-title');
     if (titleEl && newData.title) titleEl.textContent = newData.title;
 
-    // 2. Actualizar Contenido
     const contentEl = card.querySelector('.note-content');
     if (contentEl && newData.content) contentEl.textContent = newData.content;
 
-    // 3. Actualizar Categoría
-    // ¡OJO! Aquí estaba el error probable: cambiamos la clase a .category-pill
     const categoryEl = card.querySelector('.category-pill'); 
     if (categoryEl && newData.category) categoryEl.textContent = newData.category;
 
-    // 4. Actualizar Tema (Issue)
-    // El issue es delicado porque a veces no existe en el HTML original
     const issueEl = card.querySelector('.issue-pill');
     
     if (newData.issue) {
         if (issueEl) {
-            // Si ya existe el badge, solo cambiamos el texto
             issueEl.textContent = "#" + newData.issue.replace('#', '');
         } else {
-            // Si NO existe (porque la nota no tenía tema), lo creamos dinámicamente
-            // Buscamos el footer para inyectarlo ahí
             const footer = card.querySelector('.note-footer');
             if(footer) {
                 const newSpan = document.createElement('span');
@@ -408,11 +482,9 @@ const updateCardDOM = (id: string, newData: any) => {
         }
     }
 
-    // 5. Actualizar Estado
-    const statusEl = card.querySelector('.status-badge');
+   const statusEl = card.querySelector('.status-badge');
     if (statusEl && newData.status) {
         statusEl.textContent = newData.status;
-        // Actualizamos también el color (clases)
         statusEl.className = 'status-badge'; // Reset
         if(newData.status === 'Terminado') statusEl.classList.add('status-done');
         else if(newData.status === 'En proceso') statusEl.classList.add('status-process');
@@ -421,7 +493,6 @@ const updateCardDOM = (id: string, newData: any) => {
 };
 
 
-  //Hora y fecha
   const timeAgo = (dateString: string) => {
   if (!dateString) return '';
   
@@ -459,6 +530,10 @@ const updateCardDOM = (id: string, newData: any) => {
   return rtf.format(-diffInYears, 'year');
   };
 
+
+
+
+  
   // Ejecutar al cargar la página
   loadNotes();
 </script>

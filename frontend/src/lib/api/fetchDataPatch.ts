@@ -16,18 +16,16 @@ const fetchDataPatch = async (endpoint: string, data: any, token: string, idNote
         });
 
         if(!res.ok){
-            const errorData = await res.json().catch(() => ({}));
+            const errorData = await res.json();
             
-            let errorMessage = "Ocurrió un error desconocido";
+            Array.isArray(errorData.message) 
+            ? errorData.message.join(', ') 
+            : errorData.message;
 
-            if (errorData.message){
-                errorMessage = Array.isArray(errorData.message) 
-                    ? errorData.message.join(', ') 
-                    : errorData.message;
+            const finalMessage = errorData.message || "Error desconocido";
+
+                throw new Error(finalMessage);
             }
-
-            throw new Error(errorData);
-        }
 
         return await res.json();
 

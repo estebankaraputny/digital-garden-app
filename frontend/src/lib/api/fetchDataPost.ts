@@ -32,6 +32,8 @@ const fetchDataPost = async (endpoint: string, data: any) =>{
             throw new Error(errorMessage);
         }
 
+        
+
         // const dataPost = await post.json();
         return await post.json();
 

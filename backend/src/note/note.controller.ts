@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException, UsePipes, ValidationPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException, UsePipes, ValidationPipe, HttpCode, HttpStatus, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { NoteService } from './note.service'; 
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
@@ -30,12 +30,24 @@ export class NoteController {
     return await this.noteService.create(createNoteDto, authorId);
   }
 
+  // @Get('user-notes')
+  // @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
+  // async findAllLogin(@Req() req: any) {
+  //   const userId = req.user.sub;
+  //   return await this.noteService.findAllLogin(userId);
+  // }
+
   @Get('user-notes')
   @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
-  async findAllLogin(@Req() req: any) {
+  async findAllLogin(
+    @Req() req: any,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
     const userId = req.user.sub;
-    return await this.noteService.findAllLogin(userId);
+    // Pasamos la página al servicio (el límite 10 lo dejamos fijo o también podrías pasarlo)
+    return await this.noteService.findAllLogin(userId, page, 10);
   }
+
 
   @Get('all-notes')
   @Public()
@@ -48,6 +60,8 @@ export class NoteController {
   async findOne(@Param('id') id: string) {
     return await this.noteService.findOne(id);
   }
+
+ 
 
   @Patch(':id')
   @UsePipes(new ValidationPipe())
