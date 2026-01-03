@@ -164,12 +164,17 @@ if (Astro.request.method === "POST") {
   </main>
 </Layout>
 
-<script>
-  const notification = {type: Astro.props.notification.type, message: Astro.props.notification.message};
-  if (notification.message) {
-    alert(`${notification.type === 'success' ? '✅' : '❌'} ${notification.message}`);
+<script define:vars={{ notification }}>
+  // Ahora 'notification' está disponible directamente aquí como variable
+  if (notification && notification.message) {
+    const icon = notification.type === 'success' ? '✅' : '❌';
+    alert(`${icon} ${notification.message}`);
+    
+    // Opcional: Limpiar la URL para que si recargan no se reenvíe el formulario
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
   }
-  
 </script>
 
 <!-- <script>
