@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException, ConflictException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { UserService } from "src/user/user.service"; 
+import { UserService } from "src/user/user.service";
+import { ProfileService } from "src/profile/profile.service";
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 
@@ -8,6 +9,7 @@ import { CreateUserDto } from "src/user/dto/create-user.dto";
 export class AuthService{
   constructor(
     private userService: UserService,
+    private profileService: ProfileService,
     private jwtService: JwtService,
   ) {}
 
@@ -35,6 +37,8 @@ export class AuthService{
       }
 
       const newUser = await this.userService.create(signUpDto);
+
+      await this.profileService.createInitialProfile(newUser.id, signUpDto.name);
       
       return newUser;
   }

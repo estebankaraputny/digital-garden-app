@@ -47,13 +47,17 @@ private async checkPlanLimits(userId: string) {
     // Obtenemos el usuario para saber su plan
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { plan: true } // Solo necesitamos el campo plan
+      select: {
+        profile: { 
+          select:
+          { plan: true }}
+        } // Solo necesitamos el campo plan
     });
 
     if (!user) throw new ForbiddenException('Usuario no encontrado');
 
     // ILIMITADO, pasamos directo
-    const userPlan = user.plan as Plan; 
+    const userPlan = user?.profile?.plan as Plan; 
     if (userPlan === Plan.UNLIMITED) return;
 
     //Calcular el primer día del mes actual
@@ -85,8 +89,12 @@ private async checkPlanLimits(userId: string) {
       include: {
         author: {
           select: {
-            name: true,
-            email: true,
+           email: true,
+            profile: {  
+              select: { 
+                name: true 
+              }
+            }
           }
         }
       }
@@ -99,7 +107,12 @@ private async checkPlanLimits(userId: string) {
       include: {
         author: {
           select: {
-            name: true,
+            email: true, // El email sí está en User
+            profile: {   // <--- Entramos a la relación Profile
+              select: { 
+                name: true // El nombre ahora vive aquí
+              }
+            }
           }
         }
       }

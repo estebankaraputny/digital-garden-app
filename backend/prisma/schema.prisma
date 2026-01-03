@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
   url      = env("DATABASE_URL")
 }
 
@@ -31,13 +30,23 @@ model User {
   id    String  @id @default(uuid())
   email String  @unique
   password String //Hash
-  name String
-  //PLAN DEL USUARIO
-  plan Plan @default(FREE)
+  
+  profile Profile?
 
   roles Json @default("[\"USER\"]")
-  
   notes Note[]
+}
+
+model Profile {
+  id String @id @default(uuid())
+  name String
+  description String?
+  avatar String?
+
+  plan Plan @default(FREE)
+  
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Note {

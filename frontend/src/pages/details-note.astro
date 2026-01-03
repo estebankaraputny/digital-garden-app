@@ -130,7 +130,7 @@ import Layout from "../layouts/Layout.astro";
             if(bodyEl) bodyEl.textContent = note.content;
             if(catEl) catEl.textContent = note.category || 'General';
             if(dateEl) dateEl.textContent = formatDate(note.createdAt);
-            if(authorEl) authorEl.textContent = note.author?.name || 'Esteban Karaputny'; // Default si no hay autor
+            if(authorEl) authorEl.textContent = note.author?.profile.name || 'Anonimo';
 
             // Mostrar contenido
             loadingDiv?.classList.add('hidden');
