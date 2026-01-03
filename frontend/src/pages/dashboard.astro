@@ -12,11 +12,11 @@ import ImgProfile from "../assets/image/perfil.png"
     <div class="dashboard-header">
       <div class="header-info">
         <div class="info-img">
-          <Image src={ImgProfile} alt="Foto de perfil del usuario" />
+          <Image src={ImgProfile} alt="Foto de perfil del usuario" id="img-profile" />
         </div>
         <div class="info-user">
-          <h1>Esteban Karaputny</h1>
-          <p>Me gusta aprender, siempre soy curioso con lo que veo o escucho y investigo más.</p>
+          <h1 class="name-user" id="name-user">Esteban Karaputny</h1>
+          <p class="description-user" id="description-user">Me gusta aprender, siempre soy curioso con lo que veo o escucho y investigo más.</p>
         </div>
       </div>
       <!-- <div>
@@ -30,21 +30,23 @@ import ImgProfile from "../assets/image/perfil.png"
         <div class="dashboard-profile-info">
           <div>
               <div><span>Notas</span></div>
-              <div><span class="items-profile">20</span></div>
+              <div><span class="items-profile" id="count-notes-user">20</span></div>
           </div>
           <div>
             <div><span>Ranking</span></div>
-            <div><span class="items-profile">1</span></div>
+            <div><span class="items-profile" id="ranking-user">1</span></div>
           </div>
           <div>
             <div><span>Plan</span></div>
-            <div><span class="items-profile">Gratuito</span></div>
+            <div><span class="items-profile" id="plan-user">Gratuito</span></div>
+          </div>
+          <!-- <div>
+            <div><span>Likes</span></div>
+            <div><span class="items-profile" id="likes-user">10</span></div>
           </div>
           <div>
-            <div><span>Likes</span></div>
-            <div><span class="items-profile">10</span></div>
-          </div>
-          <div></div>
+
+          </div> -->
         </div>
       </section>
       <section class="dashboard-card list-section">
@@ -69,11 +71,12 @@ import ImgProfile from "../assets/image/perfil.png"
 </Layout>
 
 <script>
+  
   const isAdmin = localStorage.getItem('isAdmin');
   if (isAdmin !== 'true') {
       window.location.href = '/'; 
   }
-
+  import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken";
   import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken";
 
   const form = document.getElementById("note-form") as HTMLFormElement;
@@ -122,6 +125,41 @@ import ImgProfile from "../assets/image/perfil.png"
         }
       });
   }
+
+  //datos usuario
+  const loadUserProfile = async () => {
+    try {
+      const myToken = localStorage.getItem("token");
+      if (!myToken) return;
+
+      // 1. Pedir datos al endpoint corregido
+      const user = await fetchDataGetWithToken("user/profile", myToken);
+      
+      console.log("Datos de usuario obtenidos:", user);
+      // 2. Verificar que llegó bien
+      if (user && user.email) {
+          // 3. Inyectar datos en el HTML
+          const nameEl = document.getElementById("name-user");
+          const descEl = document.getElementById("description-user");
+          const planEl = document.getElementById("plan-user");
+          const imgEl = document.getElementById("img-profile");
+
+          if (nameEl) nameEl.textContent = user.name;
+          // Si tuvieras descripción en la BD, la pones, si no, un texto default
+          if (descEl) descEl.textContent = user.description || "Usuario de Digital Garden"; 
+          if (planEl) planEl.textContent = user.plan || "Gratuito";
+          
+          // Opcional: Si tienes avatar
+          // if (imgEl && user.avatar) imgEl.src = user.avatar;
+      }
+
+    } catch (error) {
+      console.error("Error al obtener perfil:", error);
+    }
+  };
+
+  // Ejecutar al cargar
+  loadUserProfile();
 </script>
 
 <style>

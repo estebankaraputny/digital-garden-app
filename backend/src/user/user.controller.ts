@@ -1,12 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, HttpCode, HttpStatus, Query, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service'; 
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
+// import { AuthGuard } from '../common/guards/auth.guard';
+// import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/types/admin.types';
-import { ParseIntValidationPipe } from '../common/pipes/parse-int-validation.pipe';
+// import { ParseIntValidationPipe } from '../common/pipes/parse-int-validation.pipe';
 import { Public } from 'src/common/decorators/public.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -28,11 +29,19 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Get('profile')
+  @UseGuards(AuthGuard)
+  async getProfile(@Req() req: any){
+    const userId = req.user.sub || req.user.id;
+    return await this.userService.findOne(userId);
+  }
+
   @Get(':id')
   @Public()
   async findOne(@Param('id') id: string) {
     return await this.userService.findOne(id);
   }
+
 
   // @Patch(':id')
   // @Roles(Role.ADMIN)

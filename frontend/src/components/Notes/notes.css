@@ -221,6 +221,24 @@
 .issue-pill { background: transparent; color: var(--accent-color); padding: 6px 0; font-weight: normal; }
 .issue-pill:hover { text-decoration: underline; }
 
+/* Estilo del botón Leer más */
+.read-more-btn {
+  background: none;
+  border: none;
+  color: var(--secondary-color); /* Tu verde */
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0;
+  margin-top: 0.5rem;
+  text-decoration: underline;
+}
+
+.read-more-btn:hover {
+  color: var(--tertiary-color);
+}
+
+
 /* --- MODAL DE EDICIÓN (Moderno) --- */
 .modal-edit {
     position: fixed; top: 0; left: 0; 

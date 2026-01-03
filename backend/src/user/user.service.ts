@@ -67,6 +67,7 @@ export class UserService {
     return { ...user, roles: user.roles as Role[] };
   }
 
+  
   // async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
   //   try {
   //     await this.findOne(id);

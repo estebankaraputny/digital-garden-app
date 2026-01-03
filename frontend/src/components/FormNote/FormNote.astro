@@ -86,7 +86,13 @@
     //Capturamos los datos del formulario automáticamente
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    // console.log(data);
+
+    if (data.issue && typeof data.issue === 'string') {
+      data.title = data.title.charAt(0).toUpperCase() + data.title.slice(1).toLowerCase();
+      data.content = data.content.charAt(0).toUpperCase() + data.content.slice(1).toLowerCase();
+      data.issue = data.issue.charAt(0).toUpperCase() + data.issue.slice(1).toLowerCase();
+    }
+
 
     try {
       const myToken: any = localStorage.getItem("token");

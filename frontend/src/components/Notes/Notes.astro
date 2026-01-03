@@ -92,6 +92,353 @@ import "../Notes/notes.css"
   </section>
 
 <script>
+  import fetchDataGetWithToken from "../../lib/api/fetchDataGetWithToken";
+  import fetchDataPatch from "../../lib/api/fetchDataPatch";
+  import fetchDataDelete from "../../lib/api/fetchDataDelete";
+
+  // --- VARIABLES GLOBALES ---
+  let currentPage = 1;
+  let totalPages = 1;
+
+  // --- ELEMENTOS DEL DOM ---
+  const container = document.getElementById("notes-container");
+  const noNotesMsg = document.getElementById("no-notes-msg");
+  
+  // Paginación
+  const paginationContainer = document.getElementById("pagination-controls");
+  const prevBtn = document.getElementById("prev-page-btn");
+  const nextBtn = document.getElementById("next-page-btn");
+  const pageInfo = document.getElementById("page-info");
+
+  // Modales y Formularios
+  const myToken = localStorage.getItem("token");
+  const modalEdit = document.getElementById("modal-edit");
+  const formEdit = document.getElementById("note-form-edit");
+  const btnEdit = document.getElementById("submit-edit-btn");
+  const btnCancel = document.getElementById("cancel-edit-btn");
+  const errorMsg = document.getElementById("error-form-message-edit");
+
+  let currentEditingId = null;
+
+  // --- FUNCIÓN PARA CREAR HTML DE LA TARJETA (MODIFICADA) ---
+  const createNoteCard = (note) => {
+    const authorName = note.author?.name || "Usuario";
+    const initial = authorName.charAt(0).toUpperCase();
+    
+    // --- LÓGICA DE RECORTE DE TEXTO ---
+    const CHAR_LIMIT = 120; // Límite de caracteres antes de cortar
+    const isLong = note.content.length > CHAR_LIMIT;
+    
+    let contentHTML = '';
+
+    if (isLong) {
+      // Creamos dos versiones: corta y larga
+      const shortText = note.content.substring(0, CHAR_LIMIT) + "...";
+      contentHTML = `
+        <span class="short-text">${shortText}</span>
+        <span class="full-text hidden">${note.content}</span>
+        <button type="button" class="read-more-btn">Leer más</button>
+      `;
+    } else {
+      // Si es corto, mostramos todo normal
+      contentHTML = `<span>${note.content}</span>`;
+    }
+    // ----------------------------------
+  
+    return `
+      <article class="note-card" id="${note.id}">
+        <div class="card-header">
+            <div class="user-info">
+                <div class="avatar-circle">${initial}</div>
+                <div class="user-meta">
+                    <span class="user-name">${authorName}</span>
+                    <div class="post-meta">
+                        <time datetime="${note.createdAt}">${timeAgo(note.createdAt)}</time>
+                        <span>•</span>
+                        <span class="status-badge ${getStatusClass(note.status)}">
+                           ${note.status || 'Borrador'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-actions-wrapper">
+              <button class="menu-trigger-card">
+                <svg class="points-options" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M320 208C289.1 208 264 182.9 264 152C264 121.1 289.1 96 320 96C350.9 96 376 121.1 376 152C376 182.9 350.9 208 320 208zM320 432C350.9 432 376 457.1 376 488C376 518.9 350.9 544 320 544C289.1 544 264 518.9 264 488C264 457.1 289.1 432 320 432zM376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320z"/></svg>
+              </button>
+              <div class="menu-dropdown hidden">
+                <button class="edit-btn menu-item" data-id="${note.id}" type="button">Editar</button>
+                <button class="delete-btn menu-item" data-id="${note.id}" type="button">Eliminar</button>
+              </div>
+            </div>
+        </div>
+
+        <div class="note-body">
+          <h2 class="note-title">${note.title}</h2>
+          <div class="note-content-wrapper">
+            ${contentHTML}
+          </div>
+        </div>
+
+        <div class="note-footer">
+            <div class="badges-container">
+                <span class="pill-badge category-pill">${note.category || 'General'}</span>
+                ${note.issue ? `<span class="pill-badge issue-pill">#${note.issue}</span>` : ''}
+            </div>
+        </div>
+      </article>
+    `;
+  };
+
+  // --- ACTIVAR BOTONES LEER MÁS ---
+  const activateReadMoreButtons = () => {
+    document.querySelectorAll('.read-more-btn').forEach(btn => {
+      // Usamos onclick para evitar acumulación de listeners si se llama varias veces
+      btn.onclick = (e) => {
+        const button = e.target;
+        // Buscamos el contenedor padre
+        const wrapper = button.closest('.note-content-wrapper');
+        const shortText = wrapper.querySelector('.short-text');
+        const fullText = wrapper.querySelector('.full-text');
+
+        // Alternamos visibilidad
+        if (shortText.classList.contains('hidden')) {
+          // ESTADO: Estaba expandido, lo contraemos
+          shortText.classList.remove('hidden');
+          fullText.classList.add('hidden');
+          button.textContent = "Leer más";
+        } else {
+          // ESTADO: Estaba contraído, lo expandimos
+          shortText.classList.add('hidden');
+          fullText.classList.remove('hidden');
+          button.textContent = "Leer menos";
+        }
+      };
+    });
+  };
+
+  const getStatusClass = (status) => {
+      if (status === 'Terminado') return 'status-done';
+      if (status === 'En proceso') return 'status-process';
+      return 'status-pending';
+  };
+
+  // --- CARGA DE NOTAS (CORE) ---
+  const loadNotes = async (page = 1) => {
+    if (!myToken) {
+      window.location.href = "/login";
+      return;
+    }
+
+    if (container) container.style.opacity = "0.5";
+
+    try {
+      const response = await fetchDataGetWithToken(`notes/user-notes?page=${page}`, myToken);
+
+      const notesData = response.data || response; 
+      const metaData = response.meta || { page: 1, lastPage: 1 };
+
+      if (!notesData || notesData.length === 0) {
+        if (container) container.innerHTML = ""; 
+        if (noNotesMsg) noNotesMsg.classList.remove("hidden");
+        if (paginationContainer) paginationContainer.classList.add("hidden");
+        return;
+      }
+
+      if (noNotesMsg) noNotesMsg.classList.add("hidden");
+
+      if (container) {
+          container.innerHTML = notesData.map((note) => createNoteCard(note)).join("");
+      }
+
+      currentPage = metaData.page;
+      totalPages = metaData.lastPage;
+      updatePaginationUI();
+
+      // --- REACTIVAR TODOS LOS LISTENERS ---
+      activateEditButton();
+      activateDeleteButtons();
+      activateMenus();
+      activateReadMoreButtons(); // <--- IMPORTANTE: Activar los nuevos botones
+
+    } catch (error) {
+      console.error("Error cargando notas:", error);
+      if (container) container.innerHTML = `<p class="error-msg">Error al cargar las notas.</p>`;
+    } finally {
+       if (container) container.style.opacity = "1";
+    }
+  };
+
+  const updatePaginationUI = () => {
+    if (!paginationContainer || !pageInfo || !prevBtn || !nextBtn) return;
+
+    if (totalPages > 1) {
+      paginationContainer.classList.remove("hidden");
+    } else {
+      paginationContainer.classList.add("hidden");
+    }
+
+    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+  };
+
+  if (prevBtn) prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) loadNotes(currentPage - 1);
+  });
+
+  if (nextBtn) nextBtn.addEventListener("click", () => {
+      if (currentPage < totalPages) loadNotes(currentPage + 1);
+  });
+
+  // --- EDICIÓN Y ELIMINACIÓN ---
+  
+  if(formEdit) {
+    formEdit.addEventListener("submit", async(event) =>{
+      event.preventDefault();
+      if(!currentEditingId) return;
+
+      btnEdit.disabled = true;
+      btnEdit.textContent = "Guardando...";
+      errorMsg.classList.add("hidden");
+
+      const formData = new FormData(formEdit);
+      const data = Object.fromEntries(formData);
+      
+      try{
+        await fetchDataPatch("notes", data, myToken, currentEditingId);
+        updateCardDOM(currentEditingId, data);
+        modalEdit.classList.add("hidden");
+        alert("Nota actualizada");
+      } catch (error){
+        errorMsg.textContent = error.message;
+        errorMsg.classList.remove("hidden");
+      } finally{
+        btnEdit.disabled = false;
+        btnEdit.textContent = "Guardar";
+      }
+    });
+  }
+
+  const openEditModal = (id, cardEdit) =>{
+    currentEditingId = id;
+    const title = cardEdit.querySelector(".note-title")?.textContent;
+    // IMPORTANTE: Al editar, queremos el texto completo, no el recortado
+    // Buscamos si existe la versión full-text (oculta), sino tomamos el contenido normal
+    const fullTextEl = cardEdit.querySelector(".full-text");
+    const content = fullTextEl ? fullTextEl.textContent : cardEdit.querySelector("span")?.textContent;
+    
+    const category = cardEdit.querySelector(".category-pill")?.textContent;
+    const issueText = cardEdit.querySelector(".issue-pill")?.textContent || "";
+    const issue = issueText.replace("#", ""); 
+    const status = cardEdit.querySelector(".status-badge")?.textContent.trim();
+
+    formEdit.title.value = title;
+    formEdit.content.value = content;
+    formEdit.category.value = category;
+    formEdit.issue.value = issue;
+    formEdit.status.value = status;
+  
+    modalEdit.classList.remove("hidden");
+    cardEdit.querySelector(".menu-dropdown")?.classList.add("hidden");
+  };
+
+  const activateEditButton = () => {
+    document.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const target = event.currentTarget;
+        const idNote = target.dataset.id;
+        const card = target.closest(".note-card");
+        openEditModal(idNote, card);
+      });
+    });
+  }
+
+  const activateDeleteButtons = () => {
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        if (!confirm("¿Borrar nota?")) return;
+        const target = e.currentTarget;
+        const id = target.dataset.id;
+        try {
+          await fetchDataDelete(`notes/${id}`, myToken);
+          document.getElementById(id)?.remove();
+          if (document.querySelectorAll(".note-card").length === 0) {
+             noNotesMsg?.classList.remove("hidden");
+          }
+        } catch (error) {
+          alert("Error al eliminar");
+        }
+      });
+    });
+  };
+
+  const activateMenus = () => {
+    document.querySelectorAll('.menu-trigger-card').forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dropdown = trigger.nextElementSibling;
+            document.querySelectorAll('.menu-dropdown').forEach(m => {
+                if (m !== dropdown) m.classList.add('hidden');
+            });
+            dropdown?.classList.toggle('hidden');
+        });
+    });
+  };
+
+  if(btnCancel) {
+    btnCancel.addEventListener("click", (e) => {
+      e.preventDefault();
+      modalEdit.classList.add("hidden");
+      currentEditingId = null;
+      formEdit.reset();
+      errorMsg.classList.add("hidden");
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.card-actions-wrapper')) {
+        document.querySelectorAll('.menu-dropdown').forEach(menu => menu.classList.add('hidden'));
+    }
+    if (e.target === modalEdit) {
+        modalEdit.classList.add('hidden');
+    }
+  });
+
+  const updateCardDOM = (id, newData) => {
+    // Para simplificar, si se edita, recargamos la lista para reaplicar el recorte de texto
+    // O podrías implementar lógica compleja para actualizar solo el DOM manteniendo el "Leer más"
+    // Pero recargar la página actual es más seguro y fácil:
+    loadNotes(currentPage);
+  };
+
+  const timeAgo = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const rtf = new Intl.RelativeTimeFormat('es-AR', { numeric: 'auto' });
+
+    if (diffInSeconds < 60) return rtf.format(-diffInSeconds, 'second');
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return rtf.format(-diffInMinutes, 'minute');
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return rtf.format(-diffInHours, 'hour');
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) return rtf.format(-diffInDays, 'day');
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) return rtf.format(-diffInMonths, 'month');
+    return rtf.format(-Math.floor(diffInDays / 365), 'year');
+  };
+
+  // --- INICIO ---
+  loadNotes(1);
+</script>
+
+
+<!-- 
+<script>
   // Importamos las funciones necesarias
   import fetchDataGetWithToken from "../../lib/api/fetchDataGetWithToken";
   import fetchDataPatch from "../../lib/api/fetchDataPatch";
@@ -536,6 +883,6 @@ const updateCardDOM = (id: string, newData: any) => {
   
   // Ejecutar al cargar la página
   loadNotes();
-</script>
+</script> -->
 
 
