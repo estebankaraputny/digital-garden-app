@@ -20,11 +20,13 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
+      const { name, ...userData } = createUserDto;
+      
       const hashedPassword = (await bcrypt.hash(createUserDto.password, 10)).split(' ').join('');
 
       const newUser = await this.prisma.user.create({
         data: {
-          ...createUserDto,
+          ...userData,
           password: hashedPassword,
         },
       });
@@ -67,7 +69,7 @@ export class UserService {
     return { ...user, roles: user.roles as Role[] };
   }
 
-  
+
   // async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
   //   try {
   //     await this.findOne(id);

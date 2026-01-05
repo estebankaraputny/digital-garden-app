@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,8 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  password String
+  roles    Json     @default("[\"USER\"]")
+  notes    Note[]
+  profile  Profile?
+}
+
+model Profile {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  avatar      String?
+  plan        Plan    @default(FREE)
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   String
+  category  String
+  issue     String
+  status    String   @default("DRAFT")
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
 enum Role {
-  USER 
+  USER
   ADMIN
   MODERATOR
 }
@@ -24,43 +51,4 @@ enum Plan {
   BASIC
   PREMIUM
   UNLIMITED
-}
-
-model User {
-  id    String  @id @default(uuid())
-  email String  @unique
-  password String //Hash
-  
-  profile Profile?
-
-  roles Json @default("[\"USER\"]")
-  notes Note[]
-}
-
-model Profile {
-  id String @id @default(uuid())
-  name String
-  description String?
-  avatar String?
-
-  plan Plan @default(FREE)
-  
-  userId String @unique
-  user User @relation(fields: [userId], references: [id])
-}
-
-model Note {
-  id String @id @default(uuid())
-  title String
-  slug String @unique 
-  content String @db.Text
-  category String
-  issue String 
-  status String @default("DRAFT")
-
-  authorId String
-  author User @relation(fields: [authorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
