@@ -11,7 +11,7 @@ export class CreateNoteDto {
     @IsString({ message:'El contenido debe ser un texto'})
     @IsNotEmpty({message:'El contenido es obligatorio'})
     @MinLength(20, { message: 'El contenido debe tener más de 20 caracteres'})
-    @MaxLength(2000, { message: 'El contenido debe tener menos de 2000 caracteres'})
+    @MaxLength(4000, { message: 'El contenido debe tener menos de 4000 caracteres'})
     content: string;
 
     @IsString({ message:'La categoria debe ser un texto'})
