@@ -147,7 +147,7 @@ import "./notes.css";
       `;
     } else {
       // Si es corto, mostramos todo normal
-      contentHTML = `<span>${note.content}</span>`;
+      contentHTML = `<span class="simple-text">${note.content}</span>`;
     }
     // ----------------------------------
   
@@ -206,6 +206,7 @@ import "./notes.css";
         const wrapper = button.closest('.note-content-wrapper');
         const shortText = wrapper.querySelector('.short-text');
         const fullText = wrapper.querySelector('.full-text');
+        const simpleTextEl = cardEdit.querySelector(".simple-text");
 
         // Alternamos visibilidad
         if (shortText.classList.contains('hidden')) {
@@ -273,6 +274,16 @@ import "./notes.css";
 
     } catch (error) {
       console.error("Error cargando notas:", error);
+      
+      // AGREGADO: Detección de token expirado
+      // Verifica si el error tiene status 401 o el mensaje lo menciona
+      if (error.status === 401 || (error.message && error.message.includes('401'))) {
+          alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+          return;
+      }
+
       if (container) container.innerHTML = `<p class="error-msg">Error al cargar las notas.</p>`;
     } finally {
        if (container) container.style.opacity = "1";
