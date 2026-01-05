@@ -91,7 +91,9 @@ import "../Notes/notes.css"
     </article>
   </section>
 
-<script>
+<script lang="ts">
+  // @ts-nocheck
+  /// <reference types="astro/client" />
   import fetchDataGetWithToken from "../../lib/api/fetchDataGetWithToken";
   import fetchDataPatch from "../../lib/api/fetchDataPatch";
   import fetchDataDelete from "../../lib/api/fetchDataDelete";
@@ -243,7 +245,7 @@ import "../Notes/notes.css"
 
 
       console.log("Notas cargadas:", notesData); 
-      
+
       const metaData = response.meta || { page: 1, lastPage: 1 };
 
       if (!notesData || notesData.length === 0) {

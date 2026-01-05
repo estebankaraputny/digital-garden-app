@@ -50,7 +50,7 @@ import Layout from "../layouts/Layout.astro";
                 <p>Compártela con otros cultivadores digitales.</p>
                 <div class="share-buttons">
                     <button class="btn-share copy">Copiar Link</button>
-                    <button class="btn-share twitter">Instagram</button>
+                    <button class="btn-share twitter">Compartir</button>
                 </div>
             </div>
         </aside>
@@ -61,7 +61,7 @@ import Layout from "../layouts/Layout.astro";
         <div class="ad-container">
             <span class="ad-label">Publicidad</span>
             <div class="ad-placeholder">
-                <p>Espacio para tu AdSense o Banner</p>
+                <p>Espacio para AdSense o Banner</p>
                 </div>
         </div>
 
@@ -69,9 +69,9 @@ import Layout from "../layouts/Layout.astro";
             <h3>Más notas del usuario</h3>
             <p>Otros aportes que podrían interesarte de su jardín:</p>
             <ul class="related-list">
-                <li><a href="/">Titulo 1</a></li>
+                <!-- <li><a href="/">Titulo 1</a></li>
                 <li><a href="/">Titulo 2</a></li>
-                <li><a href="/">Titulo 3</a></li>
+                <li><a href="/">Titulo 3</a></li> -->
             </ul>
         </div>
 
@@ -89,6 +89,7 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
     import fetchDataGetById from "../lib/api/fetchDataGetById";
+    import fetchDataGet from "../lib/api/fetchDataGet";
 
     async function loadNote() {
         const params = new URLSearchParams(window.location.search);
@@ -135,6 +136,177 @@ import Layout from "../layouts/Layout.astro";
             // Mostrar contenido
             loadingDiv?.classList.add('hidden');
             contentDiv?.classList.remove('hidden');
+
+            // Preparar datos para compartir
+            const shareUrl = `${location.origin}${location.pathname}?id=${encodeURIComponent(id)}`;
+            const shareTitle = note.title || document.title || '';
+
+            const copyBtn = document.querySelector('.btn-share.copy') as HTMLButtonElement | null;
+            const instagramBtn = document.querySelector('.btn-share.twitter') as HTMLButtonElement | null;
+
+            const resetButtonText = (btn: HTMLButtonElement, original: string, timeout = 2000) => {
+                setTimeout(() => { btn.textContent = original; }, timeout);
+            };
+
+            if (copyBtn) {
+                copyBtn.addEventListener('click', async () => {
+                    const original = copyBtn.textContent || 'Copiar Link';
+                    try {
+                        await navigator.clipboard.writeText(shareUrl);
+                        copyBtn.textContent = 'Copiado';
+                        resetButtonText(copyBtn, original);
+                    } catch (err) {
+                        // Fallback viejo
+                        const textarea = document.createElement('textarea');
+                        textarea.value = shareUrl;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try { document.execCommand('copy'); copyBtn.textContent = 'Copiado'; }
+                        catch (e) { alert('No se pudo copiar automáticamente. Por favor selecciona y copia el enlace: ' + shareUrl); }
+                        textarea.remove();
+                        resetButtonText(copyBtn, original);
+                    }
+                });
+            }
+
+            if (instagramBtn) {
+                instagramBtn.addEventListener('click', async () => {
+                    // Preferir Web Share API (mostrará Instagram en móviles si está disponible)
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({ title: shareTitle, text: shareTitle, url: shareUrl });
+                        } catch (e) {
+                            // Compartir cancelado o fallido
+                            const original = instagramBtn.textContent || 'Instagram';
+                            instagramBtn.textContent = 'Error al compartir';
+                            resetButtonText(instagramBtn, original);
+                        }
+                        return;
+                    }
+
+                    // Fallback: copiar enlace y abrir Instagram web
+                    try {
+                        await navigator.clipboard.writeText(shareUrl);
+                        const original = instagramBtn.textContent || 'Instagram';
+                        instagramBtn.textContent = 'Enlace copiado';
+                        resetButtonText(instagramBtn, original);
+                        window.open('https://www.instagram.com', '_blank');
+                    } catch (err) {
+                        // Si no se puede copiar, simplemente abrir Instagram
+                        window.open('https://www.instagram.com', '_blank');
+                        alert('Abriendo Instagram. Copia manualmente este enlace para compartir: ' + shareUrl);
+                    }
+                });
+            }
+
+            // --- Notas relacionadas (máx 3) ---
+            try {
+                const relatedListEl = document.querySelector('.related-list') as HTMLUListElement | null;
+
+                const getAuthorIdFromNote = (noteObj: any) => {
+                    return (
+                        noteObj?.author?.id ||
+                        noteObj?.author?.profile?.id ||
+                        noteObj?.authorId ||
+                        ''
+                    );
+                };
+
+                const rawAuthorId = getAuthorIdFromNote(note);
+                const authorId = rawAuthorId ? String(rawAuthorId) : '';
+
+                if (relatedListEl && authorId) {
+                    const triedEndpoints: string[] = [];
+                    let relatedNotes: any[] = [];
+
+                    // Intentar endpoint por usuario (que en tu proyecto parece existir)
+                    const candidateEndpoints = [
+                        
+                        `notes?author=${encodeURIComponent(authorId)}`,
+                        
+                    ];
+
+                    // for (const ep of candidateEndpoints) {
+                    //     try {
+                    //         triedEndpoints.push(ep);
+                    //         const res = await fetchDataGet(`notes?author=${encodeURIComponent(authorId)}`);
+                    //         let arr: any[] = [];
+
+                    //         if (Array.isArray(res)) arr = res;
+                    //         else if (Array.isArray(res.notes)) arr = res.notes;
+                    //         else if (Array.isArray(res.data)) arr = res.data;
+                    //         else if (res?.user && Array.isArray(res.user.notes)) arr = res.user.notes;
+                    //         else if (res?.items && Array.isArray(res.items)) arr = res.items;
+
+                    //         if (arr.length) { relatedNotes = arr; break; }
+                    //     } catch (err) {
+                    //         // ignore and continue
+                    //     }
+                    // }
+
+                    // Fallback: si no se encontraron notas, traer todas y filtrar localmente
+                    if (relatedNotes.length === 0) {
+                        try {
+                            triedEndpoints.push('notes/all-notes');
+                            const all = await fetchDataGet('notes/all-notes');
+                            if (Array.isArray(all)) {
+                                relatedNotes = all.filter((n: any) => {
+                                    const aid = String(n?.author?.id ?? n?.author?._id ?? n?.authorId ?? n?.userId ?? n?.user?._id ?? '');
+                                    return aid === authorId;
+                                });
+                            } else if (Array.isArray(all?.notes)) {
+                                relatedNotes = all.notes.filter((n: any) => String(n?.author?.id ?? n?.author?._id ?? n?.authorId ?? n?.userId ?? '') === authorId);
+                            }
+                        } catch (err) {
+                            // ignore
+                        }
+                    }
+
+                    // Filtrar la nota actual y limitar a 3
+                    relatedNotes = relatedNotes.filter(n => String(n.id ?? n._id ?? n.noteId ?? n._id) !== String(id)).slice(0, 3);
+
+                    if (relatedNotes.length === 0) {
+                        relatedListEl.innerHTML = '<li>No hay más notas de este autor.</li>';
+                        console.debug('Related notes empty. Tried endpoints:', triedEndpoints, 'authorId:', authorId);
+                    } else {
+                        relatedListEl.innerHTML = relatedNotes.map(n => {
+                            const nid = encodeURIComponent(n.id ?? n._id ?? n.noteId ?? n._id);
+                            const title = (n.title || 'Sin título').slice(0, 80);
+                            const date = n.createdAt ? new Date(n.createdAt).toLocaleDateString('es-AR') : '';
+                            return `<li>
+                                    <a class="related-link" href="/details-note?id=${nid}" data-id="${nid}">${title}
+                                        ${date ? ` — ${date}` : ''}
+                                    </a>
+                                </li>`;
+                        }).join('');
+
+                        // Asegurar navegación consistente: guardar noteId en localStorage y navegar
+                        const anchors = relatedListEl.querySelectorAll('.related-link');
+                        anchors.forEach(a => {
+                            a.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const href = a.getAttribute('href') || '';
+                                try {
+                                    const url = new URL(href, location.origin);
+                                    const nid = url.searchParams.get('id');
+                                    if (nid) localStorage.setItem('noteId', nid);
+                                } catch (err) {
+                                    // fallback: usar data-id si parseo falla
+                                    const nid = a.getAttribute('data-id');
+                                    if (nid) localStorage.setItem('noteId', nid);
+                                }
+                                // Navegar a la página de detalles
+                                window.location.href = href;
+                            });
+                        });
+                    }
+                } else if (relatedListEl) {
+                    relatedListEl.innerHTML = '<li>No hay más notas de este autor.</li>';
+                    console.debug('No authorId found on note', note);
+                }
+            } catch (err) {
+                console.debug('Error cargando notas relacionadas:', err);
+            }
 
         } catch (error) {
             // console.error(error);
@@ -346,12 +518,26 @@ import Layout from "../layouts/Layout.astro";
         border-bottom: 1px solid #f0f0f0;
         padding-bottom: 0.5rem;
     }
-    .related-list a {
+    .related-list a, .related-link {
         text-decoration: none;
-        color: #555;
-        transition: color 0.2s;
+        color: var(--color-text-primary);
+        transition: color 0.2s, background 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.45rem 0;
+        border-radius: 6px;
     }
-    .related-list a:hover { color: var(--secondary-color); }
+    .related-list a:hover, .related-link:hover {
+        color: var(--secondary-color);
+        background: rgba(68,125,75,0.05);
+    }
+    .related-list .related-date {
+        font-size: 0.85rem;
+        color: var(--color-text-light);
+        margin-left: 0.5rem;
+        font-weight: 600;
+    }
 
     .btn-subscribe {
         width: 100%;
