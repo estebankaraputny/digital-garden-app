@@ -60,6 +60,12 @@ export class UserService {
   async findOne(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      include: { 
+        profile: true,
+          _count: { 
+          select: { notes: true } 
+        }
+      },
     });
 
     if (!user) {

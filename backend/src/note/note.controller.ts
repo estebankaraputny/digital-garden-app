@@ -61,7 +61,13 @@ export class NoteController {
     return await this.noteService.findOne(id);
   }
 
- 
+ @Get('user-notes/count') 
+  @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
+  async countUserNotes(@Req() req) {
+    const userId = req.user.sub || req.user.id;
+    const count = await this.noteService.countByUser(userId);
+    return { count };
+  }
 
   @Patch(':id')
   @UsePipes(new ValidationPipe())

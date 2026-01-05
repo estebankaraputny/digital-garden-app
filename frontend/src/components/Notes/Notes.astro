@@ -96,6 +96,8 @@ import "../Notes/notes.css"
   import fetchDataPatch from "../../lib/api/fetchDataPatch";
   import fetchDataDelete from "../../lib/api/fetchDataDelete";
 
+
+  
   // --- VARIABLES GLOBALES ---
   let currentPage = 1;
   let totalPages = 1;
@@ -122,7 +124,9 @@ import "../Notes/notes.css"
 
   // --- FUNCIÓN PARA CREAR HTML DE LA TARJETA (MODIFICADA) ---
   const createNoteCard = (note) => {
-    const authorName = note.author?.name || "Usuario";
+    console.log(note, "notaaaaaaaaaaaa");
+    const authorName = note.author.profile?.name || "Usuario";
+    // const authorAvatar = note.author.profile?.avatar;
     const initial = authorName.charAt(0).toUpperCase();
     
     // --- LÓGICA DE RECORTE DE TEXTO ---
@@ -235,7 +239,11 @@ import "../Notes/notes.css"
     try {
       const response = await fetchDataGetWithToken(`notes/user-notes?page=${page}`, myToken);
 
-      const notesData = response.data || response; 
+      const notesData = response.data || response;
+
+
+      console.log("Notas cargadas:", notesData); 
+      
       const metaData = response.meta || { page: 1, lastPage: 1 };
 
       if (!notesData || notesData.length === 0) {

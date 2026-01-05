@@ -84,22 +84,25 @@ private async checkPlanLimits(userId: string) {
     }
   }
 
-  async findAll() {
-    return await this.prisma.note.findMany({
-      include: {
-        author: {
-          select: {
-           email: true,
-            profile: {  
-              select: { 
-                name: true 
-              }
+ async findAll() {
+  return this.prisma.note.findMany({
+    include: {
+      author: {
+        select: {
+          id: true,
+          email: true,
+          profile: {
+            select: {
+              name: true,
+              avatar: true,
+              plan: true
             }
           }
         }
       }
-    });
-  }
+    }
+  });
+}
 
   async findOne(id: string) {
     return await this.prisma.note.findUnique({
@@ -107,10 +110,12 @@ private async checkPlanLimits(userId: string) {
       include: {
         author: {
           select: {
-            email: true, // El email sí está en User
-            profile: {   // <--- Entramos a la relación Profile
+            email: true, 
+            profile: { 
               select: { 
-                name: true // El nombre ahora vive aquí
+                name: true,
+                avatar: true,
+                plan: true
               }
             }
           }
@@ -137,14 +142,27 @@ private async checkPlanLimits(userId: string) {
 async findAllLogin(userId: string, page: number = 1, limit: number = 10) {
   const skip = (page - 1) * limit;
 
-  // Ejecutamos dos consultas: una para los datos y otra para el total
   const [notes, total] = await Promise.all([
     this.prisma.note.findMany({
       where: { authorId: userId },
-      skip: skip,
+      skip,
       take: limit,
       orderBy: { createdAt: 'desc' }, // IMPORTANTE: Ordenar en backend para que la paginación sea coherente
-      include: { author: true },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            profile: {
+              select: {
+                name: true,
+                avatar: true,
+                plan: true,
+              },
+            },
+          },
+        },
+      },
     }),
     this.prisma.note.count({ where: { authorId: userId } }),
   ]);
@@ -159,6 +177,9 @@ async findAllLogin(userId: string, page: number = 1, limit: number = 10) {
   };
 }
 
+async countByUser(userId: string): Promise<number> {
+  return this.prisma.note.count({ where: { authorId: userId } });
+}
 
 
   async findAllCategory(category: string) {

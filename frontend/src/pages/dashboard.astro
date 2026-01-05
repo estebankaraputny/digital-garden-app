@@ -14,9 +14,9 @@ import ImgProfile from "../assets/image/perfil.png"
         <div class="info-img">
           <Image src={ImgProfile} alt="Foto de perfil del usuario" id="img-profile" />
         </div>
-        <div class="info-user">
-          <h1 class="name-user" id="name-user">Esteban Karaputny</h1>
-          <p class="description-user" id="description-user">Me gusta aprender, siempre soy curioso con lo que veo o escucho y investigo más.</p>
+        <div class="info-user" id="info-user">
+          <!-- <h1 class="name-user" id="name-user">Esteban Karaputny</h1>
+          <p class="description-user" id="description-user">Me gusta aprender, siempre soy curioso con lo que veo o escucho y investigo más.</p> -->
         </div>
       </div>
       <!-- <div>
@@ -71,13 +71,14 @@ import ImgProfile from "../assets/image/perfil.png"
 </Layout>
 
 <script>
-  
+  import fetchDataGet from "../lib/api/fetchDataGet";
+  import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken";
+  import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken";
+
   const isAdmin = localStorage.getItem('isAdmin');
   if (isAdmin !== 'true') {
       window.location.href = '/'; 
   }
-  import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken";
-  import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken";
 
   const form = document.getElementById("note-form") as HTMLFormElement;
   const errorMsg = document.getElementById("error-message") as HTMLParagraphElement;
@@ -133,24 +134,36 @@ import ImgProfile from "../assets/image/perfil.png"
       if (!myToken) return;
 
       // 1. Pedir datos al endpoint corregido
-      const user = await fetchDataGetWithToken("user/profile", myToken);
+      const user = await fetchDataGetWithToken("profile", myToken);
+      console.log("Datos del usuario:", user);
       
-      console.log("Datos de usuario obtenidos:", user);
-      // 2. Verificar que llegó bien
-      if (user && user.email) {
-          // 3. Inyectar datos en el HTML
-          const nameEl = document.getElementById("name-user");
-          const descEl = document.getElementById("description-user");
-          const planEl = document.getElementById("plan-user");
-          const imgEl = document.getElementById("img-profile");
-
-          if (nameEl) nameEl.textContent = user.name;
-          // Si tuvieras descripción en la BD, la pones, si no, un texto default
-          if (descEl) descEl.textContent = user.description || "Usuario de Digital Garden"; 
-          if (planEl) planEl.textContent = user.plan || "Gratuito";
+      const profileDate = document.getElementById("info-user");
+          if (profileDate) profileDate.innerHTML = `
+            <h1 class="name-user" id="name-user">${user.name}</h1>
+            <p class="description-user" id="description-user">${user.description}</p>
+          `;
+          // <div class="info-user">
+          // </div>
+          // // Si tuvieras descripción en la BD, la pones, si no, un texto default
+          // if (descEl) descEl.textContent = user.description || "Usuario de Digital Garden"; 
+          // if (planEl) planEl.textContent = user.plan || "Gratuito";
           
           // Opcional: Si tienes avatar
           // if (imgEl && user.avatar) imgEl.src = user.avatar;
+     
+      const cantNotesUser = await fetchDataGetWithToken("notes/user-notes/count", myToken);
+      console.log(cantNotesUser,  "cantidad de notas");
+      
+
+      if (user) {
+        const countNotesEl = document.getElementById("count-notes-user");
+        if (countNotesEl) countNotesEl.textContent = cantNotesUser.count || "0";
+
+        const rankingEl = document.getElementById("ranking-user");
+        if (rankingEl) rankingEl.textContent = user.ranking || "Proximamente";
+
+        const planEl = document.getElementById("plan-user");
+        if (planEl) planEl.textContent = user.plan || "Gratuito";
       }
 
     } catch (error) {

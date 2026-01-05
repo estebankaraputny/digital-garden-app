@@ -28,17 +28,18 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Get('profile')
+  async getProfile(@Req() req: any){
+    const userId = req.user.id;
+    return await this.userService.findOne(userId);
+  }
+  
   @Get(':id')
   @Public()
   async findOne(@Param('id') id: string) {
     return await this.userService.findOne(id);
   }
 
-  @Get('profile')
-  async getProfile(@Req() req: any){
-    const userId = req.user.id;
-    return await this.userService.findOne(userId);
-  }
 
   // @Patch(':id')
   // @Roles(Role.ADMIN)
