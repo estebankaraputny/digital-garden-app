@@ -843,6 +843,104 @@ const ITEMS_PER_PAGE = 8;
     color: var(--white-color);
   }
 
+
+  /* --- SECCIÓN CTA FUTURE --- */
+.cta-future {
+  display: grid;
+  /* Creamos columnas flexibles: si no caben, bajan a una fila */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2.5rem; /* Separación del resto del contenido */
+}
+
+/* Estilos compartidos para ambas tarjetas */
+.cta-banner-ia, 
+.cta-banner-plans {
+  padding: 2rem;
+  border-radius: 16px; /* Bordes un poco más redondeados para suavidad */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+/* Efecto Hover sutil para dar interactividad */
+.cta-banner-ia:hover, 
+.cta-banner-plans:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* --- TARJETA IA (Estilo Premium/Oscuro) --- */
+.cta-banner-ia {
+  background-color: var(--tertiary-color); /* Verde oscuro #08453c */
+  color: var(--white-color);
+  /* Un degradado sutil para darle profundidad */
+  background-image: linear-gradient(135deg, var(--tertiary-color) 0%, #0d5c50 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-banner-ia h2 {
+  color: #a7f3d0; /* Un verde menta muy claro para el título */
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Simulación de brillo o "magia" IA (Opcional) */
+.cta-banner-ia::after {
+  content: "✨";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 8rem;
+  opacity: 0.05;
+  transform: rotate(30deg);
+  pointer-events: none;
+}
+
+.cta-banner-ia p {
+  color: rgba(255, 255, 255, 0.85); /* Blanco con transparencia */
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 90%;
+}
+
+/* --- TARJETA PLANES (Estilo Limpio/Growth) --- */
+.cta-banner-plans {
+  background-color: var(--white-color);
+  border: 1px solid var(--border-color);
+  border-left: 5px solid var(--secondary-color); /* Borde lateral verde #447d4b */
+}
+
+.cta-banner-plans h2 {
+  color: var(--secondary-color);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cta-banner-plans p {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .cta-future {
+    grid-template-columns: 1fr; /* Una columna en móvil */
+  }
+  
+  .cta-banner-ia, 
+  .cta-banner-plans {
+    padding: 1.5rem;
+  }
+}
+
   /* --- Responsive --- */
   @media (max-width: 900px) {
 
