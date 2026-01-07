@@ -7,16 +7,18 @@ import ImgProfile from "../assets/image/perfil.png"
 ---
 
 <Layout title="Perfil de usuario | Digital Garden">
+  
+  
   <section class="dashboard-wrapper">
     
     <div class="dashboard-header">
       <div class="header-info">
-        <div class="info-img">
-          <Image src={ImgProfile} alt="Foto de perfil del usuario" id="img-profile" />
+        <div class="info-img" id="info-img">
+          
         </div>
         <div class="info-user" id="info-user">
-          <!-- <h1 class="name-user" id="name-user">Esteban Karaputny</h1>
-          <p class="description-user" id="description-user">Me gusta aprender, siempre soy curioso con lo que veo o escucho y investigo más.</p> -->
+          <h1 class="name-user" id="name-user"></h1>
+          <p class="description-user" id="description-user"></p>
         </div>
       </div>
       <!-- <div>
@@ -30,15 +32,15 @@ import ImgProfile from "../assets/image/perfil.png"
         <div class="dashboard-profile-info">
           <div>
               <div><span>Notas</span></div>
-              <div><span class="items-profile" id="count-notes-user">20</span></div>
+              <div><span class="items-profile" id="count-notes-user"></span></div>
           </div>
           <div>
             <div><span>Ranking</span></div>
-            <div><span class="items-profile" id="ranking-user">1</span></div>
+            <div><span class="items-profile" id="ranking-user"></span></div>
           </div>
           <div>
             <div><span>Plan</span></div>
-            <div><span class="items-profile" id="plan-user">Gratuito</span></div>
+            <div><span class="items-profile" id="plan-user"></span></div>
           </div>
           <!-- <div>
             <div><span>Likes</span></div>
@@ -71,9 +73,8 @@ import ImgProfile from "../assets/image/perfil.png"
 </Layout>
 
 <script>
-  import fetchDataGet from "../lib/api/fetchDataGet";
-  import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken";
-  import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken";
+  import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken.ts";
+  import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken.ts";
 
   const isAdmin = localStorage.getItem('isAdmin');
   if (isAdmin !== 'true') {
@@ -138,19 +139,26 @@ import ImgProfile from "../assets/image/perfil.png"
       console.log("Datos del usuario:", user);
       
       const profileDate = document.getElementById("info-user");
-          if (profileDate) profileDate.innerHTML = `
-            
-          `;
-          // <div class="info-user">
-          // </div>
-          // // Si tuvieras descripción en la BD, la pones, si no, un texto default
-          // if (descEl) descEl.textContent = user.description || "Usuario de Digital Garden"; 
-          // if (planEl) planEl.textContent = user.plan || "Gratuito";
           
-          // Opcional: Si tienes avatar
-          // if (imgEl && user.avatar) imgEl.src = user.avatar;
-     
-      const cantNotesUser = await fetchDataGetWithToken("notes/user-notes/count", myToken);
+      if (profileDate) {
+          const descEl = document.getElementById("description-user") as HTMLParagraphElement;
+          const nameEl = document.getElementById("name-user") as HTMLHeadingElement;
+          const imgEl = document.getElementById("info-img") as HTMLElement;
+
+          if (nameEl) nameEl.textContent = user.name || "Usuario de Digital Garden";
+          if (descEl) descEl.textContent = user.description || "Usuario de Digital Garden"; 
+          
+          const userName = user.name || "Usuario";
+          const initialUser = userName.charAt(0).toUpperCase();
+
+          if (imgEl && user.avatar){
+            imgEl.innerHTML = `<img src="${user.avatar}" alt="Foto de perfil del usuario ${user.name}" id="img-profile />`;
+          } else if (imgEl) {
+            imgEl.innerHTML = `<div class="avatar-circle-profile">${initialUser}</div>`;
+          }
+        }
+
+    const cantNotesUser = await fetchDataGetWithToken("notes/user-notes/count", myToken);
       console.log(cantNotesUser,  "cantidad de notas");
       
 
@@ -172,7 +180,7 @@ import ImgProfile from "../assets/image/perfil.png"
 
   // Ejecutar al cargar
   loadUserProfile();
-</script>
+</script> 
 
 <style>
   :root {
@@ -213,13 +221,14 @@ import ImgProfile from "../assets/image/perfil.png"
   .header-info{
     display: grid;
     grid-template-columns: 300px 1fr;
-    place-items: center;
+    align-items: center;
     gap: 1rem;
+    width: 100%;
   }
 
   .info-img{
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
   }
 
   .info-img img{
@@ -227,6 +236,20 @@ import ImgProfile from "../assets/image/perfil.png"
     height: 100%;
     border-radius:50%;
   }
+
+  :global(.avatar-circle-profile) {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--tertiary-color));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 5rem;
+    flex-shrink: 0;
+}
 
   .info-user h1 {
     font-size: 2rem;
@@ -253,6 +276,10 @@ import ImgProfile from "../assets/image/perfil.png"
   }
 
   @media (min-width: 900px) {
+
+    .info-user{
+      max-width: 100%;
+    }
     .dashboard-grid {
       /* Desktop: Izquierda 400px (Form), Derecha flexible (Lista) */
       grid-template-columns: 400px 1fr; 
@@ -326,11 +353,17 @@ import ImgProfile from "../assets/image/perfil.png"
       place-items: center;
     }
     .info-user{
+      max-width: 100%;
+
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
+    }
+
+    .info-user h1, .info-user p {
+      max-width: 100%;
     }
 
     .card-header{
