@@ -9,7 +9,12 @@ import BannerLogin from "../assets/image/bannerlogin.png"
 <Layout title="Crear Cuenta | Digital Garden">
 
     <!-- <main > -->
-     <section class="container">
+        <div class="message-container hidden" id="message-container">
+            <svg class="icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576zM320 112C205.1 112 112 205.1 112 320C112 434.9 205.1 528 320 528C434.9 528 528 434.9 528 320C528 205.1 434.9 112 320 112zM390.7 233.9C398.5 223.2 413.5 220.8 424.2 228.6C434.9 236.4 437.3 251.4 429.5 262.1L307.4 430.1C303.3 435.8 296.9 439.4 289.9 439.9C282.9 440.4 276 437.9 271.1 433L215.2 377.1C205.8 367.7 205.8 352.5 215.2 343.2C224.6 333.9 239.8 333.8 249.1 343.2L285.1 379.2L390.7 234z"/></svg>
+            <p class="message-register" id="message-register"></p>
+            <button class="button-message" id="button-message">OK</button>
+       </div>
+        <section class="container">
          <section class="register-container">       
             <aside class="visual-side">
                 <aside class="content-welcome">
@@ -19,24 +24,6 @@ import BannerLogin from "../assets/image/bannerlogin.png"
                     <Image src={BannerLogin} alt="Notas en el aire y una persona disfrutando escribiendolas" class="banner-register" />
                     </div>
                 </aside>
-                <!-- <div class="visual-content">
-                    <h2>Únete a la comunidad</h2>
-                    <h1>Digital Garden</h1>
-                    <p class="hero-text">
-                        Cultiva tus ideas y deja que florezcan. Crea notas que generen impacto y conecta con otros jardineros del conocimiento.
-                    </p>
-                    
-                    <div class="benefits-box">
-                        <h3>¿Por qué unirte?</h3>
-                        <ul class="benefits-list">
-                            <li>✨ Tu saber es valioso</li>
-                            <li>🚀 Crece profesionalmente</li>
-                            <li>🌱 Aprende en comunidad</li>
-                        </ul>
-                    </div>
-                </div> -->
-                
-                <!-- <div class="overlay"></div> -->
             </aside>
             <aside class="form-side">
                 <div class="form-wrapper">
@@ -78,7 +65,7 @@ import BannerLogin from "../assets/image/bannerlogin.png"
                             </div>
                         </div>
                         <p class="error-message hidden"></p>
-                        <button type="submit" class="btn-register">
+                        <button type="submit" class="btn-register-form btn-register">
                             Registrarme
                         </button>
     
@@ -89,6 +76,8 @@ import BannerLogin from "../assets/image/bannerlogin.png"
                 </div>
             </aside>
         </section>
+
+        
      </section>
     <!-- </main> -->
 
@@ -98,7 +87,7 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     import fetchDataPost from "../lib/api/fetchDataPost";
     // Seleccionamos el formulario
     const form = document.querySelector('.modern-form') as HTMLFormElement;
-    const btn = document.querySelector('.btn-register') as HTMLButtonElement;
+    const btn = document.querySelector('.btn-register-form') as HTMLButtonElement;
     // Elemento para mostrar errores
     const errorMsg = document.querySelector('.error-message');
     //VER CONTRA
@@ -134,17 +123,32 @@ import BannerLogin from "../assets/image/bannerlogin.png"
 
             // 2. Capturar los datos AUTOMÁTICAMENTE
             const formData = new FormData(form);
-            const data = Object.fromEntries(formData); 
+            const data = Object.fromEntries(formData);
+            const messageContainer = document.getElementById('message-container') as HTMLDivElement;
+            const messageRegister = document.getElementById('message-register') as HTMLParagraphElement;
+            const buttonMessage = document.getElementById('button-message') as HTMLButtonElement;
             // console.log("Enviamos a back", data);
 
             try {
-    
+                
                 const response = await fetchDataPost('auth/register', data);
             
                 if (response && (response.id || response.access_token || response.email)) {
-                    alert('¡Cuenta creada con éxito!');
-                    window.location.href = '/login';
+                    messageContainer.classList.remove('hidden');
+                    messageRegister.textContent = '¡Cuenta creada con éxito!';
+                    buttonMessage.addEventListener('click', () => {
+                        messageContainer.classList.add('hidden');
+                        messageRegister.textContent = '';
+                        window.location.href = '/login';
+                    });
                 } else {
+                    messageContainer.classList.remove('hidden');
+                    messageRegister.textContent =  'Hubo un problema al crear la cuenta. Inténtalo de nuevo.';
+                    buttonMessage.addEventListener('click', () => {
+                        messageContainer.classList.add('hidden');
+                        messageRegister.textContent = '';
+                    });
+
                     throw new Error('No se pudo crear la cuenta.');
                 }
 
@@ -466,6 +470,72 @@ import BannerLogin from "../assets/image/bannerlogin.png"
         text-decoration: underline;
     }
 
+    .message-container{
+        position: fixed;
+        max-width: 400px;
+        width: 100%;
+        padding: 2rem;
+        top: 0%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--white-color);
+        padding: 1rem 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        text-align: center;
+        z-index: 10000;
+        animation: notificacionAlert 0.5s ease-in-out;
+    }
+
+    @keyframes notificacionAlert {
+        0% {
+            transform: translate(-50%, -150%);
+            opacity: 0;
+        }
+        100% {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+        }
+    }
+
+    .message-register{
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: var(--color-text-primary);
+    }
+
+    .button-message{
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .button-message:hover{
+        background-color: var(--tertiary-color);
+    }
+
+    .icon-check{
+        display: inline-block;
+        width: 4rem;
+        height: 4rem;
+        line-height: 1;
+        color: var(--secondary-color);
+        margin-top: 9rem;
+        margin-bottom: .5rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .icon-check path {
+        fill: currentColor;
+    }
+
     .error-message {
     color: #e11d48; /* Rojo rosado */
     background-color: #ffe4e6;
@@ -517,6 +587,17 @@ import BannerLogin from "../assets/image/bannerlogin.png"
     .input-wrapper input {
         font-size: 16px; /* Evita zoom en iOS */
     }
+
+    .message-container{
+        width: 80%;
+    }
+    .message-register{
+        font-size: .8rem;
+    }
+    .button-message{
+        font-size: .8rem;
+    }
+
 }
   
   @media (max-width: 480px) {

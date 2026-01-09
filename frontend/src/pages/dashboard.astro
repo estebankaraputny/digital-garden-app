@@ -2,15 +2,15 @@
 import Layout from "../layouts/Layout.astro";
 import FormNote from "../components/FormNote/FormNote.astro";
 import Notes from "../components/Notes/Notes.astro";
-import { Image } from "astro:assets";
-import ImgProfile from "../assets/image/perfil.png"
 ---
 
 <Layout title="Perfil de usuario | Digital Garden">
+  <div class="message-container hidden" id="message-container">
+      <svg class="icon-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576zM320 112C205.1 112 112 205.1 112 320C112 434.9 205.1 528 320 528C434.9 528 528 434.9 528 320C528 205.1 434.9 112 320 112zM390.7 233.9C398.5 223.2 413.5 220.8 424.2 228.6C434.9 236.4 437.3 251.4 429.5 262.1L307.4 430.1C303.3 435.8 296.9 439.4 289.9 439.9C282.9 440.4 276 437.9 271.1 433L215.2 377.1C205.8 367.7 205.8 352.5 215.2 343.2C224.6 333.9 239.8 333.8 249.1 343.2L285.1 379.2L390.7 234z"/></svg>
+      <p class="message-register" id="message-register"></p>
+  </div>
   
-  
-  <section class="dashboard-wrapper">
-    
+  <section class="dashboard-wrapper">    
     <div class="dashboard-header">
       <div class="header-info">
         <div class="info-img" id="info-img">
@@ -75,12 +75,11 @@ import ImgProfile from "../assets/image/perfil.png"
 <script>
   import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken.ts";
   import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken.ts";
-
-  const isAdmin = localStorage.getItem('isAdmin');
-  if (isAdmin !== 'true') {
-      window.location.href = '/'; 
-  }
-
+  
+  // const isAdmin = localStorage.getItem('isAdmin');
+  // if (isAdmin !== 'true') {
+  //     window.location.href = '/'; 
+  // }
   const form = document.getElementById("note-form") as HTMLFormElement;
   const errorMsg = document.getElementById("error-message") as HTMLParagraphElement;
   const btn = document.getElementById("submit-btn") as HTMLButtonElement;
@@ -136,7 +135,30 @@ import ImgProfile from "../assets/image/perfil.png"
 
       // 1. Pedir datos al endpoint corregido
       const user = await fetchDataGetWithToken("profile", myToken);
-      console.log("Datos del usuario:", user);
+      
+      //Saludo bienvenida inicio sesion
+      const messageContainer = document.getElementById('message-container') as HTMLDivElement;
+      const messageRegister = document.getElementById('message-register') as HTMLParagraphElement;
+
+      const previousPage = document.referrer;
+      const fromLogin = previousPage.includes('/login');
+
+
+      if (fromLogin) {
+          messageRegister.textContent = `Inicio de sesión exitoso. ¡Bienvenido, ${user.name}!`;
+          messageContainer.classList.remove('hidden');
+          setTimeout(() => {
+              messageContainer.classList.add('message-container-hidden');
+          }, 4000);
+
+          if(messageContainer.classList.contains('message-container-hidden')){
+              messageContainer.classList.remove('message-container-hidden');
+              messageContainer.classList.add('hidden');
+          }
+
+      } else {
+          messageContainer.classList.add('hidden');
+      }
       
       const profileDate = document.getElementById("info-user");
           
@@ -198,6 +220,88 @@ import ImgProfile from "../assets/image/perfil.png"
     padding: 0;
     box-sizing: border-box;
   }
+
+  .message-container{
+        position: fixed;
+        max-width: 400px;
+        width: 100%;
+        padding: 2rem;
+        top: 0%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--white-color);
+        padding: 1rem 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        text-align: center;
+        z-index: 10000;
+        animation: notificacionAlert 0.5s ease-in-out;
+      }
+      .message-container-hidden{
+        animation: closeNotificacionAlert 0.5s ease-in-out forwards;
+      }
+
+    @keyframes notificacionAlert {
+        0% {
+            transform: translate(-50%, -150%);
+            opacity: 0;
+        }
+        100% {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+        }
+    }
+
+    @keyframes closeNotificacionAlert {
+      0% {
+          transform: translate(-50%, -50%);
+          opacity: 1;
+      }
+      100% {
+          transform: translate(-50%, -150%);
+          opacity: 0;
+      }
+    }
+
+    .icon-check{
+        display: inline-block;
+        width: 4rem;
+        height: 4rem;
+        line-height: 1;
+        color: var(--secondary-color);
+        margin-top: 8rem;
+        margin-bottom: .5rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .icon-check path {
+        fill: currentColor;
+    }
+/**Mensaje inicio sesion */
+    .message-register{
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: var(--color-text-primary);
+    }
+
+    .button-message{
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .button-message:hover{
+        background-color: var(--tertiary-color);
+    }
+
+/*ESTILOS DEL PERFIL*/
 
   .dashboard-wrapper {
     max-width: 1400px;
@@ -341,6 +445,8 @@ import ImgProfile from "../assets/image/perfil.png"
     color: var(--secondary-color);
     font-weight: 700;
   }
+
+
   /* Ajustes Responsive */
   @media (max-width: 900px) {
     .dashboard-header {

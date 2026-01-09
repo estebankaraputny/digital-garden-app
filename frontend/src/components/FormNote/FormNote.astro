@@ -81,7 +81,7 @@
     e.preventDefault();
 
     btn.disabled = true;
-    btn.textContent = "Cargando...";
+    btn.textContent = "Creando Nota...";
 
     //Capturamos los datos del formulario automáticamente
     const formData = new FormData(form);
@@ -97,17 +97,14 @@
     try {
       const myToken: any = localStorage.getItem("token");
 
-      const response = await fetchDataPostWithToken("notes", data, myToken);
-      // console.log("Respuesta:", response);
+      const response = await fetchDataPostWithToken("notes", data, myToken)
 
       if (response && response.id) {
-         alert('¡Nota creada con éxito!')
         window.location.href = "dashboard";
       } else {
         throw new Error("Error al crear la nota");
       }
     } catch (error: any) {
-        // console.log("Error form:", error.message);
         if (errorMsg) errorMsg.textContent = error.message;
         if (errorMsg) errorMsg.classList.remove('hidden');
     } finally {
@@ -118,18 +115,7 @@
 </script>
 
 <style>
-  /* 
-  section {
-    background: #f4f4f5;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  } */
-
   .section-create {
-    /* background: #f4f4f5; */
     border-radius: 8px;
     width: 100%;
     margin: auto;

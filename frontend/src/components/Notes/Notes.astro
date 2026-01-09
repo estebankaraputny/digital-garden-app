@@ -1,6 +1,12 @@
 ---
 import "./notes.css";
 ---
+  <div class="message-container hidden" id="message-container-note">
+      <svg class="icon-check" id="icon-check-note" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576zM320 112C205.1 112 112 205.1 112 320C112 434.9 205.1 528 320 528C434.9 528 528 434.9 528 320C528 205.1 434.9 112 320 112zM390.7 233.9C398.5 223.2 413.5 220.8 424.2 228.6C434.9 236.4 437.3 251.4 429.5 262.1L307.4 430.1C303.3 435.8 296.9 439.4 289.9 439.9C282.9 440.4 276 437.9 271.1 433L215.2 377.1C205.8 367.7 205.8 352.5 215.2 343.2C224.6 333.9 239.8 333.8 249.1 343.2L285.1 379.2L390.7 234z"/></svg>
+      <p class="message-register" id="message-register-note"></p>
+      <button class="button-message" id="message-btn-note"></button>
+      <button class="button-close-message" id="close-message-btn-note"></button>
+  </div>
 
   <section class="section-container-card">
 
@@ -120,6 +126,15 @@ import "./notes.css";
   const btnCancel = document.getElementById("cancel-edit-btn");
   const errorMsg = document.getElementById("error-form-message-edit");
 
+  //Alert mensaje elementos
+  const messageContainer = document.getElementById("message-container-note");
+  const messageRegister = document.getElementById("message-register-note");
+  const messageBtn = document.getElementById("message-btn-note");;
+  const iconCheck = document.getElementById("icon-check-note");
+  const buttonCloseMessageBtn = document.querySelector(".button-close-message");
+  const fullPage = document.querySelector("body");
+
+
   // --- FUNCIONES AUXILIARES ---
   const timeAgo = (dateString) => {
     if (!dateString) return '';
@@ -238,11 +253,32 @@ import "./notes.css";
     } catch (error) {
       console.error("Error detallado:", error);
       
+      function bloquearNavegacion() {
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'PageUp' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Home' || e.key === 'End') {
+            e.preventDefault();
+          }
+        });
+
+        document.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('mousedown', function(e) { e.preventDefault(); }); // Para evitar clics arrastrando
+      }
+
       // 3. MANEJO AUTOMÁTICO DE ERROR 401 (TOKEN EXPIRADO)
       if (error.status === 401 || (error.message && error.message.includes('401'))) {
-          alert("Sesión expirada. Por favor ingresa nuevamente.");
-          localStorage.removeItem("token");
-          window.location.href = "/login";
+
+          bloquearNavegacion();
+          iconCheck?.classList.add("hidden");
+          buttonCloseMessageBtn?.classList.add("hidden");
+          messageContainer.classList.remove("hidden");
+          messageRegister.textContent = "Sesión expirada. Por favor ingresa nuevamente.";
+          messageBtn.textContent = "Volver a iniciar sesión";
+          messageBtn?.addEventListener("click", () => {
+              messageContainer.classList.add("hidden");
+              localStorage.removeItem("token");
+              document.location.href = "/login";
+          });
           return;
       }
       if (container) container.innerHTML = `<p class="error-msg">Error al cargar notas.</p>`;
@@ -316,12 +352,47 @@ import "./notes.css";
   const activateDeleteButtons = () => {
     document.querySelectorAll(".delete-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
-        if (!confirm("¿Borrar nota?")) return;
-        const id = e.currentTarget.dataset.id;
-        try {
-          await fetchDataDelete(`notes/${id}`, myToken);
-          loadNotes(currentPage); // Recargar es más seguro para mantener consistencia
-        } catch (error) { alert("Error al eliminar"); }
+        const noteId = e.currentTarget?.dataset?.id;
+        if (!noteId) {
+          console.error("No se encontró el ID de la nota");
+          return;
+        }
+        
+        messageContainer.classList.remove("hidden");
+        iconCheck?.classList.add("hidden");
+        messageRegister.textContent = "¿Estas seguro que deseas eliminar esta nota?";
+        messageBtn.textContent = "Aceptar";
+        buttonCloseMessageBtn.textContent = "Cancelar";
+        
+        messageBtn?.addEventListener("click", async () => {
+          messageContainer.classList.add("hidden");
+          try {
+            await fetchDataDelete(`notes/${noteId}`, myToken);
+              messageContainer.classList.remove("hidden");
+              iconCheck?.classList.remove("hidden");
+              iconCheck.style.marginTop = "10px";
+              messageRegister.textContent = "Nota eliminada con éxito";
+              buttonCloseMessageBtn.textContent = "Cerrar";
+              messageBtn.classList.add("hidden");
+              buttonCloseMessageBtn.addEventListener("click", () => { 
+              messageContainer.classList.add("hidden"); 
+              loadNotes(currentPage);
+            });
+          } catch (error) { 
+              buttonCloseMessageBtn.classList.add("hidden");
+              messageContainer.classList.remove("hidden");
+              messageRegister.textContent = "Error al eliminar la nota";
+              messageBtn.textContent = "Cerrar";
+              console.error("Error al eliminar la nota:", error);
+              messageBtn.addEventListener("click", () => { 
+                messageContainer.classList.add("hidden"); 
+              });
+           }
+        });
+        
+        buttonCloseMessageBtn?.addEventListener("click", () => { 
+          messageContainer.classList.add("hidden");
+        });
       });
     });
   };
