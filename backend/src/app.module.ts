@@ -12,6 +12,8 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { NoteModule } from './note/note.module';
 import { ProfileModule } from './profile/profile.module';
+import { StripeModule } from './stripe/stripe.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { ProfileModule } from './profile/profile.module';
     PrismaModule,
     NoteModule,
     ProfileModule,
+    StripeModule,
+    SubscriptionModule,
   ],
   providers: [
     // Filtros globales

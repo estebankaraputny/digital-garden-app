@@ -14,11 +14,12 @@ model User {
   roles    Json     @default("[\"USER\"]")
   notes    Note[]
   profile  Profile?
+  name     String
+  stripeCustomerId String? @unique
 }
 
 model Profile {
   id          String  @id @default(uuid())
-  name        String
   description String?
   avatar      String?
   plan        Plan    @default(FREE)

@@ -20,7 +20,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const { name, ...userData } = createUserDto;
+      const { password, ...userData } = createUserDto;
       
       const hashedPassword = (await bcrypt.hash(createUserDto.password, 10)).split(' ').join('');
 
@@ -28,7 +28,19 @@ export class UserService {
         data: {
           ...userData,
           password: hashedPassword,
+          name: userData.name || userData.email.split('@')[0],
+          roles: ['USER'],
+
+          profile: {
+            create: {
+              plan: 'FREE'
+            }
+          }
         },
+        // Incluimos el perfil en la respuesta para verificar que se creó
+        include: {
+            profile: true 
+        }
       });
 
       return { ...newUser, roles: newUser.roles as Role[] };
@@ -114,24 +126,4 @@ export class UserService {
       throw error;
     }
   }
-
-  // async findByEmail(email: string): Promise<User | null> {
-  //   const user = await this.prisma.user.findUnique({
-  //     where: { email },
-  //   });
-  //   if (!user) return null;
-  //   return { ...user, roles: user.roles as Role[] };
-  // }
-
-  // async findByRole(role: Role): Promise<User[]> {
-  //   const users = await this.prisma.user.findMany({
-  //     where: {
-  //       roles: { // The 'has' property is available on JsonFilter
-  //         equals: [role],
-  //       } as Prisma.JsonFilter,
-  //     },
-  //   });
-  //   return users.map((user) => ({ ...user, roles: user.roles as Role[] }));
-  // }
-
 }

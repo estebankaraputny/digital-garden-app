@@ -1,10 +1,6 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
-import { Role } from 'src/common/types/admin.types';
-import {
-  AdminAlreadyExistsException,
-} from '../common/exceptions/user-exceptions';
 import { PrismaService } from 'src/prisma/prisma.service';
 import slugify from 'slugify';
 import { Note } from '@prisma/client'
@@ -51,7 +47,7 @@ private async checkPlanLimits(userId: string) {
         profile: { 
           select:
           { plan: true }}
-        } // Solo necesitamos el campo plan
+        }
     });
 
     if (!user) throw new ForbiddenException('Usuario no encontrado');
@@ -89,13 +85,12 @@ private async checkPlanLimits(userId: string) {
     include: {
       author: {
         select: {
-          id: true,
+          name: true,
           email: true,
           profile: {
             select: {
-              name: true,
-              avatar: true,
-              plan: true
+              plan: true,
+              avatar: true
             }
           }
         }
@@ -111,9 +106,9 @@ private async checkPlanLimits(userId: string) {
         author: {
           select: {
             email: true, 
+            name: true,
             profile: { 
               select: { 
-                name: true,
                 avatar: true,
                 plan: true
               }
@@ -124,20 +119,6 @@ private async checkPlanLimits(userId: string) {
     });
   }
 
-  // backend/src/notes/notes.service.ts
-
-  // async findAllLogin(userId: string) {
-  //   return await this.prisma.note.findMany({
-  //     where: {
-  //       authorId: userId,
-  //     },
-  //     include: {
-  //       author: true
-  //     }
-  //   });
-  // }
-
-  // En NoteService
 
 async findAllLogin(userId: string, page: number = 1, limit: number = 10) {
   const skip = (page - 1) * limit;
@@ -153,9 +134,9 @@ async findAllLogin(userId: string, page: number = 1, limit: number = 10) {
           select: {
             id: true,
             email: true,
+            name: true,
             profile: {
               select: {
-                name: true,
                 avatar: true,
                 plan: true,
               },

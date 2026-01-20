@@ -38,7 +38,7 @@ export class AuthService{
 
       const newUser = await this.userService.create(signUpDto);
 
-      await this.profileService.createInitialProfile(newUser.id, signUpDto.name);
+      await this.profileService.createInitialProfile(newUser.id);
       
       return newUser;
   }

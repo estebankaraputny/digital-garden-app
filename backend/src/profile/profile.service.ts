@@ -20,9 +20,11 @@ export class ProfileService {
   }
   
   // Crear perfil inicial (se llamará desde el registro)
-  async createInitialProfile(userId: string, name: string) {
+  async createInitialProfile(userId: string) {
       return await this.prisma.profile.create({
-          data: { userId, name }
+          data: { 
+            userId,
+          }
       });
   }
 }
