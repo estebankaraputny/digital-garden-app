@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, InternalServerErrorException } from '@
 import { StripeService } from '../stripe/stripe.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { ConfigService } from '@nestjs/config'; // Para la URL del frontend
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SubscriptionService {
@@ -13,45 +13,65 @@ export class SubscriptionService {
   ) {}
 
   async createSubscription(userId: string, dto: CreateSubscriptionDto) {
-    // 1. Validar Usuario
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     
-    if (!user?.stripeCustomerId) {
-      throw new BadRequestException('El usuario no tiene un Customer ID de Stripe asociado.');
+    if (!user) {
+        throw new BadRequestException('Usuario no encontrado.');
+    }
+
+    // --- AUTO-REPARACIÓN (LA DEJAMOS PORQUE FUNCIONA BIEN) ---
+    let customerId = user.stripeCustomerId;
+    if (!customerId) {
+        console.log(`⚠️ Creando customer para ${user.email}...`);
+        try {
+            const newCustomer = await this.stripeService.stripe.customers.create({
+                email: user.email,
+                name: user.name || 'Usuario',
+            });
+            customerId = newCustomer.id;
+            await this.prisma.user.update({
+                where: { id: userId },
+                data: { stripeCustomerId: customerId }
+            });
+        } catch (error) {
+            console.error('Error creando customer:', error);
+            throw new InternalServerErrorException('Error al registrar usuario en Stripe.');
+        }
     }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
 
-    console.log(`🚀 Creando Checkout Session (Custom UI) para ${user.email}...`);
+    console.log(`🚀 Creando Checkout Session para ${user.email}...`);
 
     try {
-      // 2. CREAR SESSION DE CHECKOUT
-      // Usamos ui_mode: 'custom' para que se dibuje en tu web, no en la de Stripe
       const session = await this.stripeService.stripe.checkout.sessions.create({
-        customer: user.stripeCustomerId,
+        customer: customerId, 
         mode: 'subscription',
-        ui_mode: 'embedded', // <--- LA CLAVE PARA EMBEDDED CHECKOUT
+        ui_mode: 'embedded',
         line_items: [
           {
             price: dto.priceId,
             quantity: 1,
           },
         ],
-        // Stripe reemplazará {CHECKOUT_SESSION_ID} automáticamente
+        // MANTENEMOS ESTO (Para que redirija al éxito)
         return_url: `${frontendUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}&payment=success`, 
-        payment_method_types: ['card'], // Opcional si ya lo configuras en el Dashboard
+        
+        payment_method_types: ['card'], 
+        
+        // ❌ ELIMINAMOS ESTA LÍNEA QUE CAUSABA EL ERROR ❌
+        // redirect_on_completion: 'never', 
       });
 
       console.log('✅ Checkout Session creada:', session.id);
 
-      // 3. Retornamos el client_secret DE LA SESIÓN (no del payment intent)
       return {
         clientSecret: session.client_secret,
       };
 
     } catch (error) {
       console.error('❌ Error creando Checkout Session:', error);
-      throw new InternalServerErrorException('No se pudo iniciar el proceso de pago.');
+      throw new InternalServerErrorException('Error Stripe: ' + error.message);
     }
   }
 }

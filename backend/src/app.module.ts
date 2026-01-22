@@ -14,7 +14,7 @@ import { NoteModule } from './note/note.module';
 import { ProfileModule } from './profile/profile.module';
 import { StripeModule } from './stripe/stripe.module';
 import { SubscriptionModule } from './subscription/subscription.module';
-
+import { WebhookController } from './stripeWebhook/webhook.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -37,6 +37,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     StripeModule,
     SubscriptionModule,
   ],
+  controllers: [WebhookController],
   providers: [
     // Filtros globales
     {

@@ -4,7 +4,10 @@ import { setupSwagger } from './swagger';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+    cors: true,
+  });
   
   app.enableCors({
     origin: true,
