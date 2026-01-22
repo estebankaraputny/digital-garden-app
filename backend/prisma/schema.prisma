@@ -7,6 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+  UNLIMITED
+}
+
+
 model User {
   id       String   @id @default(uuid())
   email    String   @unique
@@ -16,6 +30,10 @@ model User {
   profile  Profile?
   name     String
   stripeCustomerId String? @unique
+  stripeSubscriptionId String? @unique
+  subscriptionStatus String?
+  planPriceId String?
+  subscriptionEndDate DateTime?
 }
 
 model Profile {
@@ -41,15 +59,3 @@ model Note {
   author    User     @relation(fields: [authorId], references: [id])
 }
 
-enum Role {
-  USER
-  ADMIN
-  MODERATOR
-}
-
-enum Plan {
-  FREE
-  BASIC
-  PREMIUM
-  UNLIMITED
-}

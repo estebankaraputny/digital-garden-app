@@ -86,28 +86,6 @@ export class UserService {
 
     return { ...user, roles: user.roles as Role[] };
   }
-
-
-  // async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-  //   try {
-  //     await this.findOne(id);
-
-  //     const updatedUser = await this.prisma.user.update({
-  //       where: { id },
-  //       data: updateUserDto,
-  //     });
-
-  //     return { ...updatedUser, roles: updatedUser.roles as Role[] };
-  //   } catch (error) {
-  //     // Manejar error de email duplicado
-  //     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-  //       if (error.code === 'P2002') {
-  //         throw new UserAlreadyExistsException(updateUserDto.email!);
-  //       }
-  //     }
-  //     throw error;
-  //   }
-  // }
   
 
   async remove(id: string): Promise<User> {

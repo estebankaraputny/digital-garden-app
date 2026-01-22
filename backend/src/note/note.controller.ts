@@ -5,6 +5,8 @@ import { UpdateNoteDto } from './dto/update-note.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/types/admin.types';
 import { Public } from 'src/common/decorators/public.decorator';
+import { RequiredPlan } from '../common/decorators/plans.decorator';
+import { Plan } from '@prisma/client';
 
 @Controller('notes')
 export class NoteController {
@@ -29,13 +31,6 @@ export class NoteController {
     // Pasamos el DTO y el ID del autor al servicio
     return await this.noteService.create(createNoteDto, authorId);
   }
-
-  // @Get('user-notes')
-  // @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
-  // async findAllLogin(@Req() req: any) {
-  //   const userId = req.user.sub;
-  //   return await this.noteService.findAllLogin(userId);
-  // }
 
   @Get('user-notes')
   @Roles(Role.USER, Role.ADMIN, Role.MODERATOR)
@@ -67,6 +62,13 @@ export class NoteController {
     const userId = req.user.sub || req.user.id;
     const count = await this.noteService.countByUser(userId);
     return { count };
+  }
+
+  // Accesible solo para PREMIUM y UNLIMITED
+  @Get('ia-chat')
+  @RequiredPlan(Plan.PREMIUM)
+  chatWithAI() {
+    return "Hola soy la IA, tienes acceso porque pagas Premium";
   }
 
   @Patch(':id')
