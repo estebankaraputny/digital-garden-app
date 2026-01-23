@@ -160,8 +160,9 @@ import "./notes.css";
   };
 
   const createNoteCard = (note) => {
-    const authorName = note.author?.profile?.name || "Usuario";
+    const authorName = note.author?.name || "Usuario";
     const initial = authorName.charAt(0).toUpperCase();
+    const avatarUrl = note.author?.profile.avatar || initial;
     const CHAR_LIMIT = 120;
     const isLong = note.content.length > CHAR_LIMIT;
     
@@ -176,12 +177,16 @@ import "./notes.css";
     } else {
       contentHTML = `<span class="simple-text">${note.content}</span>`;
     }
-  
+    
+    console.log("Creando tarjeta para la nota:", note);
+
     return `
       <article class="note-card" id="${note.id}">
         <div class="card-header">
             <div class="user-info">
-                <div class="avatar-circle">${initial}</div>
+                <div>
+                  <img  class="avatar-circle" src="${avatarUrl}" alt="Avatar de ${authorName}" class="avatar-image"/>
+                </div>
                 <div class="user-meta">
                     <span class="user-name">${authorName}</span>
                     <div class="post-meta">

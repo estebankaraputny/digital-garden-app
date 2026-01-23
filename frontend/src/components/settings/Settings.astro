@@ -1,232 +1,548 @@
 ---
-// No se necesita lógica de servidor aquí por ahora, todo es del lado del cliente.
-// Podríamos cargar datos iniciales del usuario si fuera necesario.
+// Settings.astro
 ---
+
 <div class="settings-container">
   <aside class="settings-nav">
-    <ul>
-      <li><a href="#profile" class="active">Perfil</a></li>
-      <li><a href="#account">Cuenta</a></li>
-      <li><a href="#subscription">Suscripción</a></li>
-      <li><a href="#sharing">Compartir</a></li>
-      <li><a href="#legal">Legal</a></li>
-      <li><a href="#danger-zone">Eliminar Cuenta</a></li>
-    </ul>
+    <nav>
+      <ul>
+        <li><a href="#profile" class="active">Perfil</a></li>
+        <li><a href="#account">Cuenta</a></li>
+        <li><a href="#subscription">Suscripción</a></li>
+        <li><a href="#sharing">Compartir</a></li>
+        <li><a href="#legal">Legal</a></li>
+        <li><a href="#danger-zone" class="danger-link">Zona de Peligro</a></li>
+      </ul>
+    </nav>
   </aside>
 
   <main class="settings-content">
-    <!-- Sección Perfil -->
-    <section id="profile" class="settings-section">
-      <h2>Perfil Público</h2>
-      <form id="profile-form">
-        <div class="form-group avatar-group">
-          <img src="/src/assets/image/perfil.png" alt="Avatar actual" id="avatar-preview" class="avatar-preview">
-          <input type="file" id="avatar-upload" accept="image/*" class="hidden">
-          <button type="button" id="change-avatar-btn">Cambiar Foto</button>
+    
+    <section id="profile" class="settings-card">
+      <div class="card-header">
+        <h2>Tu Perfil</h2>
+        <p>Actualiza tu información pública y foto de perfil.</p>
+      </div>
+      
+      <form id="profile-form" class="card-body">
+        <div class="form-group avatar-group" id="setting-img">
+          <div class="avatar-preview" id="current-avatar-container">
+             <span class="loading-text">...</span>
+          </div>
+          
+          <div class="avatar-actions">
+             <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+             <button type="button" id="change-avatar-btn" class="btn-secondary">Cambiar Foto</button>
+             <small>Recomendado: Cuadrado, max 5MB.</small>
+          </div>
         </div>
+
         <div class="form-group">
-          <label for="name">Nombre</label>
-          <input type="text" id="name" name="name" placeholder="Tu nombre para mostrar">
+          <label for="name">Nombre para mostrar</label>
+          <input type="text" id="name" name="name" placeholder="Ej: Juan Pérez">
         </div>
-        <button type="submit">Guardar Cambios</button>
+        
+        <div class="form-group">
+            <label for="description-user">Descripción</label>
+            <textarea id="description-user" rows="3" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Guardar Cambios</button>
+        </div>
       </form>
     </section>
 
-    <!-- Sección Cuenta -->
-    <section id="account" class="settings-section">
-      <h2>Configuración de la Cuenta</h2>
-      <form id="email-form">
-        <div class="form-group">
-          <label for="email">Correo Electrónico</label>
-          <input type="email" id="email" name="email" placeholder="tu.correo@example.com">
-        </div>
-        <button type="submit">Cambiar Correo</button>
-      </form>
-      <hr>
-      <form id="password-form">
-        <h4>Cambiar Contraseña</h4>
-        <div class="form-group">
-          <label for="current-password">Contraseña Actual</label>
-          <input type="password" id="current-password" name="currentPassword">
-        </div>
-        <div class="form-group">
-          <label for="new-password">Nueva Contraseña</label>
-          <input type="password" id="new-password" name="newPassword">
-        </div>
-        <button type="submit">Actualizar Contraseña</button>
-      </form>
-       <div class="form-group">
-        <a href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
+    <section id="account" class="settings-card">
+      <div class="card-header">
+        <h2>Configuración de la Cuenta</h2>
+        <p>Administra tu acceso y seguridad.</p>
+      </div>
+
+      <div class="card-body">
+          <form id="email-form">
+            <div class="form-group">
+              <label for="email">Correo Electrónico</label>
+              <div class="input-with-button">
+                  <input type="email" id="email" name="email" placeholder="tu.correo@example.com">
+                  <button type="submit" class="btn-secondary">Cambiar</button>
+              </div>
+            </div>
+          </form>
+
+          <hr class="divider">
+
+          <form id="password-form">
+            <h4>Cambiar Contraseña</h4>
+            <div class="grid-2">
+                <div class="form-group">
+                  <label for="current-password">Contraseña Actual</label>
+                  <input type="password" id="current-password" name="currentPassword">
+                </div>
+                <div class="form-group">
+                  <label for="new-password">Nueva Contraseña</label>
+                  <input type="password" id="new-password" name="newPassword">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Actualizar Contraseña</button>
+                <a href="#" id="forgot-password-link" class="link-text">¿Olvidaste tu contraseña?</a>
+            </div>
+          </form>
       </div>
     </section>
 
-    <!-- Sección Suscripción -->
-    <section id="subscription" class="settings-section">
-      <h2>Suscripción</h2>
-      <div id="subscription-status">
-        <p>Plan actual: <span id="plan-name">Cargando...</span></p>
-        <p>Estado: <span id="plan-status">Cargando...</span></p>
+    <section id="subscription" class="settings-card">
+      <div class="card-header">
+        <h2>Suscripción</h2>
+        <p>Gestiona tu plan y facturación.</p>
       </div>
-      <div class="actions">
-        <a href="/pricing" class="btn-secondary">Ver Planes</a>
-        <button id="cancel-plan-btn" class="btn-danger">Cancelar Suscripción</button>
+      
+      <div class="card-body">
+          <div class="subscription-status-box">
+            <div class="plan-info">
+                <p class="label">Plan actual</p>
+                <h3 id="plan-name">Cargando...</h3>
+            </div>
+            <div class="status-info">
+                <p class="label">Estado</p>
+                <span id="plan-status" class="badge">Cargando...</span>
+            </div>
+          </div>
+          
+          <div class="actions mt-4">
+            <a href="/pricing" class="btn-secondary">Ver Planes</a>
+            <button id="cancel-plan-btn" class="btn-danger-outline">Cancelar Suscripción</button>
+          </div>
       </div>
     </section>
 
-    <!-- Sección Compartir -->
-    <section id="sharing" class="settings-section">
-        <h2>Compartir Perfil</h2>
-        <p>Comparte tu jardín digital con otros.</p>
-        <div class="form-group share-group">
-            <input type="text" id="share-link" readonly>
-            <button id="copy-link-btn">Copiar</button>
+    <section id="sharing" class="settings-card">
+        <div class="card-header">
+            <h2>Compartir Perfil</h2>
+            <p>Comparte tu jardín digital con el mundo.</p>
+        </div>
+        <div class="card-body">
+            <div class="form-group share-group">
+                <input type="text" id="share-link" readonly>
+                <button id="copy-link-btn" class="btn-secondary">Copiar</button>
+            </div>
         </div>
     </section>
 
-
-    <!-- Sección Legal -->
-    <section id="legal" class="settings-section">
-      <h2>Legal y Políticas</h2>
-      <ul>
-        <li><a href="/privacy">Política de Privacidad</a></li>
-        <li><a href="/security">Política de Seguridad</a></li>
-        <li><a href="/guidelines">Directrices de la Comunidad</a></li>
-      </ul>
+    <section id="legal" class="settings-card">
+      <div class="card-header">
+         <h2>Legal</h2>
+      </div>
+      <div class="card-body">
+          <ul class="legal-links">
+            <li><a href="/privacy">Política de Privacidad</a></li>
+            <li><a href="/security">Política de Seguridad</a></li>
+            <li><a href="/guidelines">Directrices de la Comunidad</a></li>
+          </ul>
+      </div>
     </section>
 
-    <!-- Sección Eliminar Cuenta -->
-    <section id="danger-zone" class="settings-section">
-      <h2>Eliminar Cuenta</h2>
-      <div class="danger-action">
-        <p><strong>Eliminar cuenta</strong><br>Esta acción es irreversible. Se borrarán todos tus datos.</p>
-        <button id="delete-account-btn" class="btn-danger">Eliminar Mi Cuenta</button>
+    <section id="danger-zone" class="settings-card danger-card">
+      <div class="card-header">
+         <h2 class="text-danger">Eliminar Cuenta</h2>
+      </div>
+      <div class="card-body">
+          <div class="danger-action">
+            <p>Esta acción es <strong>irreversible</strong>. Se borrarán todos tus datos, notas y configuraciones.</p>
+            <button id="delete-account-btn" class="btn-danger">Eliminar Mi Cuenta</button>
+          </div>
       </div>
     </section>
   </main>
 </div>
 
 <style>
-/* Estilos generales */
+/* --- VARIABLES & RESET --- */
+:root {
+  --secondary-color: #447d4b;
+  --tertiary-color: #08453c;
+  --background-color: #F4EEE5;
+  --white-color: #ffffff;
+  --border-color: #E7E7E7;
+  --color-text-primary: #262626;
+  --color-text-light: #666666;
+  --danger-color: #dc2626;
+  --danger-bg: #fef2f2;
+  --radius: 12px;
+  --font-family: 'Figtree', system-ui, sans-serif;
+}
+
+/* --- LAYOUT PRINCIPAL --- */
 .settings-container {
   display: flex;
-  max-width: 1000px;
+  max-width: 1200px; /* Un poco más ancho para desktop */
   margin: 2rem auto;
   gap: 2rem;
+  padding: 0 1.5rem;
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+  align-items: flex-start;
 }
+
+/* --- SIDEBAR DE NAVEGACIÓN --- */
 .settings-nav {
-  width: 200px;
+  width: 250px;
   position: sticky;
   top: 2rem;
-  align-self: flex-start;
+  flex-shrink: 0;
 }
+
 .settings-nav ul {
   list-style: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
 .settings-nav a {
   display: block;
   padding: 0.75rem 1rem;
   text-decoration: none;
-  color: #333;
-  border-radius: 6px;
+  color: var(--color-text-light);
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
-.settings-nav a.active, .settings-nav a:hover {
-  background-color: #f0f0f0;
-  font-weight: bold;
+
+.settings-nav a:hover {
+  background-color: rgba(68, 125, 75, 0.1); /* Secondary color con opacidad */
+  color: var(--secondary-color);
 }
+
+.settings-nav a.active {
+  background-color: var(--secondary-color);
+  color: var(--white-color);
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(68, 125, 75, 0.2);
+}
+
+.settings-nav a.danger-link:hover {
+    color: var(--danger-color);
+    background-color: var(--danger-bg);
+}
+
+/* --- CONTENIDO PRINCIPAL & CARDS --- */
 .settings-content {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%; /* Asegura que ocupe el espacio restante */
 }
-.settings-section {
+
+.settings-card {
+  background-color: var(--white-color);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  scroll-margin-top: 2rem; /* Para que el ancla no quede pegada arriba */
+}
+
+.card-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #fafafa;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--tertiary-color);
+  font-weight: 700;
+}
+
+.card-header p {
+  margin: 0.25rem 0 0 0;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.card-body {
   padding: 2rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin-bottom: 2rem;
 }
-.settings-section h2 {
-  margin-top: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e0e0e0;
-}
+
+/* --- FORMULARIOS & INPUTS --- */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
+
 label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--tertiary-color);
 }
-input[type="text"], input[type="email"], input[type="password"] {
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"],
+textarea {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fcfcfc;
 }
-button, .btn-secondary, .btn-danger {
+
+textarea {
+    resize: vertical;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(68, 125, 75, 0.1);
+}
+
+.input-with-button {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* --- BOTONES --- */
+button, .btn-primary, .btn-secondary, .btn-danger {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
-button[type="submit"] {
-  background-color: #007bff;
-  color: white;
-}
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-hr {
-  margin: 2rem 0;
-  border: 0;
-  border-top: 1px solid #e0e0e0;
-}
-.hidden { display: none; }
 
-/* Avatar */
-.avatar-group {
+.btn-primary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--tertiary-color);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--color-text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+.btn-danger-outline {
+    background-color: transparent;
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+}
+.btn-danger-outline:hover {
+    background-color: var(--danger-bg);
+}
+
+.form-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin-top: 1rem;
 }
+
+.link-text {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.link-text:hover {
+    text-decoration: underline;
+}
+
+/* --- AVATAR (Optimizado) --- */
+.avatar-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .avatar-preview {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ccc;
+    /* Estilos para el fallback de texto */
+    background: linear-gradient(135deg, var(--secondary-color), var(--tertiary-color));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 3px solid var(--white-color);
+    box-shadow: 0 0 0 2px var(--border-color);
 }
-/* Share */
+
+/* Cuando JS inyecta la imagen dentro */
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.avatar-actions small {
+    color: var(--color-text-light);
+    font-size: 0.8rem;
+}
+
+/* --- SUBSCRIPCIÓN & OTROS --- */
+.subscription-status-box {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-light);
+    margin-bottom: 0.25rem;
+}
+
+.plan-info h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--tertiary-color);
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background-color: #e2e8f0;
+    color: #475569;
+}
+
 .share-group {
     display: flex;
 }
 #share-link {
-    flex-grow: 1;
-    background-color: #f4f4f4;
-    cursor: text;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #f9f9f9;
 }
 #copy-link-btn {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    border-left: none;
 }
 
+.divider {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
 
-/* Responsive */
-@media (max-width: 768px) {
+.legal-links {
+    list-style: none;
+    padding: 0;
+}
+.legal-links li {
+    border-bottom: 1px solid var(--border-color);
+}
+.legal-links li:last-child {
+    border-bottom: none;
+}
+.legal-links a {
+    display: block;
+    padding: 1rem 0;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+}
+.legal-links a:after {
+    content: '→';
+    color: var(--secondary-color);
+}
+
+.danger-card {
+    border-color: #fecaca;
+}
+.danger-card .card-header {
+    background-color: #fef2f2;
+}
+.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.hidden { display: none; }
+.mt-4 { margin-top: 1.5rem; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
   .settings-container {
     flex-direction: column;
   }
   .settings-nav {
     width: 100%;
-    position: static;
-    display: flex;
-    overflow-x: auto;
-    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--background-color); /* Para que no se transparente al scrollear */
+    padding-bottom: 1rem;
   }
   .settings-nav ul {
-    display: flex;
-    gap: 1rem;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .settings-nav a {
+    white-space: nowrap;
+  }
+  .grid-2 {
+      grid-template-columns: 1fr;
   }
 }
 </style>
@@ -236,170 +552,225 @@ hr {
     import fetchDataGetWithToken from '../../lib/api/fetchDataGetWithToken.ts';
     import { fetchDataPatchUser } from '../../lib/api/fetchDataPatch.ts';
     import fetchDataDelete from '../../lib/api/fetchDataDelete.ts';
+    import { fetchDataPostUserFile } from '../../lib/api/fetchDataPost.ts';
 
     document.addEventListener('DOMContentLoaded', () => {
-        const userId = 'USER_ID_PLACEHOLDER';
+        // --- CONFIGURACIÓN INICIAL ---
+        const userId = 'USER_ID_PLACEHOLDER'; // Idealmente obtén esto del token o perfil real
         const shareLinkInput = document.getElementById('share-link') as HTMLInputElement;
+        
         if(shareLinkInput) {
             shareLinkInput.value = `${window.location.origin}/profile/${userId}`;
         }
 
-        // Navegación suave y activa
+        // --- INTERSECTION OBSERVER (Navegación Activa) ---
         const navLinks = document.querySelectorAll('.settings-nav a');
-        const sections = document.querySelectorAll('.settings-section');
+        const sections = document.querySelectorAll('.settings-section, .settings-card');
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     navLinks.forEach(link => {
                         link.classList.remove('active');
-                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        if (link.getAttribute('href')?.substring(1) === entry.target.id) {
                             link.classList.add('active');
                         }
                     });
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: 0.2, rootMargin: "-20% 0px -50% 0px" }); // Ajustado para mejor respuesta
 
         sections.forEach(section => observer.observe(section));
 
+        // --- CARGAR DATOS DEL USUARIO ---
+        const myToken = localStorage.getItem('token') || '';
 
-        // --- Lógica de Perfil ---
-        const avatarUpload = document.getElementById('avatar-upload') as HTMLInputElement;
-        document.getElementById('change-avatar-btn').addEventListener('click', () => {
-            avatarUpload.click();
-        });
-
-        avatarUpload.addEventListener('change', async (event) => {
-            const file = (event.target as HTMLInputElement).files[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append('profilePicture', file);
+        const loadUserProfile = async () => {
+            if(!myToken) return;
 
             try {
-                const response = await api.uploadProfilePicture(formData);
-                 if (!response.ok) throw new Error('Falló la subida de imagen.');
-                const data = await response.json();
-                (document.getElementById('avatar-preview') as HTMLImageElement).src = data.url;
-                alert('Foto de perfil actualizada.');
-            } catch (error) {
-                alert(`Error: ${error.message}`);
+                const userDate = await fetchDataGetWithToken('user/data-user', myToken);
+                console.log("Datos usuario:", userDate);
+                
+                // Rellenar campos de texto
+                const nameEl = document.getElementById("name") as HTMLInputElement;
+                const descEl = document.getElementById("description-user") as HTMLTextAreaElement;
+                const emailEl = document.getElementById("email") as HTMLInputElement;
+
+                if (nameEl) nameEl.value = userDate.name || "";
+                if (descEl) descEl.value = userDate.profile?.description || ""; // Asumo que es value para textarea
+                if (emailEl) emailEl.value = userDate.email || "";
+
+                // Rellenar Avatar
+                const avatarContainer = document.querySelector("#setting-img .avatar-preview") as HTMLElement;
+                const avatarUrl = userDate.profile?.avatar || userDate.profile?.avatarUrl;
+
+                if (avatarContainer) {
+                    if (avatarUrl){
+                        // Opción A: Tiene Imagen
+                        avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="Avatar de ${userDate.name}" />`;
+                      } else {
+                        // Opción B: Iniciales
+                        const initialUser = userDate.name ? userDate.name.charAt(0).toUpperCase() : "DG";
+                        // Limpiamos innerHTML para quitar el spinner
+                        avatarContainer.innerHTML = `<span>${initialUser}</span>`;
+                    }
+                }
+
+            } catch (error: any) {
+                console.error("Error cargando perfil:", error);
             }
+        };
+
+        loadUserProfile();
+
+
+        // --- LÓGICA DE SUBIDA DE AVATAR ---
+        const fileInput = document.getElementById('avatar-upload') as HTMLInputElement;
+        const changeAvatarBtn = document.getElementById('change-avatar-btn');
+
+        // Función corregida (renombrada para evitar conflictos)
+        const handleUpload = async () => {
+          if (!fileInput.files || fileInput.files.length === 0) return;
+
+          const file = fileInput.files[0];
+          const formData = new FormData();
+          formData.append('file', file);
+
+          // Feedback visual de carga
+          if(changeAvatarBtn) changeAvatarBtn.textContent = "Subiendo...";
+
+          try {
+            await fetchDataPostUserFile('user/upload-avatar', formData); // Asegura el slash inicial
+            alert('Avatar actualizado correctamente');
+            window.location.reload(); 
+          } catch (error: any) {
+            console.error(error);
+            alert(`Error: ${error.message}`);
+            if(changeAvatarBtn) changeAvatarBtn.textContent = "Cambiar Foto";
+          }
+        };
+
+        // Eventos de Avatar
+        changeAvatarBtn?.addEventListener('click', () => {
+          fileInput.click(); 
         });
 
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = (document.getElementById('name') as HTMLInputElement).value;
-            try {
-                await api.updateProfile({ name });
-                alert('Perfil actualizado con éxito.');
-            } catch (error) {
-                alert(`Error: ${error.message}`);
+        fileInput?.addEventListener('change', handleUpload);
+
+
+        // --- LÓGICA DE SUSCRIPCIÓN ---
+        async function loadSubscriptionData() {
+             if(!myToken) return;
+             try {
+              const data = await fetchDataGetWithToken('subscription/status', myToken);
+              console.log("Subscription status:", data);
+
+              const planNameEl = document.getElementById('plan-name');
+              const planStatusEl = document.getElementById('plan-status');
+              const cancelBtn = document.getElementById('cancel-plan-btn') as HTMLButtonElement | null;
+
+              if (planNameEl) planNameEl.textContent = data.plan || 'Gratuito';
+              
+              if (planStatusEl) {
+                  planStatusEl.textContent = data.status || 'Inactivo';
+                  // Estilos dinámicos para el badge
+                  if(data.status === 'active') {
+                      planStatusEl.style.backgroundColor = '#dcfce7'; // Verde claro
+                      planStatusEl.style.color = '#166534';
+                  } else {
+                      planStatusEl.style.backgroundColor = '#f1f5f9';
+                      planStatusEl.style.color = '#64748b';
+                  }
+              }
+
+              if (data.status !== 'active' && cancelBtn) {
+                cancelBtn.disabled = true;
+                cancelBtn.style.opacity = '0.5';
+                cancelBtn.textContent = "No hay suscripción activa";
+              }
+
+            } catch (error: any) {
+              console.error("Error suscripción:", error);
             }
-        });
+        }
 
-        // --- Lógica de Suscripción ---
-async function loadSubscriptionData() {
-      try {
-      const myToken = localStorage.getItem('token') || '';
-      const data = await fetchDataGetWithToken('subscription/status', myToken);
-      console.log("Get subs", data);
+        loadSubscriptionData();
 
-      // Selección segura de elementos (Evita crash si el HTML no cargó aún)
-      const planNameEl = document.getElementById('plan-name');
-      const planStatusEl = document.getElementById('plan-status');
-      const cancelBtn = document.getElementById('cancel-plan-btn') as HTMLButtonElement | null;
+        // Cancelar suscripción
+        const btnCancel = document.getElementById('cancel-plan-btn');
 
-      if (planNameEl) planNameEl.textContent = data.plan || 'Ninguno'; // Ojo: data.plan (según tu servicio backend)
-      if (planStatusEl) planStatusEl.textContent = data.status || 'Inactivo';
+        const cancelSubscription = async () => {
+          if (!confirm('¿Estás seguro de que deseas cancelar tu suscripción? Perderás los beneficios al final del ciclo.')) {
+            return;
+          }
 
-      if (data.status !== 'active' && cancelBtn) {
-        cancelBtn.disabled = true;
-      }
+          try {
+            await fetchDataPatchUser('subscription/cancel', myToken);
+            alert('Suscripción cancelada con éxito.');
+            window.location.reload();
+          } 
+          catch (error: any) {
+            alert(`Error: ${error.message}`);
+          }
+        };
 
-    } catch (error: any) {
-      console.error("Error cargando suscripción:", error);
-      
-      const planNameEl = document.getElementById('plan-name');
-      const planStatusEl = document.getElementById('plan-status');
-      
-      if(planNameEl) planNameEl.textContent = 'Error';
-      if(planStatusEl) planStatusEl.textContent = 'No disponible';
-    }
-}
-
-loadSubscriptionData();
-
-//Cancelar suscripción
-const btnCancel = document.getElementById('cancel-plan-btn');
-
-const cancelSubscription = async () => {
-  const myToken = localStorage.getItem('token') || '';
-  console.log("Cancel subs", myToken);
-
-  if (!confirm('¿Estás seguro de que deseas cancelar tu suscripción? Dejarás de tener acceso a los beneficios Premium al finalizar el periodo actual.')) {
-    return;
-  }
-
-  try {
-    await fetchDataPatchUser('subscription/cancel', myToken);
-    alert('Suscripción cancelada con éxito.');
-    window.location.reload();
-  } 
-  catch (error: any) {
-    alert(`Error: ${error.message}`);
-  }
-};
-
-btnCancel?.addEventListener('click', cancelSubscription);
+        btnCancel?.addEventListener('click', cancelSubscription);
 
 
-// --- Borrar Cuenta ---
-const btnDeleteAccount = document.getElementById('delete-account-btn');
+        // --- BORRAR CUENTA ---
+        const btnDeleteAccount = document.getElementById('delete-account-btn');
 
-const deleteAccount = async () => {
-  const myToken = localStorage.getItem('token') || '';
-  console.log("Delete account", myToken);
+        const deleteAccount = async () => {
+          if (!confirm('PELIGRO: Esta acción borrará todos tus datos permanentemente. ¿Estás seguro?')) {
+            return;
+          }
 
-  if (!confirm('Esta acción es irreversible. ¿Estás seguro de que deseas eliminar tu cuenta?')) {
-    return;
-  }
+          try {
+            await fetchDataDelete('user/delete', myToken);
+            alert('Cuenta eliminada con éxito. Hasta pronto.');
+            localStorage.removeItem('token');
+            window.location.href = '/';
+          } 
+          catch (error: any) {
+            alert(`Error eliminando cuenta: ${error.message}`);
+          }
+        };
 
-  try {
-    await fetchDataDelete('user/delete', myToken);
-    alert('Cuenta eliminada con éxito.');
-    localStorage.removeItem('token');
-    window.location.href = '/';
-  } 
-  catch (error: any) {
-    alert(`Error: ${error.message}`);
-  }
-};
+        btnDeleteAccount?.addEventListener('click', deleteAccount);
 
-btnDeleteAccount?.addEventListener('click', deleteAccount);
+        // --- COMPARTIR ---
+        const copyBtn = document.getElementById('copy-link-btn');
+        if(copyBtn && shareLinkInput){
+            copyBtn.addEventListener('click', () => {
+                shareLinkInput.select();
+                document.execCommand('copy');
+                // Feedback visual en el botón
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = "¡Copiado!";
+                setTimeout(() => {
+                    if(copyBtn) copyBtn.textContent = originalText;
+                }, 2000);
+            });
+        }
 
-         // --- Compartir ---
-        document.getElementById('copy-link-btn').addEventListener('click', () => {
-            shareLinkInput.select();
-            document.execCommand('copy');
-            alert('Enlace copiado al portapapeles');
-        });
-
-         // --- Recuperar Contraseña ---
-        document.getElementById('forgot-password-link').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = (document.getElementById('email') as HTMLInputElement).value;
-            if(!email) {
-                alert("Por favor, introduce tu correo electrónico en el campo de arriba para recuperar la contraseña.");
-                return;
-            }
-            try {
-                await api.requestPasswordRecovery(email);
-                alert('Se ha enviado un correo de recuperación a tu dirección.');
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-            }
-        });
+        // --- RECUPERAR CONTRASEÑA ---
+        const forgotLink = document.getElementById('forgot-password-link');
+        if(forgotLink){
+            forgotLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const emailVal = (document.getElementById('email') as HTMLInputElement).value;
+                if(!emailVal) {
+                    alert("Por favor, verifica que tu correo electrónico esté visible en el campo de arriba.");
+                    return;
+                }
+                try {
+                    await api.requestPasswordRecovery(emailVal);
+                    alert('Se ha enviado un correo de recuperación.');
+                } catch (error: any) {
+                    alert(`Error: ${error.message}`);
+                }
+            });
+        }
     });
 </script>

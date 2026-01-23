@@ -177,7 +177,7 @@ import Notes from "../components/Notes/Notes.astro";
           const initialUser = userName.charAt(0).toUpperCase();
 
           if (imgEl && userDate.profile.avatar){
-            imgEl.innerHTML = `<img src="${userDate.avatar}" alt="Foto de perfil del usuario ${userDate.name}" id="img-profile" />`;
+            imgEl.innerHTML = `<img class="avatar-circle-profile" src="${userDate.profile.avatar}" alt="Foto de perfil del usuario ${userDate.name}" id="img-profile" />`;
           } else if (imgEl) {
             imgEl.innerHTML = `<div class="avatar-circle-profile">${initialUser}</div>`;
           }
