@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Settings from '../components/settings/Settings.astro';
+import ProfileDropdown from '../components/common/ProfileDropdown.astro';
+---
+
+<Layout title="Configuración - Digital Garden">
+  <div class="settings-header">
+    <h1>Configuración</h1>
+    <ProfileDropdown />
+  </div>
+  <Settings />
+</Layout>
+
+<style>
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+</style>

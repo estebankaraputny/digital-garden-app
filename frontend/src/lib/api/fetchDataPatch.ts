@@ -35,4 +35,28 @@ const fetchDataPatch = async (endpoint: string, data: any, token: string, idNote
     }
 }
 
-export default fetchDataPatch;
+
+const fetchDataPatchUser = async (endpoint: string, token: string) => {
+    
+        console.log(token);
+        
+    
+        const res = await fetch(`${DataUrl}/${endpoint}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.message || 'Error en la petición');
+        }
+
+  return res.json();
+}
+
+
+export { fetchDataPatch, fetchDataPatchUser };

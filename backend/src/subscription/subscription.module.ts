@@ -5,7 +5,7 @@ import { SubscriptionController } from './subscription.controller';
 import { StripeModule } from '../stripe/stripe.module'; 
 import { PrismaModule } from '../prisma/prisma.module'; 
 import  { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 
 @Module({

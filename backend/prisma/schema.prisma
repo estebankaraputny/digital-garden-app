@@ -34,6 +34,7 @@ model User {
   subscriptionStatus String?
   planPriceId String?
   subscriptionEndDate DateTime?
+
 }
 
 model Profile {
@@ -42,7 +43,7 @@ model Profile {
   avatar      String?
   plan        Plan    @default(FREE)
   userId      String  @unique
-  user        User    @relation(fields: [userId], references: [id])
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade) //Borrado de cuenta: onDelete: Cascade
 }
 
 model Note {
@@ -56,6 +57,6 @@ model Note {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 

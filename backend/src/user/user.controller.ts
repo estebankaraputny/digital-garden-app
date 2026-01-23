@@ -51,10 +51,13 @@ export class UserController {
   //   return await this.userService.update(id, updateUserDto);
   // }
 
-  @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Delete('delete')
+  @Roles(Role.ADMIN, Role.MODERATOR, Role.USER)
+  @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
-  async remove(@Param('id') id: string) {
-    return await this.userService.remove(id);
+  async remove(@Req() req: any) {
+    const idUser = req.user.sub;
+
+    return await this.userService.remove(idUser);
   }
 }

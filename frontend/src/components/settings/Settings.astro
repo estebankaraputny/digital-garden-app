@@ -1,0 +1,405 @@
+---
+// No se necesita lógica de servidor aquí por ahora, todo es del lado del cliente.
+// Podríamos cargar datos iniciales del usuario si fuera necesario.
+---
+<div class="settings-container">
+  <aside class="settings-nav">
+    <ul>
+      <li><a href="#profile" class="active">Perfil</a></li>
+      <li><a href="#account">Cuenta</a></li>
+      <li><a href="#subscription">Suscripción</a></li>
+      <li><a href="#sharing">Compartir</a></li>
+      <li><a href="#legal">Legal</a></li>
+      <li><a href="#danger-zone">Eliminar Cuenta</a></li>
+    </ul>
+  </aside>
+
+  <main class="settings-content">
+    <!-- Sección Perfil -->
+    <section id="profile" class="settings-section">
+      <h2>Perfil Público</h2>
+      <form id="profile-form">
+        <div class="form-group avatar-group">
+          <img src="/src/assets/image/perfil.png" alt="Avatar actual" id="avatar-preview" class="avatar-preview">
+          <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+          <button type="button" id="change-avatar-btn">Cambiar Foto</button>
+        </div>
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input type="text" id="name" name="name" placeholder="Tu nombre para mostrar">
+        </div>
+        <button type="submit">Guardar Cambios</button>
+      </form>
+    </section>
+
+    <!-- Sección Cuenta -->
+    <section id="account" class="settings-section">
+      <h2>Configuración de la Cuenta</h2>
+      <form id="email-form">
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" name="email" placeholder="tu.correo@example.com">
+        </div>
+        <button type="submit">Cambiar Correo</button>
+      </form>
+      <hr>
+      <form id="password-form">
+        <h4>Cambiar Contraseña</h4>
+        <div class="form-group">
+          <label for="current-password">Contraseña Actual</label>
+          <input type="password" id="current-password" name="currentPassword">
+        </div>
+        <div class="form-group">
+          <label for="new-password">Nueva Contraseña</label>
+          <input type="password" id="new-password" name="newPassword">
+        </div>
+        <button type="submit">Actualizar Contraseña</button>
+      </form>
+       <div class="form-group">
+        <a href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
+      </div>
+    </section>
+
+    <!-- Sección Suscripción -->
+    <section id="subscription" class="settings-section">
+      <h2>Suscripción</h2>
+      <div id="subscription-status">
+        <p>Plan actual: <span id="plan-name">Cargando...</span></p>
+        <p>Estado: <span id="plan-status">Cargando...</span></p>
+      </div>
+      <div class="actions">
+        <a href="/pricing" class="btn-secondary">Ver Planes</a>
+        <button id="cancel-plan-btn" class="btn-danger">Cancelar Suscripción</button>
+      </div>
+    </section>
+
+    <!-- Sección Compartir -->
+    <section id="sharing" class="settings-section">
+        <h2>Compartir Perfil</h2>
+        <p>Comparte tu jardín digital con otros.</p>
+        <div class="form-group share-group">
+            <input type="text" id="share-link" readonly>
+            <button id="copy-link-btn">Copiar</button>
+        </div>
+    </section>
+
+
+    <!-- Sección Legal -->
+    <section id="legal" class="settings-section">
+      <h2>Legal y Políticas</h2>
+      <ul>
+        <li><a href="/privacy">Política de Privacidad</a></li>
+        <li><a href="/security">Política de Seguridad</a></li>
+        <li><a href="/guidelines">Directrices de la Comunidad</a></li>
+      </ul>
+    </section>
+
+    <!-- Sección Eliminar Cuenta -->
+    <section id="danger-zone" class="settings-section">
+      <h2>Eliminar Cuenta</h2>
+      <div class="danger-action">
+        <p><strong>Eliminar cuenta</strong><br>Esta acción es irreversible. Se borrarán todos tus datos.</p>
+        <button id="delete-account-btn" class="btn-danger">Eliminar Mi Cuenta</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<style>
+/* Estilos generales */
+.settings-container {
+  display: flex;
+  max-width: 1000px;
+  margin: 2rem auto;
+  gap: 2rem;
+}
+.settings-nav {
+  width: 200px;
+  position: sticky;
+  top: 2rem;
+  align-self: flex-start;
+}
+.settings-nav ul {
+  list-style: none;
+  padding: 0;
+}
+.settings-nav a {
+  display: block;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: #333;
+  border-radius: 6px;
+}
+.settings-nav a.active, .settings-nav a:hover {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+.settings-content {
+  flex-grow: 1;
+}
+.settings-section {
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+.settings-section h2 {
+  margin-top: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+input[type="text"], input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button, .btn-secondary, .btn-danger {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid #e0e0e0;
+}
+.hidden { display: none; }
+
+/* Avatar */
+.avatar-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}
+/* Share */
+.share-group {
+    display: flex;
+}
+#share-link {
+    flex-grow: 1;
+    background-color: #f4f4f4;
+    cursor: text;
+}
+#copy-link-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .settings-container {
+    flex-direction: column;
+  }
+  .settings-nav {
+    width: 100%;
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .settings-nav ul {
+    display: flex;
+    gap: 1rem;
+  }
+}
+</style>
+
+<script>
+    import * as api from '../../lib/api/settingsApi.ts';
+    import fetchDataGetWithToken from '../../lib/api/fetchDataGetWithToken.ts';
+    import { fetchDataPatchUser } from '../../lib/api/fetchDataPatch.ts';
+    import fetchDataDelete from '../../lib/api/fetchDataDelete.ts';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const userId = 'USER_ID_PLACEHOLDER';
+        const shareLinkInput = document.getElementById('share-link') as HTMLInputElement;
+        if(shareLinkInput) {
+            shareLinkInput.value = `${window.location.origin}/profile/${userId}`;
+        }
+
+        // Navegación suave y activa
+        const navLinks = document.querySelectorAll('.settings-nav a');
+        const sections = document.querySelectorAll('.settings-section');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(section => observer.observe(section));
+
+
+        // --- Lógica de Perfil ---
+        const avatarUpload = document.getElementById('avatar-upload') as HTMLInputElement;
+        document.getElementById('change-avatar-btn').addEventListener('click', () => {
+            avatarUpload.click();
+        });
+
+        avatarUpload.addEventListener('change', async (event) => {
+            const file = (event.target as HTMLInputElement).files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('profilePicture', file);
+
+            try {
+                const response = await api.uploadProfilePicture(formData);
+                 if (!response.ok) throw new Error('Falló la subida de imagen.');
+                const data = await response.json();
+                (document.getElementById('avatar-preview') as HTMLImageElement).src = data.url;
+                alert('Foto de perfil actualizada.');
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = (document.getElementById('name') as HTMLInputElement).value;
+            try {
+                await api.updateProfile({ name });
+                alert('Perfil actualizado con éxito.');
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        // --- Lógica de Suscripción ---
+async function loadSubscriptionData() {
+      try {
+      const myToken = localStorage.getItem('token') || '';
+      const data = await fetchDataGetWithToken('subscription/status', myToken);
+      console.log("Get subs", data);
+
+      // Selección segura de elementos (Evita crash si el HTML no cargó aún)
+      const planNameEl = document.getElementById('plan-name');
+      const planStatusEl = document.getElementById('plan-status');
+      const cancelBtn = document.getElementById('cancel-plan-btn') as HTMLButtonElement | null;
+
+      if (planNameEl) planNameEl.textContent = data.plan || 'Ninguno'; // Ojo: data.plan (según tu servicio backend)
+      if (planStatusEl) planStatusEl.textContent = data.status || 'Inactivo';
+
+      if (data.status !== 'active' && cancelBtn) {
+        cancelBtn.disabled = true;
+      }
+
+    } catch (error: any) {
+      console.error("Error cargando suscripción:", error);
+      
+      const planNameEl = document.getElementById('plan-name');
+      const planStatusEl = document.getElementById('plan-status');
+      
+      if(planNameEl) planNameEl.textContent = 'Error';
+      if(planStatusEl) planStatusEl.textContent = 'No disponible';
+    }
+}
+
+loadSubscriptionData();
+
+//Cancelar suscripción
+const btnCancel = document.getElementById('cancel-plan-btn');
+
+const cancelSubscription = async () => {
+  const myToken = localStorage.getItem('token') || '';
+  console.log("Cancel subs", myToken);
+
+  if (!confirm('¿Estás seguro de que deseas cancelar tu suscripción? Dejarás de tener acceso a los beneficios Premium al finalizar el periodo actual.')) {
+    return;
+  }
+
+  try {
+    await fetchDataPatchUser('subscription/cancel', myToken);
+    alert('Suscripción cancelada con éxito.');
+    window.location.reload();
+  } 
+  catch (error: any) {
+    alert(`Error: ${error.message}`);
+  }
+};
+
+btnCancel?.addEventListener('click', cancelSubscription);
+
+
+// --- Borrar Cuenta ---
+const btnDeleteAccount = document.getElementById('delete-account-btn');
+
+const deleteAccount = async () => {
+  const myToken = localStorage.getItem('token') || '';
+  console.log("Delete account", myToken);
+
+  if (!confirm('Esta acción es irreversible. ¿Estás seguro de que deseas eliminar tu cuenta?')) {
+    return;
+  }
+
+  try {
+    await fetchDataDelete('user/delete', myToken);
+    alert('Cuenta eliminada con éxito.');
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  } 
+  catch (error: any) {
+    alert(`Error: ${error.message}`);
+  }
+};
+
+btnDeleteAccount?.addEventListener('click', deleteAccount);
+
+         // --- Compartir ---
+        document.getElementById('copy-link-btn').addEventListener('click', () => {
+            shareLinkInput.select();
+            document.execCommand('copy');
+            alert('Enlace copiado al portapapeles');
+        });
+
+         // --- Recuperar Contraseña ---
+        document.getElementById('forgot-password-link').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = (document.getElementById('email') as HTMLInputElement).value;
+            if(!email) {
+                alert("Por favor, introduce tu correo electrónico en el campo de arriba para recuperar la contraseña.");
+                return;
+            }
+            try {
+                await api.requestPasswordRecovery(email);
+                alert('Se ha enviado un correo de recuperación a tu dirección.');
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+    });
+</script>
