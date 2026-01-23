@@ -34,6 +34,15 @@ export class UserController {
     return await this.userService.findOne(userId);
   }
   
+
+  @Get('data-user') 
+  @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.OK)
+  async getMyProfile(@Req() req: any) {
+      return this.userService.getUserWithProfile(req.user.sub);
+  }
+
+
   @Get(':id')
   @Public()
   async findOne(@Param('id') id: string) {

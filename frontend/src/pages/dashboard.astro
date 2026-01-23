@@ -75,7 +75,7 @@ import Notes from "../components/Notes/Notes.astro";
 <script>
   import fetchDataGetWithToken from "../lib/api/fetchDataGetWithToken.ts";
   import fetchDataPostWithToken from "../lib/api/fetchDataPostWithToken.ts";
-  
+
   // const isAdmin = localStorage.getItem('isAdmin');
   // if (isAdmin !== 'true') {
   //     window.location.href = '/'; 
@@ -134,8 +134,9 @@ import Notes from "../components/Notes/Notes.astro";
       if (!myToken) return;
 
       // 1. Pedir datos al endpoint corregido
-      const user = await fetchDataGetWithToken("profile", myToken);
+      const userDate = await fetchDataGetWithToken("user/data-user", myToken);
       
+      console.log(userDate, "datos usuario perfil");
       //Saludo bienvenida inicio sesion
       const messageContainer = document.getElementById('message-container') as HTMLDivElement;
       const messageRegister = document.getElementById('message-register') as HTMLParagraphElement;
@@ -145,7 +146,7 @@ import Notes from "../components/Notes/Notes.astro";
 
 
       if (fromLogin) {
-          messageRegister.textContent = `Inicio de sesión exitoso. ¡Bienvenido, ${user.name}!`;
+          messageRegister.textContent = `Inicio de sesión exitoso. ¡Bienvenido, ${userDate.name}!`;
           messageContainer.classList.remove('hidden');
           setTimeout(() => {
               messageContainer.classList.add('message-container-hidden');
@@ -167,14 +168,16 @@ import Notes from "../components/Notes/Notes.astro";
           const nameEl = document.getElementById("name-user") as HTMLHeadingElement;
           const imgEl = document.getElementById("info-img") as HTMLElement;
 
-          if (nameEl) nameEl.textContent = user.name || "Usuario de Digital Garden";
-          if (descEl) descEl.textContent = user.description || "Usuario de Digital Garden"; 
+          if (nameEl) nameEl.textContent = userDate.name || "Usuario de Digital Garden";
+          if (descEl) descEl.textContent = userDate.profile.description || "Usuario de Digital Garden"; 
           
-          const userName = user.name || "Usuario";
+
+
+          const userName = userDate.name || "Usuario";
           const initialUser = userName.charAt(0).toUpperCase();
 
-          if (imgEl && user.avatar){
-            imgEl.innerHTML = `<img src="${user.avatar}" alt="Foto de perfil del usuario ${user.name}" id="img-profile />`;
+          if (imgEl && userDate.profile.avatar){
+            imgEl.innerHTML = `<img src="${userDate.avatar}" alt="Foto de perfil del usuario ${userDate.name}" id="img-profile" />`;
           } else if (imgEl) {
             imgEl.innerHTML = `<div class="avatar-circle-profile">${initialUser}</div>`;
           }
@@ -184,15 +187,15 @@ import Notes from "../components/Notes/Notes.astro";
       console.log(cantNotesUser,  "cantidad de notas");
       
 
-      if (user) {
+      if (userDate) {
         const countNotesEl = document.getElementById("count-notes-user");
         if (countNotesEl) countNotesEl.textContent = cantNotesUser.count || "0";
 
         const rankingEl = document.getElementById("ranking-user");
-        if (rankingEl) rankingEl.textContent = user.ranking || "Proximamente";
+        if (rankingEl) rankingEl.textContent = userDate.ranking || "Proximamente";
 
         const planEl = document.getElementById("plan-user");
-        if (planEl) planEl.textContent = user.plan || "Gratuito";
+        if (planEl) planEl.textContent = userDate.profile.plan || "Gratuito";
       }
 
     } catch (error) {

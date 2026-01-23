@@ -65,9 +65,23 @@ export class UserService {
     const users = await this.prisma.user.findMany();
     return users.map((user) => ({ ...user, roles: user.roles as Role[] }));
   }
+  
 
+  async getUserWithProfile(userId: string) {
+  const user = await this.prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      profile: true 
+    }
+  });
 
- 
+ if (!user) return null;
+
+  const { password, ...result } = user;
+
+  return result;
+}
+
 
   async findOne(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
